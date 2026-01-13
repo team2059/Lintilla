@@ -7,6 +7,7 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -16,8 +17,11 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import gg.questnav.questnav.PoseFrame;
+import gg.questnav.questnav.QuestNav;
 import org.team2059.Lintilla.Constants.AutoConstants;
 import org.team2059.Lintilla.Constants.DrivetrainConstants;
+import org.team2059.Lintilla.Constants.VisionConstants;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -27,6 +31,8 @@ import org.littletonrobotics.junction.Logger;
 public class Drivetrain extends SubsystemBase {
 
   public static boolean isFieldRelativeTeleop = true;
+
+  private final QuestNav questNav;
 
   private final GyroscopeIO gyroIO;
   private final GyroscopeIOInputsAutoLogged gyroInputs = new GyroscopeIOInputsAutoLogged();
@@ -45,6 +51,9 @@ public class Drivetrain extends SubsystemBase {
     SwerveModuleIO backLeftModuleIO,
     SwerveModuleIO backRightModuleIO
   ) {
+
+    questNav = new QuestNav();
+
     this.gyroIO = gyroIO;
 
     modules = new SwerveModuleIO[4];
@@ -95,9 +104,9 @@ public class Drivetrain extends SubsystemBase {
   }
 
   /**
-   * @return current estimated pose
+   * @return current pose from pose estimator
    */
-  public Pose2d getPose() {
+  public Pose2d getEstimatedPose() {
     return poseEstimator.getEstimatedPosition();
   }
 
@@ -269,7 +278,7 @@ public class Drivetrain extends SubsystemBase {
 
       // Configure AutoBuilder
       AutoBuilder.configure(
-        this::getPose, // Robot pose supplier
+        this::getEstimatedPose, // Robot pose supplier
         this::setPosition, // Method to reset pose
         this::getRobotRelativeSpeeds, // ChassisSpeeds supplier, MUST be robot relative
         (speeds) -> driveRobotRelative(speeds), // Method that will drive the robot given robot-relative chassis speeds
@@ -297,12 +306,45 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
+
+    Logger.recordOutput("Estimated Pose", getEstimatedPose());
+    Logger.recordOutput("Field Relative", isFieldRelativeTeleop);
+
     gyroIO.updateInputs(gyroInputs);
     Logger.processInputs("Gyroscope", gyroInputs);
 
     for (int i = 0; i < 4; i++) {
       modules[i].updateInputs(swerveModuleInputs[i]);
       Logger.processInputs(("Drive/Module" + Integer.toString(i)), swerveModuleInputs[i]);
+    }
+
+    // Must be run to update Quest measurements
+    questNav.commandPeriodic();
+
+    // Get the latest pose data frames from the Quest
+    PoseFrame[] questFrames = questNav.getAllUnreadPoseFrames();
+
+    // Loop over pose data frames, send to pose estimator
+    for (PoseFrame questFrame : questFrames) {
+      // Make sure Quest was tracking for this frame
+      if (questFrame.isTracking()) {
+        // Get the pose of the Quest
+        Pose3d questPose = questFrame.questPose3d();
+        // Get timestamp for when data was sent
+        double timestamp = questFrame.dataTimestamp();
+
+        // Transform by the mount pose to get robot pose
+        Pose3d robotPose = questPose.transformBy(VisionConstants.ROBOT_TO_QUEST.inverse());
+
+        // TODO: filtering?
+
+        // Add measurement to pose estimator
+        addVisionMeasurement(
+          robotPose.toPose2d(),
+          timestamp,
+          VisionConstants.questNavStdDevs
+        );
+      }
     }
 
     // Update pose estimator based on wheel positions

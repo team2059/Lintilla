@@ -11,6 +11,9 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N1;
@@ -154,6 +157,9 @@ public final class Constants {
           0.02, // Trust down to 2 cm in Y direction
           0.035 // Trust down to 2 degrees rotational
         );
+
+        public static final Transform2d ROBOT_TO_QUEST_2D = new Transform2d(0.06445393, 0.23854354, Rotation2d.kCCW_90deg);
+        public static final Transform3d ROBOT_TO_QUEST = new Transform3d(ROBOT_TO_QUEST_2D);
     }
 
     public static final class CANConstants {
