@@ -108,8 +108,8 @@ public final class Constants {
          * Wheel Diameter: 4 inches, 0.1016 meters
          */
 
-        public static final Distance wheelBase = Inches.of(25); // Distance from center of wheels on side
-        public static final Distance trackWidth = Inches.of(21.5); // Distance between front wheels (like train track)
+        public static final Distance wheelBase = Inches.of(25.7); // Distance from center of wheels on side
+        public static final Distance trackWidth = Inches.of(19); // Distance between front wheels (like train track)
 
         // Kinematics give each module relative to center. X is forward/backward and Y is left/right.
         public static final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
@@ -144,7 +144,7 @@ public final class Constants {
         public static final boolean backLeftInverted = false;
         public static boolean backRightInverted = false;
 
-        public static double kPRotation = 0.35;
+        public static double kPRotation = 0.3;
 
         public static final SimpleMotorFeedforward driveFF = new SimpleMotorFeedforward(0.17821, 1.9047, 0.14686);
     }

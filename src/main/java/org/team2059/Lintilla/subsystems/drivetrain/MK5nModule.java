@@ -64,7 +64,7 @@ public class MK5nModule implements SwerveModuleIO {
     driveMotor.clearFaults();
 
     // Configure cancoder
-    canCoder = new CANcoder(canCoderCanId, Constants.CANConstants.canivore);
+    canCoder = new CANcoder(canCoderCanId);
 
     canCoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
     canCoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
@@ -73,7 +73,7 @@ public class MK5nModule implements SwerveModuleIO {
     canCoder.getConfigurator().apply(canCoderConfig);
 
     // Configure turn motor
-    azimuthMotor = new TalonFX(azimuthMotorCanId, Constants.CANConstants.canivore);
+    azimuthMotor = new TalonFX(azimuthMotorCanId); // (, CANConstants.canivore);
 
     azimuthMotorConfig.Feedback.FeedbackRemoteSensorID = canCoder.getDeviceID();
     azimuthMotorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;

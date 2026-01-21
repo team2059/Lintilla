@@ -44,7 +44,7 @@ public class RobotContainer {
         /* SUBSYSTEMS */
         /* ========== */
         drivetrain = new Drivetrain(
-          new Pigeon2Gyroscope(CANConstants.pigeon2, CANConstants.canivore),
+          new Pigeon2Gyroscope(CANConstants.pigeon2), // (, CANConstants.canivore),
           new MK5nModule(
             CANConstants.frontLeftDriveMotor,
             CANConstants.frontLeftTurnMotor,
