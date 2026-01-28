@@ -142,7 +142,7 @@ public class MK5nModule implements SwerveModuleIO {
     inputs.driveAppliedVolts.mut_replace(getDriveAppliedVolts(), Volts);
     inputs.driveCurrent.mut_replace(driveMotor.getOutputCurrent(), Amps);
     inputs.driveTemp.mut_replace(driveMotor.getMotorTemperature(), Celsius);
-
+    
     inputs.azimuthAbsolutePos.mut_replace(canCoder.getAbsolutePosition().getValue());
     inputs.azimuthVel.mut_replace(canCoder.getVelocity().getValue());
     inputs.azimuthAppliedVolts.mut_replace(azimuthMotor.getMotorVoltage().getValue());

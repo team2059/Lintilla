@@ -50,28 +50,28 @@ public class RobotContainer {
             CANConstants.frontLeftTurnMotor,
             CANConstants.frontLeftCancoder,
             DrivetrainConstants.frontLeftEncoderOffset,
-            true
+            DrivetrainConstants.frontLeftInverted
           ),
           new MK5nModule(
             CANConstants.frontRightDriveMotor,
             CANConstants.frontRightTurnMotor,
             CANConstants.frontRightCancoder,
             DrivetrainConstants.frontRightEncoderOffset,
-            true
+            DrivetrainConstants.frontRightInverted
           ),
           new MK5nModule(
             CANConstants.backLeftDriveMotor,
             CANConstants.backLeftTurnMotor,
             CANConstants.backLeftCancoder,
             DrivetrainConstants.backLeftEncoderOffset,
-            false
+            DrivetrainConstants.backLeftInverted
           ),
           new MK5nModule(
             CANConstants.backRightDriveMotor,
             CANConstants.backRightTurnMotor,
             CANConstants.backRightCancoder,
             DrivetrainConstants.backRightEncoderOffset,
-            true
+            DrivetrainConstants.backRightInverted
           )
         );
 

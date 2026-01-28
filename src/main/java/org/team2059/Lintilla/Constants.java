@@ -48,8 +48,8 @@ public final class Constants {
         /* AXES */
         /* ==== */
 
-        public static final int JoystickTranslationAxis = 1;
-        public static final int JoystickStrafeAxis = 0;
+        public static final int JoystickTranslationAxis = 0;
+        public static final int JoystickStrafeAxis = 1;
         public static final int JoystickRotationAxis = 2;
         public static final int JoystickSliderAxis = 3;
 
@@ -133,18 +133,18 @@ public final class Constants {
         public static final double peakTorqueCurrentAmps = 60;
 
         // CANcoder offsets, in rotations
-        public static final double frontLeftEncoderOffset = -0.099854;
-        public static final double frontRightEncoderOffset = -0.731689;
-        public static final double backLeftEncoderOffset = -0.352051;
-        public static final double backRightEncoderOffset = -0.898193;
+        public static final double frontRightEncoderOffset = -0.099854;
+        public static final double frontLeftEncoderOffset = -0.731689;
+        public static final double backRightEncoderOffset = -0.352051;
+        public static final double backLeftEncoderOffset = -0.898193;
 
         // Drive motor inversions
-        public static final boolean frontLeftInverted = false;
         public static final boolean frontRightInverted = false;
-        public static final boolean backLeftInverted = false;
-        public static boolean backRightInverted = false;
+        public static final boolean frontLeftInverted = true;
+        public static final boolean backRightInverted = false;
+        public static final boolean backLeftInverted = true;
 
-        public static double kPRotation = 0.3;
+        public static double kPRotation = 0.25;
 
         public static final SimpleMotorFeedforward driveFF = new SimpleMotorFeedforward(0.17821, 1.9047, 0.14686);
     }
@@ -168,18 +168,18 @@ public final class Constants {
 
         public static final int pigeon2 = 60;
 
-        public static final int frontLeftDriveMotor = 1;
-        public static final int frontLeftTurnMotor = 2;
-        public static final int frontLeftCancoder = 10;
-        public static final int frontRightDriveMotor = 3;
-        public static final int frontRightTurnMotor = 4;
-        public static final int frontRightCancoder = 20;
-        public static final int backLeftDriveMotor = 5;
-        public static final int backLeftTurnMotor = 6;
-        public static final int backLeftCancoder = 30;
-        public static final int backRightDriveMotor = 7;
-        public static final int backRightTurnMotor = 8;
-        public static final int backRightCancoder = 40;
+        public static final int frontRightDriveMotor = 1;
+        public static final int frontRightTurnMotor = 2;
+        public static final int frontRightCancoder = 10;
+        public static final int frontLeftDriveMotor = 3;
+        public static final int frontLeftTurnMotor = 4;
+        public static final int frontLeftCancoder = 20;
+        public static final int backRightDriveMotor = 5;
+        public static final int backRightTurnMotor = 6;
+        public static final int backRightCancoder = 30;
+        public static final int backLeftDriveMotor = 7;
+        public static final int backLeftTurnMotor = 8;
+        public static final int backLeftCancoder = 40;
 
         public static final int powerDistributionHub = 50;
     }
