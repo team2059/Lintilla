@@ -9,6 +9,7 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import org.littletonrobotics.junction.Logger;
@@ -87,6 +88,22 @@ public class ShooterBase extends SubsystemBase {
       )
     );
   }
+
+  public Command leftSysIdQuasistaticForward() { return leftRoutine.quasistatic(SysIdRoutine.Direction.kForward); }
+
+  public Command leftSysIdQuasistaticReverse() { return leftRoutine.quasistatic(SysIdRoutine.Direction.kReverse); }
+
+  public Command rightSysIdQuasistaticForward() { return rightRoutine.quasistatic(SysIdRoutine.Direction.kForward); }
+
+  public Command rightSysIdQuasistaticReverse() { return rightRoutine.quasistatic(SysIdRoutine.Direction.kReverse); }
+
+  public Command leftSysIdDynamicForward() { return leftRoutine.dynamic(SysIdRoutine.Direction.kForward); }
+
+  public Command leftSysIdDynamicReverse() { return leftRoutine.dynamic(SysIdRoutine.Direction.kReverse); }
+
+  public Command rightSysIdDynamicForward() { return rightRoutine.dynamic(SysIdRoutine.Direction.kForward); }
+
+  public Command rightSysIdDynamicReverse() { return rightRoutine.dynamic(SysIdRoutine.Direction.kReverse); }
 
   @Override
   public void periodic() {
