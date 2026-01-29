@@ -51,8 +51,8 @@ public final class Constants {
         /* AXES */
         /* ==== */
 
-        public static final int JoystickTranslationAxis = 0;
-        public static final int JoystickStrafeAxis = 1;
+        public static final int JoystickTranslationAxis = 1;
+        public static final int JoystickStrafeAxis = 0;
         public static final int JoystickRotationAxis = 2;
         public static final int JoystickSliderAxis = 3;
 
@@ -136,16 +136,16 @@ public final class Constants {
         public static final double peakTorqueCurrentAmps = 60;
 
         // CANcoder offsets, in rotations
-        public static final double frontRightEncoderOffset = -0.099854;
-        public static final double frontLeftEncoderOffset = -0.731689;
-        public static final double backRightEncoderOffset = -0.352051;
-        public static final double backLeftEncoderOffset = -0.898193;
+        public static final double frontRightEncoderOffset = -0.347656;
+        public static final double frontLeftEncoderOffset = -0.983887;
+        public static final double backRightEncoderOffset = -0.605713;
+        public static final double backLeftEncoderOffset = -0.650391;
 
         // Drive motor inversions
-        public static final boolean frontRightInverted = false;
-        public static final boolean frontLeftInverted = true;
-        public static final boolean backRightInverted = false;
-        public static final boolean backLeftInverted = true;
+        public static final boolean frontRightInverted = true;
+        public static final boolean frontLeftInverted = false;
+        public static final boolean backRightInverted = true;
+        public static final boolean backLeftInverted = false;
 
         public static double kPRotation = 0.25;
 
