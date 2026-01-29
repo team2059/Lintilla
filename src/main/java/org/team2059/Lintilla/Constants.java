@@ -18,10 +18,13 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.units.LinearAccelerationUnit;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.*;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -182,5 +185,37 @@ public final class Constants {
         public static final int backLeftCancoder = 40;
 
         public static final int powerDistributionHub = 50;
+    }
+
+    public static final class ShooterConstants {
+
+        public static final Measure<LinearAccelerationUnit> gravitationalAcceleration = Units.MetersPerSecondPerSecond.of(9.80665);
+        public static final Distance hubHeight = Meters.of(0); // End height of trajectory
+        public static final Distance shooterHeight = Meters.of(0); // Start height of trajectory
+        public static final Angle fuelExitAngle = Degrees.of(0); // At what angle does fuel leave the shooter
+
+        /**
+         * Units of Flywheel Constants (Thanks Rev for good docs this year)
+         * - kP: Duty cycle per rotation of error
+         * - kI: Duty cycle per (rotation * ms)
+         * - kD: (Duty cycle * ms) per duty cycle
+         * - kS: Volts
+         * - kV: Volts per RPM
+         * - kA: Volts per RPM/sec
+         */
+
+        public static final double leftkP = 0.0;
+        public static final double leftkI = 0.0;
+        public static final double leftkD = 0.0;
+        public static final double leftkS = 0.0;
+        public static final double leftkV = 0.0;
+        public static final double leftkA = 0.0;
+
+        public static final double rightkP = 0.0;
+        public static final double rightkI = 0.0;
+        public static final double rightkD = 0.0;
+        public static final double rightkS = 0.0;
+        public static final double rightkV = 0.0;
+        public static final double rightkA = 0.0;
     }
 }
