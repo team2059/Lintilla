@@ -46,13 +46,17 @@ public class ShooterBase extends SubsystemBase {
     this.leftShooter = leftShooter;
     this.rightShooter = rightShooter;
 
-    // Configure indexer motor
-    indexerMotor = new SparkFlex(indexerMotorCanId, SparkLowLevel.MotorType.kBrushless);
-    indexerMotorConfig
-      .inverted(false)
-      .idleMode(SparkBaseConfig.IdleMode.kBrake);
-    indexerMotor.configure(indexerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    indexerMotor.clearFaults();
+    // Configure indexer motor (account for prototypes which have no indexer)
+    if (indexerMotorCanId != -1) {
+        indexerMotor = new SparkFlex(indexerMotorCanId, SparkLowLevel.MotorType.kBrushless);
+        indexerMotorConfig
+          .inverted(false)
+          .idleMode(SparkBaseConfig.IdleMode.kBrake);
+        indexerMotor.configure(indexerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        indexerMotor.clearFaults();
+    } else {
+        indexerMotor = null;
+    }
 
     leftRoutine = new SysIdRoutine(
       // Empty config defaults to 1 volt/second ramp rate and 7 volt step voltage.
@@ -87,6 +91,27 @@ public class ShooterBase extends SubsystemBase {
         this
       )
     );
+  }
+
+  public void setLeftShooterVoltage(double volts) {
+      leftShooter.setFlywheelVoltage(volts);
+  }
+
+  public void setRightShooterVoltage(double volts) {
+      leftShooter.setFlywheelVoltage(volts);
+  }
+
+  public void stopLeftShooter() {
+      leftShooter.stopFlywheel();
+  }
+
+  public void stopRightShooter() {
+      rightShooter.stopFlywheel();
+  }
+
+  public void stopBothShooters() {
+      stopLeftShooter();
+      stopRightShooter();
   }
 
   public Command leftSysIdQuasistaticForward() { return leftRoutine.quasistatic(SysIdRoutine.Direction.kForward); }

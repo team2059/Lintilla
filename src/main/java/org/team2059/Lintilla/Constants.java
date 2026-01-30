@@ -185,9 +185,15 @@ public final class Constants {
         public static final int backLeftCancoder = 40;
 
         public static final int powerDistributionHub = 50;
+
+        public static final int leftShooterFlywheel = 53;
+        public static final int rightShooterFlywheel = -1;
     }
 
     public static final class ShooterConstants {
+
+        public static final boolean leftFlywheelInverted = true;
+        public static final boolean rightFlywheelInverted = false;
 
         public static final Measure<LinearAccelerationUnit> gravitationalAcceleration = Units.MetersPerSecondPerSecond.of(9.80665);
         public static final Distance hubHeight = Meters.of(0); // End height of trajectory

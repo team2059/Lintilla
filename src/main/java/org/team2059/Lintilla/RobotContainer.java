@@ -22,6 +22,9 @@ import org.team2059.Lintilla.commands.TeleopDriveCmd;
 import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
 import org.team2059.Lintilla.subsystems.drivetrain.MK5nModule;
 import org.team2059.Lintilla.subsystems.drivetrain.Pigeon2Gyroscope;
+import org.team2059.Lintilla.subsystems.shooter.NullShooter;
+import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
+import org.team2059.Lintilla.subsystems.shooter.VortexShooter;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -35,7 +38,11 @@ public class RobotContainer {
 
     public static Joystick logitech;
 
+    public static GenericHID buttonBox;
+
     public static Drivetrain drivetrain;
+
+    public static ShooterBase shooterBase;
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -75,11 +82,28 @@ public class RobotContainer {
           )
         );
 
+        shooterBase = new ShooterBase(
+          new VortexShooter(
+            CANConstants.leftShooterFlywheel,
+            ShooterConstants.leftFlywheelInverted,
+            ShooterConstants.leftkP,
+            ShooterConstants.leftkI,
+            ShooterConstants.leftkD,
+            ShooterConstants.leftkS,
+            ShooterConstants.leftkV,
+            ShooterConstants.leftkA
+          ),
+          new NullShooter(),
+          -1
+        );
+
         /* =========== */
         /* CONTROLLERS */
         /* =========== */
 
         logitech = new Joystick(OperatorConstants.logitechPort);
+
+        buttonBox = new GenericHID(OperatorConstants.buttonBoxPort);
 
         drivetrain.setDefaultCommand(
           new TeleopDriveCmd(
@@ -130,6 +154,18 @@ public class RobotContainer {
         /* SWITCH FIELD/ROBOT RELATIVITY IN TELEOP */
         new JoystickButton(logitech, OperatorConstants.JoystickRobotRelative)
           .whileTrue(new InstantCommand(() -> drivetrain.setFieldRelativity()));
+
+        new JoystickButton(buttonBox, 1)
+          .whileTrue(new InstantCommand(() -> shooterBase.setLeftShooterVoltage(4)));
+
+        new JoystickButton(buttonBox, 2)
+          .whileTrue(new InstantCommand(() -> shooterBase.setLeftShooterVoltage(8)));
+
+        new JoystickButton(buttonBox, 3)
+          .whileTrue(new InstantCommand(() -> shooterBase.setLeftShooterVoltage(12)));
+
+        new JoystickButton(buttonBox, 4)
+          .whileTrue(new InstantCommand(() -> shooterBase.stopBothShooters()));
     }
 
     /**
