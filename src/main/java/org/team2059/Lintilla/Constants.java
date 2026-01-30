@@ -195,10 +195,10 @@ public final class Constants {
         public static final boolean leftFlywheelInverted = true;
         public static final boolean rightFlywheelInverted = false;
 
-        public static final Measure<LinearAccelerationUnit> gravitationalAcceleration = Units.MetersPerSecondPerSecond.of(9.80665);
-        public static final Distance hubHeight = Meters.of(0); // End height of trajectory
-        public static final Distance shooterHeight = Meters.of(0); // Start height of trajectory
-        public static final Angle fuelExitAngle = Degrees.of(0); // At what angle does fuel leave the shooter
+        public static final double gravitationalAccelerationMpss = 9.80665;
+        public static final double hubHeightMeters = 1.83; // End height of trajectory
+        public static final double shooterHeightMeters = 0.5; // Start height of trajectory
+        public static final double fuelExitAngleRadians = 40 * Math.PI / 180; // RADIANS At what angle does fuel leave the shooter
 
         /**
          * Units of Flywheel Constants (Thanks Rev for good docs this year)

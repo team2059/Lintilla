@@ -6,6 +6,7 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
@@ -14,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import org.littletonrobotics.junction.Logger;
 
+import static org.team2059.Lintilla.Constants.ShooterConstants;
 import static edu.wpi.first.units.Units.*;
 
 public class ShooterBase extends SubsystemBase {
@@ -91,6 +93,13 @@ public class ShooterBase extends SubsystemBase {
         this
       )
     );
+  }
+
+  public double getTargetFuelVelocityMps(double directDistanceToHubMeters) {
+      return Math.sqrt(
+        (ShooterConstants.gravitationalAccelerationMpss * Math.pow(directDistanceToHubMeters, 2))
+        / (2 * Math.pow(Math.cos(ShooterConstants.fuelExitAngleRadians), 2) * ((directDistanceToHubMeters * Math.tan(ShooterConstants.fuelExitAngleRadians)) - ShooterConstants.hubHeightMeters + ShooterConstants.shooterHeightMeters))
+      );
   }
 
   public void setLeftShooterVoltage(double volts) {
