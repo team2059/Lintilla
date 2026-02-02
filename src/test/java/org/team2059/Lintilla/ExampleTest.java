@@ -12,7 +12,7 @@ class ExampleTest
     
     @Test
     // While optional, Display Names allow for clearer test purpose & intent naming via more human-readable names
-    @DisplayName("String.toLoweCase should handle mixed case and return all lower case")
+    @DisplayName("String.toLowerCase should handle mixed case and return all lower case")
     void toLowerCaseHandlesMixedCase()
     {
         assertEquals("robot", "Robot".toLowerCase());
