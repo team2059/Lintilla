@@ -150,7 +150,7 @@ public final class Constants {
     }
 
     public static final class VisionConstants {
-        public static final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
+        public static final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
 
         public static Matrix<N3, N1> questNavStdDevs = VecBuilder.fill(
           0.02, // Trust down to 2 cm in X direction
