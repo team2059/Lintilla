@@ -222,5 +222,7 @@ public final class Constants {
 		public static final double rightkS = 0.0;
 		public static final double rightkV = 0.0;
 		public static final double rightkA = 0.0;
+
+		public static final int indexerMotor = 54;
 	}
 }

@@ -94,7 +94,7 @@ public class RobotContainer {
 			ShooterConstants.leftkA
 		  ),
 		  new NullShooter(),
-		  -1
+		  ShooterConstants.indexerMotor
 		);
 
 		/* =========== */
@@ -156,16 +156,20 @@ public class RobotContainer {
 		  .whileTrue(new InstantCommand(() -> drivetrain.setFieldRelativity()));
 
 		new JoystickButton(buttonBox, 1)
-		  .whileTrue(Commands.run(() -> shooterBase.setLeftShooterRPM(1500), shooterBase));
+		  .whileTrue(Commands.run(() -> shooterBase.setLeftShooterRPM(3000), shooterBase));
 
 		new JoystickButton(buttonBox, 2)
-		  .whileTrue(Commands.run(() -> shooterBase.setLeftShooterRPM(3000), shooterBase));
+		  .whileTrue(Commands.run(() -> shooterBase.setLeftShooterRPM(4500), shooterBase));
 
 		new JoystickButton(buttonBox, 3)
 		  .whileTrue(Commands.run(() -> shooterBase.setLeftShooterRPM(6000), shooterBase));
 
 		new JoystickButton(buttonBox, 4)
 		  .whileTrue(Commands.run(() -> shooterBase.stopLeftShooter()));
+
+		new JoystickButton(buttonBox, 5) 
+		  .whileTrue(Commands.run(() -> shooterBase.runIndexer(0.5), shooterBase))
+		  .onFalse(Commands.run(() -> shooterBase.runIndexer(0), shooterBase));
 	}
 
 	/**

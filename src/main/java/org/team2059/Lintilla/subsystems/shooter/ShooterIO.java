@@ -36,6 +36,7 @@ public interface ShooterIO {
 	default public void updateInputs(ShooterIOInputs inputs) {
 	}
 
+
 	@AutoLog
 	class ShooterIOInputs {
 		public MutAngle flywheelPosition = Rotations.mutable(0);
