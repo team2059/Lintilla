@@ -4,20 +4,22 @@
 
 package org.team2059.Lintilla;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import org.team2059.Lintilla.Constants.*;
-
 import com.pathplanner.lib.auto.AutoBuilder;
-
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import org.team2059.Lintilla.Constants.CANConstants;
+import org.team2059.Lintilla.Constants.DrivetrainConstants;
+import org.team2059.Lintilla.Constants.OperatorConstants;
+import org.team2059.Lintilla.Constants.ShooterConstants;
 import org.team2059.Lintilla.commands.TeleopDriveCmd;
 import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
 import org.team2059.Lintilla.subsystems.drivetrain.MK5nModule;
@@ -34,146 +36,144 @@ import org.team2059.Lintilla.subsystems.shooter.VortexShooter;
  */
 public class RobotContainer {
 
-    SendableChooser<Command> autoChooser;
+	public static Joystick logitech;
+	public static GenericHID buttonBox;
+	public static Drivetrain drivetrain;
+	public static ShooterBase shooterBase;
+	SendableChooser<Command> autoChooser;
 
-    public static Joystick logitech;
+	/**
+	 * The container for the robot. Contains subsystems, OI devices, and commands.
+	 */
+	public RobotContainer() {
 
-    public static GenericHID buttonBox;
+		/* ========== */
+		/* SUBSYSTEMS */
+		/* ========== */
+		drivetrain = new Drivetrain(
+		  new Pigeon2Gyroscope(CANConstants.pigeon2), // (, CANConstants.canivore),
+		  new MK5nModule(
+			CANConstants.frontLeftDriveMotor,
+			CANConstants.frontLeftTurnMotor,
+			CANConstants.frontLeftCancoder,
+			DrivetrainConstants.frontLeftEncoderOffset,
+			DrivetrainConstants.frontLeftInverted
+		  ),
+		  new MK5nModule(
+			CANConstants.frontRightDriveMotor,
+			CANConstants.frontRightTurnMotor,
+			CANConstants.frontRightCancoder,
+			DrivetrainConstants.frontRightEncoderOffset,
+			DrivetrainConstants.frontRightInverted
+		  ),
+		  new MK5nModule(
+			CANConstants.backLeftDriveMotor,
+			CANConstants.backLeftTurnMotor,
+			CANConstants.backLeftCancoder,
+			DrivetrainConstants.backLeftEncoderOffset,
+			DrivetrainConstants.backLeftInverted
+		  ),
+		  new MK5nModule(
+			CANConstants.backRightDriveMotor,
+			CANConstants.backRightTurnMotor,
+			CANConstants.backRightCancoder,
+			DrivetrainConstants.backRightEncoderOffset,
+			DrivetrainConstants.backRightInverted
+		  )
+		);
 
-    public static Drivetrain drivetrain;
+		shooterBase = new ShooterBase(
+		  new VortexShooter(
+			CANConstants.leftShooterFlywheel,
+			ShooterConstants.leftFlywheelInverted,
+			ShooterConstants.leftkP,
+			ShooterConstants.leftkI,
+			ShooterConstants.leftkD,
+			ShooterConstants.leftkS,
+			ShooterConstants.leftkV,
+			ShooterConstants.leftkA
+		  ),
+		  new NullShooter(),
+		  -1
+		);
 
-    public static ShooterBase shooterBase;
+		/* =========== */
+		/* CONTROLLERS */
+		/* =========== */
 
-    /** The container for the robot. Contains subsystems, OI devices, and commands. */
-    public RobotContainer() {
+		logitech = new Joystick(OperatorConstants.logitechPort);
 
-        /* ========== */
-        /* SUBSYSTEMS */
-        /* ========== */
-        drivetrain = new Drivetrain(
-          new Pigeon2Gyroscope(CANConstants.pigeon2), // (, CANConstants.canivore),
-          new MK5nModule(
-            CANConstants.frontLeftDriveMotor,
-            CANConstants.frontLeftTurnMotor,
-            CANConstants.frontLeftCancoder,
-            DrivetrainConstants.frontLeftEncoderOffset,
-            DrivetrainConstants.frontLeftInverted
-          ),
-          new MK5nModule(
-            CANConstants.frontRightDriveMotor,
-            CANConstants.frontRightTurnMotor,
-            CANConstants.frontRightCancoder,
-            DrivetrainConstants.frontRightEncoderOffset,
-            DrivetrainConstants.frontRightInverted
-          ),
-          new MK5nModule(
-            CANConstants.backLeftDriveMotor,
-            CANConstants.backLeftTurnMotor,
-            CANConstants.backLeftCancoder,
-            DrivetrainConstants.backLeftEncoderOffset,
-            DrivetrainConstants.backLeftInverted
-          ),
-          new MK5nModule(
-            CANConstants.backRightDriveMotor,
-            CANConstants.backRightTurnMotor,
-            CANConstants.backRightCancoder,
-            DrivetrainConstants.backRightEncoderOffset,
-            DrivetrainConstants.backRightInverted
-          )
-        );
+		buttonBox = new GenericHID(OperatorConstants.buttonBoxPort);
 
-        shooterBase = new ShooterBase(
-          new VortexShooter(
-            CANConstants.leftShooterFlywheel,
-            ShooterConstants.leftFlywheelInverted,
-            ShooterConstants.leftkP,
-            ShooterConstants.leftkI,
-            ShooterConstants.leftkD,
-            ShooterConstants.leftkS,
-            ShooterConstants.leftkV,
-            ShooterConstants.leftkA
-          ),
-          new NullShooter(),
-          -1
-        );
+		drivetrain.setDefaultCommand(
+		  new TeleopDriveCmd(
+			drivetrain,
+			() -> -logitech.getRawAxis(OperatorConstants.JoystickTranslationAxis), // forwardX
+			() -> -logitech.getRawAxis(OperatorConstants.JoystickStrafeAxis), // forwardY
+			() -> -logitech.getRawAxis(OperatorConstants.JoystickRotationAxis), // rotation
+			() -> logitech.getRawAxis(OperatorConstants.JoystickSliderAxis), // slider
+			() -> logitech.getRawButton(OperatorConstants.JoystickStrafeOnly), // Strafe Only Button
+			() -> logitech.getRawButton(OperatorConstants.JoystickInvertedDrive) // Inverted button
+		  )
+		);
 
-        /* =========== */
-        /* CONTROLLERS */
-        /* =========== */
+		/* ========== */
+		/* AUTONOMOUS */
+		/* ========== */
 
-        logitech = new Joystick(OperatorConstants.logitechPort);
+		// Build auto chooser - you can also set a default.
+		autoChooser = AutoBuilder.buildAutoChooser();
 
-        buttonBox = new GenericHID(OperatorConstants.buttonBoxPort);
+		// Publish auto chooser
+		SmartDashboard.putData("Auto Chooser", autoChooser);
 
-        drivetrain.setDefaultCommand(
-          new TeleopDriveCmd(
-            drivetrain,
-            () -> -logitech.getRawAxis(OperatorConstants.JoystickTranslationAxis), // forwardX
-            () -> -logitech.getRawAxis(OperatorConstants.JoystickStrafeAxis), // forwardY
-            () -> -logitech.getRawAxis(OperatorConstants.JoystickRotationAxis), // rotation
-            () -> logitech.getRawAxis(OperatorConstants.JoystickSliderAxis), // slider
-            () -> logitech.getRawButton(OperatorConstants.JoystickStrafeOnly), // Strafe Only Button
-            () -> logitech.getRawButton(OperatorConstants.JoystickInvertedDrive) // Inverted button
-          )
-        );
+		/* ======= */
+		/* LOGGING */
+		/* ======= */
 
-        /* ========== */
-        /* AUTONOMOUS */
-        /* ========== */
+		// Allow viewing of command scheduler queue in dashboards
+		SmartDashboard.putData(CommandScheduler.getInstance());
 
-        // Build auto chooser - you can also set a default.
-        autoChooser = AutoBuilder.buildAutoChooser();
+		configureBindings();
+	}
 
-        // Publish auto chooser
-        SmartDashboard.putData("Auto Chooser", autoChooser);
+	/**
+	 * Use this method to define your trigger->command mappings. Triggers can be created via the
+	 * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
+	 * predicate, or via the named factories in {@link
+	 * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
+	 * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
+	 * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
+	 * joysticks}.
+	 */
+	private void configureBindings() {
+		/* RESET GYRO HEADING */
+		new JoystickButton(logitech, OperatorConstants.JoystickResetHeading)
+		  .whileTrue(new InstantCommand(() -> drivetrain.resetGyroHeading()));
 
-        /* ======= */
-        /* LOGGING */
-        /* ======= */
+		/* SWITCH FIELD/ROBOT RELATIVITY IN TELEOP */
+		new JoystickButton(logitech, OperatorConstants.JoystickRobotRelative)
+		  .whileTrue(new InstantCommand(() -> drivetrain.setFieldRelativity()));
 
-        // Allow viewing of command scheduler queue in dashboards
-        SmartDashboard.putData(CommandScheduler.getInstance());
+		new JoystickButton(buttonBox, 1)
+		  .whileTrue(Commands.run(() -> shooterBase.setLeftShooterRPM(1500), shooterBase));
 
-        configureBindings();
-    }
+		new JoystickButton(buttonBox, 2)
+		  .whileTrue(Commands.run(() -> shooterBase.setLeftShooterRPM(3000), shooterBase));
 
-    /**
-     * Use this method to define your trigger->command mappings. Triggers can be created via the
-     * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
-     * predicate, or via the named factories in {@link
-     * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
-     * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-     * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-     * joysticks}.
-     */
-    private void configureBindings() {
-        /* RESET GYRO HEADING */
-        new JoystickButton(logitech, OperatorConstants.JoystickResetHeading)
-          .whileTrue(new InstantCommand(() -> drivetrain.resetGyroHeading()));
+		new JoystickButton(buttonBox, 3)
+		  .whileTrue(Commands.run(() -> shooterBase.setLeftShooterRPM(6000), shooterBase));
 
-        /* SWITCH FIELD/ROBOT RELATIVITY IN TELEOP */
-        new JoystickButton(logitech, OperatorConstants.JoystickRobotRelative)
-          .whileTrue(new InstantCommand(() -> drivetrain.setFieldRelativity()));
+		new JoystickButton(buttonBox, 4)
+		  .whileTrue(Commands.run(() -> shooterBase.stopLeftShooter()));
+	}
 
-        new JoystickButton(buttonBox, 1)
-          .whileTrue(new InstantCommand(() -> shooterBase.setLeftShooterVoltage(4)));
-
-        new JoystickButton(buttonBox, 2)
-          .whileTrue(new InstantCommand(() -> shooterBase.setLeftShooterVoltage(8)));
-
-        new JoystickButton(buttonBox, 3)
-          .whileTrue(new InstantCommand(() -> shooterBase.setLeftShooterVoltage(12)));
-
-        new JoystickButton(buttonBox, 4)
-          .whileTrue(new InstantCommand(() -> shooterBase.stopBothShooters()));
-    }
-
-    /**
-     * Use this to pass the autonomous command to the main {@link Robot} class.
-     *
-     * @return the command to run in autonomous
-     */
-    public Command getAutonomousCommand() {
-        return autoChooser.getSelected();
-    }
+	/**
+	 * Use this to pass the autonomous command to the main {@link Robot} class.
+	 *
+	 * @return the command to run in autonomous
+	 */
+	public Command getAutonomousCommand() {
+		return autoChooser.getSelected();
+	}
 }

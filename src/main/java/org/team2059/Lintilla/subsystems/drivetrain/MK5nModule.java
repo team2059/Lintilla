@@ -23,130 +23,130 @@ import org.team2059.Lintilla.util.SwerveUtilities;
 import static edu.wpi.first.units.Units.*;
 
 public class MK5nModule implements SwerveModuleIO {
-  private final SparkFlex driveMotor;
-  private final SparkFlexConfig driveMotorConfig = new SparkFlexConfig();
-  private final RelativeEncoder driveEncoder;
+	private final SparkFlex driveMotor;
+	private final SparkFlexConfig driveMotorConfig = new SparkFlexConfig();
+	private final RelativeEncoder driveEncoder;
 
-  private final TalonFX azimuthMotor;
-  private final TalonFXConfiguration azimuthMotorConfig = new TalonFXConfiguration();
-  private final CANcoder canCoder;
-  private final CANcoderConfiguration canCoderConfig = new CANcoderConfiguration();
+	private final TalonFX azimuthMotor;
+	private final TalonFXConfiguration azimuthMotorConfig = new TalonFXConfiguration();
+	private final CANcoder canCoder;
+	private final CANcoderConfiguration canCoderConfig = new CANcoderConfiguration();
 
-  private final PIDController azimuthController;
+	private final PIDController azimuthController;
 
-  public MK5nModule(
-    int driveMotorCanId,
-    int azimuthMotorCanId,
-    int canCoderCanId,
-    double cancoderOffset,
-    boolean driveInverted
-  ) {
-    // Configure PID controller
-    azimuthController = new PIDController(Constants.DrivetrainConstants.kPRotation, 0, 0);
-    azimuthController.enableContinuousInput(-Math.PI, Math.PI);
-    azimuthController.setTolerance(Units.degreesToRadians(1));
+	public MK5nModule(
+	  int driveMotorCanId,
+	  int azimuthMotorCanId,
+	  int canCoderCanId,
+	  double cancoderOffset,
+	  boolean driveInverted
+	) {
+		// Configure PID controller
+		azimuthController = new PIDController(Constants.DrivetrainConstants.kPRotation, 0, 0);
+		azimuthController.enableContinuousInput(-Math.PI, Math.PI);
+		azimuthController.setTolerance(Units.degreesToRadians(1));
 
-    // Configure drive motor
-    driveMotor = new SparkFlex(driveMotorCanId, SparkLowLevel.MotorType.kBrushless);
+		// Configure drive motor
+		driveMotor = new SparkFlex(driveMotorCanId, SparkLowLevel.MotorType.kBrushless);
 
-    driveMotorConfig
-      .inverted(driveInverted)
-      .idleMode(SparkBaseConfig.IdleMode.kBrake);
+		driveMotorConfig
+		  .inverted(driveInverted)
+		  .idleMode(SparkBaseConfig.IdleMode.kBrake);
 
-    driveMotorConfig.encoder
-      .positionConversionFactor(Constants.DrivetrainConstants.drivePositionConversionFactor)
-      .velocityConversionFactor(Constants.DrivetrainConstants.driveVelocityConversionFactor);
+		driveMotorConfig.encoder
+		  .positionConversionFactor(Constants.DrivetrainConstants.drivePositionConversionFactor)
+		  .velocityConversionFactor(Constants.DrivetrainConstants.driveVelocityConversionFactor);
 
-    driveMotor.configure(driveMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+		driveMotor.configure(driveMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    driveEncoder = driveMotor.getEncoder();
+		driveEncoder = driveMotor.getEncoder();
 
-    driveMotor.clearFaults();
+		driveMotor.clearFaults();
 
-    // Configure cancoder
-    canCoder = new CANcoder(canCoderCanId);
+		// Configure cancoder
+		canCoder = new CANcoder(canCoderCanId);
 
-    canCoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
-    canCoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
-    canCoderConfig.MagnetSensor.withMagnetOffset(cancoderOffset);
+		canCoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
+		canCoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
+		canCoderConfig.MagnetSensor.withMagnetOffset(cancoderOffset);
 
-    canCoder.getConfigurator().apply(canCoderConfig);
+		canCoder.getConfigurator().apply(canCoderConfig);
 
-    // Configure turn motor
-    azimuthMotor = new TalonFX(azimuthMotorCanId); // (, CANConstants.canivore);
+		// Configure turn motor
+		azimuthMotor = new TalonFX(azimuthMotorCanId); // (, CANConstants.canivore);
 
-    azimuthMotorConfig.Feedback.FeedbackRemoteSensorID = canCoder.getDeviceID();
-    azimuthMotorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-    azimuthMotorConfig.Feedback.SensorToMechanismRatio = 1.0;
-    azimuthMotorConfig.Feedback.RotorToSensorRatio = Constants.DrivetrainConstants.rotationGearRatio;
+		azimuthMotorConfig.Feedback.FeedbackRemoteSensorID = canCoder.getDeviceID();
+		azimuthMotorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+		azimuthMotorConfig.Feedback.SensorToMechanismRatio = 1.0;
+		azimuthMotorConfig.Feedback.RotorToSensorRatio = Constants.DrivetrainConstants.rotationGearRatio;
 
-    azimuthMotor.getConfigurator().apply(azimuthMotorConfig);
+		azimuthMotor.getConfigurator().apply(azimuthMotorConfig);
 
-    azimuthMotor.clearStickyFaults();
-  }
+		azimuthMotor.clearStickyFaults();
+	}
 
-  @Override
-  public void resetEncoders() {
-    // No longer resets rotation encoder (there's no need, it's absolute)
-    driveEncoder.setPosition(0);
-  }
+	@Override
+	public void resetEncoders() {
+		// No longer resets rotation encoder (there's no need, it's absolute)
+		driveEncoder.setPosition(0);
+	}
 
-  @Override
-  public void stop() {
-    driveMotor.stopMotor();
-    azimuthMotor.stopMotor();
-  }
+	@Override
+	public void stop() {
+		driveMotor.stopMotor();
+		azimuthMotor.stopMotor();
+	}
 
-  @Override
-  public void setDriveVoltage(double volts) {
-    driveMotor.setVoltage(volts);
-  }
+	@Override
+	public void setDriveVoltage(double volts) {
+		driveMotor.setVoltage(volts);
+	}
 
-  @Override
-  public void setAzimuthVoltage(double volts) {
-    azimuthMotor.setVoltage(volts);
-  }
+	@Override
+	public void setAzimuthVoltage(double volts) {
+		azimuthMotor.setVoltage(volts);
+	}
 
-  @Override
-  public void setState(SwerveModuleState targetState) {
-    // Deadband
-    if (Math.abs(targetState.speedMetersPerSecond) < 0.001) {
-      stop();
-      return;
-    }
+	@Override
+	public SwerveModuleState getState() {
+		return new SwerveModuleState(driveEncoder.getVelocity(), new Rotation2d(canCoder.getAbsolutePosition().getValue()));
+	}
 
-    Rotation2d cancoderAbsPos = new Rotation2d(canCoder.getAbsolutePosition().getValue());
+	@Override
+	public void setState(SwerveModuleState targetState) {
+		// Deadband
+		if (Math.abs(targetState.speedMetersPerSecond) < 0.001) {
+			stop();
+			return;
+		}
 
-    // Optimize angle
-    targetState = SwerveUtilities.optimize(targetState, cancoderAbsPos);
+		Rotation2d cancoderAbsPos = new Rotation2d(canCoder.getAbsolutePosition().getValue());
 
-    // PID-controlled rotation - temporary
-    azimuthMotor.set(azimuthController.calculate(cancoderAbsPos.getRadians(), targetState.angle.getRadians()));
+		// Optimize angle
+		targetState = SwerveUtilities.optimize(targetState, cancoderAbsPos);
 
-    driveMotor.setVoltage(Constants.DrivetrainConstants.driveFF.calculate(targetState.speedMetersPerSecond));
-  }
+		// PID-controlled rotation - temporary
+		azimuthMotor.set(azimuthController.calculate(cancoderAbsPos.getRadians(), targetState.angle.getRadians()));
 
-  @Override
-  public SwerveModuleState getState() {
-    return new SwerveModuleState(driveEncoder.getVelocity(), new Rotation2d(canCoder.getAbsolutePosition().getValue()));
-  }
+		driveMotor.setVoltage(Constants.DrivetrainConstants.driveFF.calculate(targetState.speedMetersPerSecond));
+	}
 
-  private double getDriveAppliedVolts() {
-    return (driveMotor.getAppliedOutput() * driveMotor.getBusVoltage());
-  }
+	private double getDriveAppliedVolts() {
+		return (driveMotor.getAppliedOutput() * driveMotor.getBusVoltage());
+	}
 
-  @Override
-  public void updateInputs(SwerveModuleIOInputs inputs) {
-    inputs.drivePos.mut_replace(driveEncoder.getPosition(), Meters);
-    inputs.driveVel.mut_replace(driveEncoder.getVelocity(), MetersPerSecond);
-    inputs.driveAppliedVolts.mut_replace(getDriveAppliedVolts(), Volts);
-    inputs.driveCurrent.mut_replace(driveMotor.getOutputCurrent(), Amps);
-    inputs.driveTemp.mut_replace(driveMotor.getMotorTemperature(), Celsius);
-    
-    inputs.azimuthAbsolutePos.mut_replace(canCoder.getAbsolutePosition().getValue());
-    inputs.azimuthVel.mut_replace(canCoder.getVelocity().getValue());
-    inputs.azimuthAppliedVolts.mut_replace(azimuthMotor.getMotorVoltage().getValue());
-    inputs.azimuthCurrent.mut_replace(azimuthMotor.getTorqueCurrent().getValue());
-    inputs.azimuthTemp.mut_replace(azimuthMotor.getDeviceTemp().getValue());
-  }
+	@Override
+	public void updateInputs(SwerveModuleIOInputs inputs) {
+		inputs.drivePos.mut_replace(driveEncoder.getPosition(), Meters);
+		inputs.driveVel.mut_replace(driveEncoder.getVelocity(), MetersPerSecond);
+		inputs.driveAppliedVolts.mut_replace(getDriveAppliedVolts(), Volts);
+		inputs.driveCurrent.mut_replace(driveMotor.getOutputCurrent(), Amps);
+		inputs.driveTemp.mut_replace(driveMotor.getMotorTemperature(), Celsius);
+
+		inputs.azimuthAbsolutePos.mut_replace(canCoder.getAbsolutePosition().getValue());
+		inputs.azimuthVel.mut_replace(canCoder.getVelocity().getValue());
+		inputs.azimuthAppliedVolts.mut_replace(azimuthMotor.getMotorVoltage().getValue());
+		inputs.azimuthCurrent.mut_replace(azimuthMotor.getTorqueCurrent().getValue());
+		inputs.azimuthTemp.mut_replace(azimuthMotor.getDeviceTemp().getValue());
+	}
 }
