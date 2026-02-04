@@ -2,6 +2,8 @@ package org.team2059.Lintilla.subsystems.shooter;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
+import com.revrobotics.spark.SparkBase;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.config.SparkBaseConfig;
@@ -10,7 +12,6 @@ import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import org.littletonrobotics.junction.Logger;
@@ -28,6 +29,8 @@ public class ShooterBase extends SubsystemBase {
 
 	private final SparkFlex indexerMotor;
 	private final SparkFlexConfig indexerMotorConfig = new SparkFlexConfig();
+
+	private final SparkClosedLoopController indexerClosedLoopController;
 
 	private final SysIdRoutine leftRoutine;
 	private final SysIdRoutine rightRoutine;
@@ -54,10 +57,17 @@ public class ShooterBase extends SubsystemBase {
 			indexerMotorConfig
 			  .inverted(false)
 			  .idleMode(SparkBaseConfig.IdleMode.kBrake);
+			indexerMotorConfig.closedLoop
+			  .pid(ShooterConstants.indexerkP, ShooterConstants.indexerkI, ShooterConstants.indexerkD)
+			  .feedForward
+			  .kS(ShooterConstants.indexerkS).kV(ShooterConstants.indexerkV).kA(ShooterConstants.indexerkA);
 			indexerMotor.configure(indexerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 			indexerMotor.clearFaults();
+
+			indexerClosedLoopController = indexerMotor.getClosedLoopController();
 		} else {
 			indexerMotor = null;
+			indexerClosedLoopController = null;
 		}
 
 		leftRoutine = new SysIdRoutine(
@@ -108,6 +118,10 @@ public class ShooterBase extends SubsystemBase {
 
 	public void setRightShooterVoltage(double volts) {
 		leftShooter.setFlywheelVoltage(volts);
+	}
+
+	public void setIndexerRPM(double rpm) {
+		indexerClosedLoopController.setSetpoint(rpm, SparkBase.ControlType.kVelocity);
 	}
 
 	public void setLeftShooterRPM(double rpm) {
@@ -161,10 +175,6 @@ public class ShooterBase extends SubsystemBase {
 
 	public Command rightSysIdDynamicReverse() {
 		return rightRoutine.dynamic(SysIdRoutine.Direction.kReverse);
-	}
- 
-	public void runIndexer(double speed) {
-		indexerMotor.set(speed);
 	}
 
 	@Override

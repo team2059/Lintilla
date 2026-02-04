@@ -94,7 +94,7 @@ public class RobotContainer {
 			ShooterConstants.leftkA
 		  ),
 		  new NullShooter(),
-		  ShooterConstants.indexerMotor
+		  CANConstants.shooterIndexerMotor
 		);
 
 		/* =========== */
@@ -155,21 +155,29 @@ public class RobotContainer {
 		new JoystickButton(logitech, OperatorConstants.JoystickRobotRelative)
 		  .whileTrue(new InstantCommand(() -> drivetrain.setFieldRelativity()));
 
+//		new JoystickButton(buttonBox, 1)
+//		  .whileTrue(shooterBase.leftSysIdQuasistaticForward());
+//
+//		new JoystickButton(buttonBox, 2)
+//		  .whileTrue(shooterBase.leftSysIdQuasistaticReverse());
+//
+//		new JoystickButton(buttonBox, 3)
+//		  .whileTrue(shooterBase.leftSysIdDynamicForward());
+//
+//		new JoystickButton(buttonBox, 4)
+//		  .whileTrue(shooterBase.leftSysIdDynamicReverse());
+
 		new JoystickButton(buttonBox, 1)
-		  .whileTrue(Commands.run(() -> shooterBase.setLeftShooterRPM(3000), shooterBase));
+		  .whileTrue(Commands.run(() -> shooterBase.setLeftShooterRPM(1500), shooterBase));
 
 		new JoystickButton(buttonBox, 2)
-		  .whileTrue(Commands.run(() -> shooterBase.setLeftShooterRPM(4500), shooterBase));
+		  .whileTrue(Commands.run(() -> shooterBase.setLeftShooterRPM(3000), shooterBase));
 
 		new JoystickButton(buttonBox, 3)
-		  .whileTrue(Commands.run(() -> shooterBase.setLeftShooterRPM(6000), shooterBase));
+		  .whileTrue(Commands.run(() -> shooterBase.setLeftShooterRPM(5000), shooterBase));
 
 		new JoystickButton(buttonBox, 4)
 		  .whileTrue(Commands.run(() -> shooterBase.stopLeftShooter()));
-
-		new JoystickButton(buttonBox, 5) 
-		  .whileTrue(Commands.run(() -> shooterBase.runIndexer(0.5), shooterBase))
-		  .onFalse(Commands.run(() -> shooterBase.runIndexer(0), shooterBase));
 	}
 
 	/**

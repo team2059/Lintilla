@@ -185,6 +185,7 @@ public final class Constants {
 
 		public static final int powerDistributionHub = 50;
 
+		public static final int shooterIndexerMotor = 54;
 		public static final int leftShooterFlywheel = 53;
 		public static final int rightShooterFlywheel = -1;
 	}
@@ -209,12 +210,19 @@ public final class Constants {
 		 * - kA: Volts per RPM/sec
 		 */
 
+		public static final double indexerkP = 0.0;
+		public static final double indexerkI = 0.0;
+		public static final double indexerkD = 0.0;
+		public static final double indexerkS = 0;
+		public static final double indexerkV = 0;
+		public static final double indexerkA = 0;
+
 		public static final double leftkP = 0.0;
 		public static final double leftkI = 0.0;
 		public static final double leftkD = 0.0;
-		public static final double leftkS = 0.047742;
-		public static final double leftkV = 0.001744;
-		public static final double leftkA = 0.000260;
+		public static final double leftkS = 0.071064;
+		public static final double leftkV = 0.10564 / 60;
+		public static final double leftkA = 0.017298 / 60;
 
 		public static final double rightkP = 0.0;
 		public static final double rightkI = 0.0;
@@ -222,7 +230,5 @@ public final class Constants {
 		public static final double rightkS = 0.0;
 		public static final double rightkV = 0.0;
 		public static final double rightkA = 0.0;
-
-		public static final int indexerMotor = 54;
 	}
 }
