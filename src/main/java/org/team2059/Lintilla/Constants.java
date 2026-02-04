@@ -224,4 +224,16 @@ public final class Constants {
         public static final double rightkV = 0.0;
         public static final double rightkA = 0.0;
     }
+
+	public static final class CollectorConstants {
+		public static final int tiltMotor = 54;
+		public static final int intakeMotor = 55;
+		public static final double kPTilt = 0;
+
+		public static final double thruBoreOffset = 0; 
+		
+		// TODO: Change these
+		public static final double thruBoreMin = 0; 
+		public static final double thruBoreMax = 0;
+	}
 }

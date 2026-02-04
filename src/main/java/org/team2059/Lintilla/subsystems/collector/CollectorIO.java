@@ -18,11 +18,12 @@ public interface CollectorIO {
 
     public MutTemperature tiltTemp = Celsius.mutable(0);
     public MutVoltage tiltAppliedVolts = Volts.mutable(0);
+    public MutCurrent tiltCurrent = Amps.mutable(0);
     public MutAngle tiltPosition = Rotations.mutable(0);
     public MutAngularVelocity tiltVelocity = RPM.mutable(0);
   }
 
-  default public void setCollectorSpeed(double speed) {}
+  default public void setIntakeSpeed(double speed) {}
 
   default public void stopCollector() {}
 

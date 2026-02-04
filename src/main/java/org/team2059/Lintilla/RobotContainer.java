@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.team2059.Lintilla.Constants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
@@ -19,6 +21,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import org.team2059.Lintilla.commands.TeleopDriveCmd;
+import org.team2059.Lintilla.subsystems.collector.Collector;
+import org.team2059.Lintilla.subsystems.collector.CollectorIOReal;
 import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
 import org.team2059.Lintilla.subsystems.drivetrain.MK5nModule;
 import org.team2059.Lintilla.subsystems.drivetrain.Pigeon2Gyroscope;
@@ -43,6 +47,8 @@ public class RobotContainer {
     public static Drivetrain drivetrain;
 
     public static ShooterBase shooterBase;
+
+	public static Collector collector;
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -96,6 +102,13 @@ public class RobotContainer {
           new NullShooter(),
           -1
         );
+
+		collector = new Collector(
+			new CollectorIOReal(
+				CollectorConstants.tiltMotor, 
+				new SparkFlex(CollectorConstants.intakeMotor, MotorType.kBrushless)
+			)
+		);
 
         /* =========== */
         /* CONTROLLERS */
@@ -166,6 +179,14 @@ public class RobotContainer {
 
         new JoystickButton(buttonBox, 4)
           .whileTrue(new InstantCommand(() -> shooterBase.stopBothShooters()));
+
+		new JoystickButton(buttonBox, 6) 
+		  .whileTrue(new InstantCommand(() -> collector.collectorIO.setIntakeSpeed(0.5)));
+
+		new JoystickButton(buttonBox, 7)
+		   .whileTrue(new InstantCommand((() -> collector.collectorIO.setIntakeSpeed(-0.5))));
+		// new JoystickButton(buttonBox, 7)
+		//   .whileTrue(new InstantCommand(() -> collector.setTiltPos(CollectorConstants.thruBoreMin)));
     }
 
     /**
