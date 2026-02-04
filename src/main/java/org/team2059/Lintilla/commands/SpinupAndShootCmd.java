@@ -8,6 +8,9 @@ import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
  *
  * 1. Shooters spin up.
  * 2. When shooters are within a tolerance of target RPM, spin indexer at 50% of target RPM.
+ *
+ * End (when interrupted):
+ * -> Stop all motors immediately.
  */
 
 public class SpinupAndShootCmd extends Command {
