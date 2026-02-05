@@ -187,7 +187,7 @@ public final class Constants {
 
 		public static final int shooterIndexerMotor = 54;
 		public static final int leftShooterFlywheel = 53;
-		public static final int rightShooterFlywheel = -1;
+		public static final int rightShooterFlywheel = 55;
 	}
 
 	public static final class ShooterConstants {
@@ -227,8 +227,8 @@ public final class Constants {
 		public static final double rightkP = 0.0;
 		public static final double rightkI = 0.0;
 		public static final double rightkD = 0.0;
-		public static final double rightkS = 0.0;
-		public static final double rightkV = 0.0;
-		public static final double rightkA = 0.0;
+		public static final double rightkS = 0.081684;
+		public static final double rightkV = 0.10737 / 60;
+		public static final double rightkA = 0.016899 / 60;
 	}
 }

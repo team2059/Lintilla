@@ -145,6 +145,14 @@ public class ShooterBase extends SubsystemBase {
 		stopRightShooter();
 	}
 
+	public void runIndexer() {
+		indexerMotor.set(0.5);
+	}
+
+	public void stopIndexer() {
+		indexerMotor.set(0);
+	}
+
 	public Command leftSysIdQuasistaticForward() {
 		return leftRoutine.quasistatic(SysIdRoutine.Direction.kForward);
 	}
