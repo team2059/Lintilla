@@ -89,24 +89,25 @@ public class RobotContainer {
         );
 
         shooterBase = new ShooterBase(
-          new VortexShooter(
-            CANConstants.leftShooterFlywheel,
-            ShooterConstants.leftFlywheelInverted,
-            ShooterConstants.leftkP,
-            ShooterConstants.leftkI,
-            ShooterConstants.leftkD,
-            ShooterConstants.leftkS,
-            ShooterConstants.leftkV,
-            ShooterConstants.leftkA
-          ),
+        //   new VortexShooter(
+        //     CANConstants.leftShooterFlywheel,
+        //     ShooterConstants.leftFlywheelInverted,
+        //     ShooterConstants.leftkP,
+        //     ShooterConstants.leftkI,
+        //     ShooterConstants.leftkD,
+        //     ShooterConstants.leftkS,
+        //     ShooterConstants.leftkV,
+        //     ShooterConstants.leftkA
+        //   )
+		  new NullShooter(),
           new NullShooter(),
           -1
         );
 
 		collector = new Collector(
 			new CollectorIOReal(
-				CollectorConstants.tiltMotor, 
-				new SparkFlex(CollectorConstants.intakeMotor, MotorType.kBrushless)
+				CANConstants.tiltMotor, 
+				new SparkFlex(CANConstants.intakeMotor, MotorType.kBrushless)
 			)
 		);
 
@@ -168,17 +169,17 @@ public class RobotContainer {
         new JoystickButton(logitech, OperatorConstants.JoystickRobotRelative)
           .whileTrue(new InstantCommand(() -> drivetrain.setFieldRelativity()));
 
-        new JoystickButton(buttonBox, 1)
-          .whileTrue(new InstantCommand(() -> shooterBase.setLeftShooterVoltage(4)));
+        // new JoystickButton(buttonBox, 1)
+        //   .whileTrue(new InstantCommand(() -> shooterBase.setLeftShooterVoltage(4)));
 
-        new JoystickButton(buttonBox, 2)
-          .whileTrue(new InstantCommand(() -> shooterBase.setLeftShooterVoltage(8)));
+        // new JoystickButton(buttonBox, 2)
+        //   .whileTrue(new InstantCommand(() -> shooterBase.setLeftShooterVoltage(8)));
 
-        new JoystickButton(buttonBox, 3)
-          .whileTrue(new InstantCommand(() -> shooterBase.setLeftShooterVoltage(12)));
+        // new JoystickButton(buttonBox, 3)
+        //   .whileTrue(new InstantCommand(() -> shooterBase.setLeftShooterVoltage(12)));
 
-        new JoystickButton(buttonBox, 4)
-          .whileTrue(new InstantCommand(() -> shooterBase.stopBothShooters()));
+        // new JoystickButton(buttonBox, 4)
+        //   .whileTrue(new InstantCommand(() -> shooterBase.stopBothShooters()));
 
 		new JoystickButton(buttonBox, 6) 
 		  .whileTrue(new InstantCommand(() -> collector.collectorIO.setIntakeSpeed(0.5)));

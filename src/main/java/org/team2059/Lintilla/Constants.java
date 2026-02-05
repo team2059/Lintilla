@@ -188,6 +188,9 @@ public final class Constants {
 
         public static final int leftShooterFlywheel = 53;
         public static final int rightShooterFlywheel = -1;
+
+		public static final int tiltMotor = 57;
+		public static final int intakeMotor = 58;
     }
 
     public static final class ShooterConstants {
@@ -226,8 +229,6 @@ public final class Constants {
     }
 
 	public static final class CollectorConstants {
-		public static final int tiltMotor = 54;
-		public static final int intakeMotor = 55;
 		public static final double kPTilt = 0;
 
 		public static final double thruBoreOffset = 0; 
