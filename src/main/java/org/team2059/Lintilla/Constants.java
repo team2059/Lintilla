@@ -185,7 +185,7 @@ public final class Constants {
 
 		public static final int powerDistributionHub = 50;
 
-		public static final int shooterIndexerMotor = 54;
+		public static final int shooterIndexerMotor = 54; // Same ID for both shooters for now (will be changed later)
 		public static final int leftShooterFlywheel = 53;
 		public static final int rightShooterFlywheel = 55;
 	}
@@ -193,7 +193,7 @@ public final class Constants {
 	public static final class ShooterConstants {
 
 		public static final boolean leftFlywheelInverted = true;
-		public static final boolean rightFlywheelInverted = false;
+		public static final boolean rightFlywheelInverted = true;
 
 		public static final double gravitationalAccelerationMpss = 9.80665;
 		public static final double hubHeightMeters = 1.83; // End height of trajectory
@@ -227,8 +227,8 @@ public final class Constants {
 		public static final double rightkP = 0.0;
 		public static final double rightkI = 0.0;
 		public static final double rightkD = 0.0;
-		public static final double rightkS = 0.081684;
-		public static final double rightkV = 0.10737 / 60;
-		public static final double rightkA = 0.016899 / 60;
+		public static final double rightkS = 0.13506;
+		public static final double rightkV = 0.10641 / 60;
+		public static final double rightkA = 0.017354 / 60;
 	}
 }
