@@ -208,11 +208,9 @@ public final class Constants {
 		public static final double shooterHeightMeters = 0.5; // Start height of trajectory
 		public static final double fuelExitAngleRadians = 40 * Math.PI / 180; // RADIANS At what angle does fuel leave the shooter
 
-
+		// LEFT SHOOTER CONSTANTS
 		public static final boolean leftFlywheelInverted = true;
 		public static final boolean leftIndexerInverted = false;
-		public static final boolean rightFlywheelInverted = true;
-		public static boolean rightIndexerInverted = false;
 
 		public static final double leftIndexerkP = 0.0;
 		public static final double leftIndexerkI = 0.0;
@@ -221,19 +219,23 @@ public final class Constants {
 		public static final double leftIndexerkV = 0;
 		public static final double leftIndexerkA = 0;
 
-		public static final double rightIndexerkP = 0.0;
-		public static final double rightIndexerkI = 0.0;
-		public static final double rightIndexerkD = 0.0;
-		public static final double rightIndexerkS = 0;
-		public static final double rightIndexerkV = 0;
-		public static final double rightIndexerkA = 0;
-
 		public static final double leftFlywheelkP = 0.0;
 		public static final double leftFlywheelkI = 0.0;
 		public static final double leftFlywheelkD = 0.0;
 		public static final double leftFlywheelkS = 0.071064;
 		public static final double leftFlywheelkV = 0.10564 / 60;
 		public static final double leftFlywheelkA = 0.017298 / 60;
+
+		// RIGHT SHOOTER CONSTANTS
+		public static final boolean rightFlywheelInverted = true;
+		public static boolean rightIndexerInverted = false;
+
+		public static final double rightIndexerkP = 0.0;
+		public static final double rightIndexerkI = 0.0;
+		public static final double rightIndexerkD = 0.0;
+		public static final double rightIndexerkS = 0;
+		public static final double rightIndexerkV = 0;
+		public static final double rightIndexerkA = 0;
 
 		public static final double rightFlywheelkP = 0.0;
 		public static final double rightFlywheelkI = 0.0;
