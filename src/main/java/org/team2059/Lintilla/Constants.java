@@ -193,6 +193,9 @@ public final class Constants {
 
 	public static final class ShooterConstants {
 
+		// Error to tolerate when spinning up to shoot (in RPMs)
+		public static final double spinupToleranceRpm = 100;
+
 		/*
 		 * Units of Flywheel Constants (Thanks Rev for good docs this year)
 		 * - kP: Duty cycle per rotation of error

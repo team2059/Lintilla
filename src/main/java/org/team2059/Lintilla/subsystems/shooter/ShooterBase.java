@@ -13,11 +13,11 @@ import static org.team2059.Lintilla.Constants.ShooterConstants;
 
 public class ShooterBase extends SubsystemBase {
 
-	private final ShooterIO leftShooter;
-	private final ShooterIO rightShooter;
+	public final ShooterIO leftShooter;
+	public final ShooterIO rightShooter;
 
-	private final ShooterIOInputsAutoLogged leftShooterInputs = new ShooterIOInputsAutoLogged();
-	private final ShooterIOInputsAutoLogged rightShooterInputs = new ShooterIOInputsAutoLogged();
+	public final ShooterIOInputsAutoLogged leftShooterInputs = new ShooterIOInputsAutoLogged();
+	public final ShooterIOInputsAutoLogged rightShooterInputs = new ShooterIOInputsAutoLogged();
 
 	private final SysIdRoutine leftFlywheelRoutine;
 	private final SysIdRoutine leftIndexerRoutine;
