@@ -229,12 +229,12 @@ public final class Constants {
     }
 
 	public static final class CollectorConstants {
-		public static final double kPTilt = 0;
+		public static final double kPTilt = 0.05;
 
-		public static final double thruBoreOffset = 0; 
+		public static final double thruBoreOffset = 0;
 		
 		// TODO: Change these
-		public static final double thruBoreMin = 0; 
-		public static final double thruBoreMax = 0;
+        public static final double thruBoreIn = 2.102;
+		public static final double thruBoreOut = 3.555; 
 	}
 }

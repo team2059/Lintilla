@@ -4,6 +4,8 @@
 
 package org.team2059.Lintilla.subsystems.collector;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -19,12 +21,18 @@ public class Collector extends SubsystemBase {
   }
 
   public Command setTiltPos(double position) {
-    return Commands.run(() -> collectorIO.setTiltPosition(position), this);
+    return Commands.run(() -> collectorIO.setTiltPosition(position));
   }
+
+  // public Command intakeFuel() {
+  // return Commands.run(() -> collectorIO.)
+  // }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    collectorIO.updateInputs(collectorInputs); 
+    //SmartDashboard.putNumber("ThruBorePos", this.collectorIO.thruBoreEnc.getPosition());
+    collectorIO.updateInputs(collectorInputs);
+    Logger.processInputs("Collector", collectorInputs);
   }
 }

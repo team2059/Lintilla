@@ -31,96 +31,93 @@ import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
 import org.team2059.Lintilla.subsystems.shooter.VortexShooter;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in
+ * the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of
+ * the robot (including
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
 
-    SendableChooser<Command> autoChooser;
+  SendableChooser<Command> autoChooser;
 
-    public static Joystick logitech;
+  public static Joystick logitech;
 
-    public static GenericHID buttonBox;
+  public static GenericHID buttonBox;
 
-    public static Drivetrain drivetrain;
+  public static Drivetrain drivetrain;
 
-    public static ShooterBase shooterBase;
+  public static ShooterBase shooterBase;
 
-	public static Collector collector;
+  public static Collector collector;
 
-    /** The container for the robot. Contains subsystems, OI devices, and commands. */
-    public RobotContainer() {
+  /**
+   * The container for the robot. Contains subsystems, OI devices, and commands.
+   */
+  public RobotContainer() {
 
-        /* ========== */
-        /* SUBSYSTEMS */
-        /* ========== */
-        drivetrain = new Drivetrain(
-          new Pigeon2Gyroscope(CANConstants.pigeon2), // (, CANConstants.canivore),
-          new MK5nModule(
+    /* ========== */
+    /* SUBSYSTEMS */
+    /* ========== */
+    drivetrain = new Drivetrain(
+        new Pigeon2Gyroscope(CANConstants.pigeon2), // (, CANConstants.canivore),
+        new MK5nModule(
             CANConstants.frontLeftDriveMotor,
             CANConstants.frontLeftTurnMotor,
             CANConstants.frontLeftCancoder,
             DrivetrainConstants.frontLeftEncoderOffset,
-            DrivetrainConstants.frontLeftInverted
-          ),
-          new MK5nModule(
+            DrivetrainConstants.frontLeftInverted),
+        new MK5nModule(
             CANConstants.frontRightDriveMotor,
             CANConstants.frontRightTurnMotor,
             CANConstants.frontRightCancoder,
             DrivetrainConstants.frontRightEncoderOffset,
-            DrivetrainConstants.frontRightInverted
-          ),
-          new MK5nModule(
+            DrivetrainConstants.frontRightInverted),
+        new MK5nModule(
             CANConstants.backLeftDriveMotor,
             CANConstants.backLeftTurnMotor,
             CANConstants.backLeftCancoder,
             DrivetrainConstants.backLeftEncoderOffset,
-            DrivetrainConstants.backLeftInverted
-          ),
-          new MK5nModule(
+            DrivetrainConstants.backLeftInverted),
+        new MK5nModule(
             CANConstants.backRightDriveMotor,
             CANConstants.backRightTurnMotor,
             CANConstants.backRightCancoder,
             DrivetrainConstants.backRightEncoderOffset,
-            DrivetrainConstants.backRightInverted
-          )
-        );
+            DrivetrainConstants.backRightInverted));
 
-        shooterBase = new ShooterBase(
-        //   new VortexShooter(
-        //     CANConstants.leftShooterFlywheel,
-        //     ShooterConstants.leftFlywheelInverted,
-        //     ShooterConstants.leftkP,
-        //     ShooterConstants.leftkI,
-        //     ShooterConstants.leftkD,
-        //     ShooterConstants.leftkS,
-        //     ShooterConstants.leftkV,
-        //     ShooterConstants.leftkA
-        //   )
-		  new NullShooter(),
-          new NullShooter(),
-          -1
-        );
+    shooterBase = new ShooterBase(
+        // new VortexShooter(
+        // CANConstants.leftShooterFlywheel,
+        // ShooterConstants.leftFlywheelInverted,
+        // ShooterConstants.leftkP,
+        // ShooterConstants.leftkI,
+        // ShooterConstants.leftkD,
+        // ShooterConstants.leftkS,
+        // ShooterConstants.leftkV,
+        // ShooterConstants.leftkA
+        // )
+        new NullShooter(),
+        new NullShooter(),
+        -1);
 
-		collector = new Collector(
-			new CollectorIOReal(
-				CANConstants.tiltMotor, 
-				new SparkFlex(CANConstants.intakeMotor, MotorType.kBrushless)
-			)
-		);
+    collector = new Collector(
+        new CollectorIOReal(
+            new SparkFlex(CANConstants.tiltMotor, MotorType.kBrushless),
+            new SparkFlex(CANConstants.intakeMotor, MotorType.kBrushless)));
 
-        /* =========== */
-        /* CONTROLLERS */
-        /* =========== */
+    /* =========== */
+    /* CONTROLLERS */
+    /* =========== */
 
-        logitech = new Joystick(OperatorConstants.logitechPort);
+    logitech = new Joystick(OperatorConstants.logitechPort);
 
-        buttonBox = new GenericHID(OperatorConstants.buttonBoxPort);
+    buttonBox = new GenericHID(OperatorConstants.buttonBoxPort);
 
-        drivetrain.setDefaultCommand(
-          new TeleopDriveCmd(
+    drivetrain.setDefaultCommand(
+        new TeleopDriveCmd(
             drivetrain,
             () -> -logitech.getRawAxis(OperatorConstants.JoystickTranslationAxis), // forwardX
             () -> -logitech.getRawAxis(OperatorConstants.JoystickStrafeAxis), // forwardY
@@ -128,30 +125,29 @@ public class RobotContainer {
             () -> logitech.getRawAxis(OperatorConstants.JoystickSliderAxis), // slider
             () -> logitech.getRawButton(OperatorConstants.JoystickStrafeOnly), // Strafe Only Button
             () -> logitech.getRawButton(OperatorConstants.JoystickInvertedDrive) // Inverted button
-          )
-        );
+        ));
 
-        /* ========== */
-        /* AUTONOMOUS */
-        /* ========== */
+    /* ========== */
+    /* AUTONOMOUS */
+    /* ========== */
 
-        // Build auto chooser - you can also set a default.
-        autoChooser = AutoBuilder.buildAutoChooser();
+    // Build auto chooser - you can also set a default.
+    autoChooser = AutoBuilder.buildAutoChooser();
 
-        // Publish auto chooser
-        SmartDashboard.putData("Auto Chooser", autoChooser);
+    // Publish auto chooser
+    SmartDashboard.putData("Auto Chooser", autoChooser);
 
-        /* ======= */
-        /* LOGGING */
-        /* ======= */
+    /* ======= */
+    /* LOGGING */
+    /* ======= */
 
-        // Allow viewing of command scheduler queue in dashboards
-        SmartDashboard.putData(CommandScheduler.getInstance());
+    // Allow viewing of command scheduler queue in dashboards
+    SmartDashboard.putData(CommandScheduler.getInstance());
 
-        configureBindings();
-    }
+    configureBindings();
+  }
 
-    /**
+  /**
      * Use this method to define your trigger->command mappings. Triggers can be created via the
      * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
      * predicate, or via the named factories in {@link
@@ -182,20 +178,30 @@ public class RobotContainer {
         //   .whileTrue(new InstantCommand(() -> shooterBase.stopBothShooters()));
 
 		new JoystickButton(buttonBox, 6) 
-		  .whileTrue(new InstantCommand(() -> collector.collectorIO.setIntakeSpeed(0.5)));
+		  .whileTrue(new InstantCommand(() -> collector.collectorIO.setIntakeSpeed(0.5)))
+      .whileFalse(new InstantCommand(() -> collector.collectorIO.setIntakeSpeed(0)));
 
 		new JoystickButton(buttonBox, 7)
-		   .whileTrue(new InstantCommand((() -> collector.collectorIO.setIntakeSpeed(-0.5))));
+		   .whileTrue(new InstantCommand((() -> collector.collectorIO.setIntakeSpeed(-0.5))))
+       .whileFalse(new InstantCommand(() -> collector.collectorIO.setIntakeSpeed(0)));
 		// new JoystickButton(buttonBox, 7)
 		//   .whileTrue(new InstantCommand(() -> collector.setTiltPos(CollectorConstants.thruBoreMin)));
+
+    new JoystickButton(buttonBox, 8)
+      .whileTrue(new InstantCommand(() -> collector.collectorIO.setTiltPosition(CollectorConstants.thruBoreOut)))
+      .whileFalse(new InstantCommand(() -> collector.collectorIO.setTiltVolts(0)));
+    new JoystickButton(buttonBox, 9)
+      .whileTrue(new InstantCommand(() -> collector.collectorIO.setTiltPosition(CollectorConstants.thruBoreIn)))
+      .whileFalse(new InstantCommand(() -> collector.collectorIO.setTiltVolts(0)));
+    //new JoystickButton(buttonBox, 10).whileTrue(new InstantCommand(() -> ))
     }
 
-    /**
-     * Use this to pass the autonomous command to the main {@link Robot} class.
-     *
-     * @return the command to run in autonomous
-     */
-    public Command getAutonomousCommand() {
-        return autoChooser.getSelected();
-    }
+  /**
+   * Use this to pass the autonomous command to the main {@link Robot} class.
+   *
+   * @return the command to run in autonomous
+   */
+  public Command getAutonomousCommand() {
+    return autoChooser.getSelected();
+  }
 }
