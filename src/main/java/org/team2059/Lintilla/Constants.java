@@ -185,20 +185,13 @@ public final class Constants {
 
 		public static final int powerDistributionHub = 50;
 
-		public static final int shooterIndexerMotor = 54; // Same ID for both shooters for now (will be changed later)
+		public static final int leftShooterIndexerMotor = 54; // Same ID for both shooters for now (will be changed later)
+		public static final int rightShooterIndexerMotor = 54;
 		public static final int leftShooterFlywheel = 53;
 		public static final int rightShooterFlywheel = 55;
 	}
 
 	public static final class ShooterConstants {
-
-		public static final boolean leftFlywheelInverted = true;
-		public static final boolean rightFlywheelInverted = true;
-
-		public static final double gravitationalAccelerationMpss = 9.80665;
-		public static final double hubHeightMeters = 1.83; // End height of trajectory
-		public static final double shooterHeightMeters = 0.5; // Start height of trajectory
-		public static final double fuelExitAngleRadians = 40 * Math.PI / 180; // RADIANS At what angle does fuel leave the shooter
 
 		/*
 		 * Units of Flywheel Constants (Thanks Rev for good docs this year)
@@ -210,25 +203,43 @@ public final class Constants {
 		 * - kA: Volts per RPM/sec
 		 */
 
-		public static final double indexerkP = 0.0;
-		public static final double indexerkI = 0.0;
-		public static final double indexerkD = 0.0;
-		public static final double indexerkS = 0;
-		public static final double indexerkV = 0;
-		public static final double indexerkA = 0;
+		public static final double gravitationalAccelerationMpss = 9.80665;
+		public static final double hubHeightMeters = 1.83; // End height of trajectory
+		public static final double shooterHeightMeters = 0.5; // Start height of trajectory
+		public static final double fuelExitAngleRadians = 40 * Math.PI / 180; // RADIANS At what angle does fuel leave the shooter
 
-		public static final double leftkP = 0.0;
-		public static final double leftkI = 0.0;
-		public static final double leftkD = 0.0;
-		public static final double leftkS = 0.071064;
-		public static final double leftkV = 0.10564 / 60;
-		public static final double leftkA = 0.017298 / 60;
 
-		public static final double rightkP = 0.0;
-		public static final double rightkI = 0.0;
-		public static final double rightkD = 0.0;
-		public static final double rightkS = 0.13506;
-		public static final double rightkV = 0.10641 / 60;
-		public static final double rightkA = 0.017354 / 60;
+		public static final boolean leftFlywheelInverted = true;
+		public static final boolean leftIndexerInverted = false;
+		public static final boolean rightFlywheelInverted = true;
+		public static boolean rightIndexerInverted = false;
+
+		public static final double leftIndexerkP = 0.0;
+		public static final double leftIndexerkI = 0.0;
+		public static final double leftIndexerkD = 0.0;
+		public static final double leftIndexerkS = 0;
+		public static final double leftIndexerkV = 0;
+		public static final double leftIndexerkA = 0;
+
+		public static final double rightIndexerkP = 0.0;
+		public static final double rightIndexerkI = 0.0;
+		public static final double rightIndexerkD = 0.0;
+		public static final double rightIndexerkS = 0;
+		public static final double rightIndexerkV = 0;
+		public static final double rightIndexerkA = 0;
+
+		public static final double leftFlywheelkP = 0.0;
+		public static final double leftFlywheelkI = 0.0;
+		public static final double leftFlywheelkD = 0.0;
+		public static final double leftFlywheelkS = 0.071064;
+		public static final double leftFlywheelkV = 0.10564 / 60;
+		public static final double leftFlywheelkA = 0.017298 / 60;
+
+		public static final double rightFlywheelkP = 0.0;
+		public static final double rightFlywheelkI = 0.0;
+		public static final double rightFlywheelkD = 0.0;
+		public static final double rightFlywheelkS = 0.13506;
+		public static final double rightFlywheelkV = 0.10641 / 60;
+		public static final double rightFlywheelkA = 0.017354 / 60;
 	}
 }

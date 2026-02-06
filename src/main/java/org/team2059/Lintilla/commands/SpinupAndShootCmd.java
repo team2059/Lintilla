@@ -16,15 +16,18 @@ import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
 public class SpinupAndShootCmd extends Command {
 	private final ShooterBase shooterBase;
 
-	public SpinupAndShootCmd(ShooterBase shooterBase) {
+	private boolean runLeft;
+
+	public SpinupAndShootCmd(ShooterBase shooterBase, boolean runLeft) {
 		this.shooterBase = shooterBase;
-		// each subsystem used by the command must be passed into the
-		// addRequirements() method (which takes a vararg of Subsystem)
+		this.runLeft = runLeft;
+
 		addRequirements(this.shooterBase);
 	}
 
 	@Override
 	public void initialize() {
+		// Spin up shooter
 
 	}
 

@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -83,28 +82,42 @@ public class RobotContainer {
 		);
 
 		shooterBase = new ShooterBase(
-		//   new VortexShooter(
-		// 	CANConstants.leftShooterFlywheel,
-		// 	ShooterConstants.leftFlywheelInverted,
-		// 	ShooterConstants.leftkP,
-		// 	ShooterConstants.leftkI,
-		// 	ShooterConstants.leftkD,
-		// 	ShooterConstants.leftkS,
-		// 	ShooterConstants.leftkV,
-		// 	ShooterConstants.leftkA
-		//   )
-		new NullShooter(),
-		  new VortexShooter(
+		  new VortexShooter( // LEFT SHOOTER
+			CANConstants.leftShooterFlywheel,
+		    CANConstants.leftShooterIndexerMotor,
+			ShooterConstants.leftFlywheelInverted,
+			ShooterConstants.leftIndexerInverted,
+		    ShooterConstants.leftFlywheelkP,
+		    ShooterConstants.leftFlywheelkI,
+		    ShooterConstants.leftFlywheelkD,
+		    ShooterConstants.leftFlywheelkS,
+		    ShooterConstants.leftFlywheelkV,
+		    ShooterConstants.leftFlywheelkA,
+		    ShooterConstants.leftIndexerkP,
+		    ShooterConstants.leftIndexerkI,
+		    ShooterConstants.leftIndexerkD,
+		    ShooterConstants.leftIndexerkS,
+		    ShooterConstants.leftIndexerkV,
+		    ShooterConstants.leftIndexerkA
+		  ),
+		  new VortexShooter( // RIGHT SHOOTER
 			CANConstants.rightShooterFlywheel,
+			CANConstants.rightShooterIndexerMotor,
 			ShooterConstants.rightFlywheelInverted,
-			ShooterConstants.rightkP,
-			ShooterConstants.rightkI,
-			ShooterConstants.rightkD,
-			ShooterConstants.rightkS,
-			ShooterConstants.rightkV,
-			ShooterConstants.rightkA
-		),
-		  CANConstants.shooterIndexerMotor
+			ShooterConstants.rightIndexerInverted,
+			ShooterConstants.rightFlywheelkP,
+			ShooterConstants.rightFlywheelkI,
+			ShooterConstants.rightFlywheelkD,
+			ShooterConstants.rightFlywheelkS,
+			ShooterConstants.rightFlywheelkV,
+			ShooterConstants.rightFlywheelkA,
+			ShooterConstants.rightIndexerkP,
+			ShooterConstants.rightIndexerkI,
+			ShooterConstants.rightIndexerkD,
+			ShooterConstants.rightIndexerkS,
+			ShooterConstants.rightIndexerkV,
+			ShooterConstants.rightIndexerkA
+		  )
 		);
 
 		/* =========== */
@@ -164,60 +177,6 @@ public class RobotContainer {
 		/* SWITCH FIELD/ROBOT RELATIVITY IN TELEOP */
 		new JoystickButton(logitech, OperatorConstants.JoystickRobotRelative)
 		  .whileTrue(new InstantCommand(() -> drivetrain.setFieldRelativity()));
-
-//		new JoystickButton(buttonBox, 1)
-//		  .whileTrue(shooterBase.leftSysIdQuasistaticForward());
-//
-//		new JoystickButton(buttonBox, 2)
-//		  .whileTrue(shooterBase.leftSysIdQuasistaticReverse());
-//
-//		new JoystickButton(buttonBox, 3)
-//		  .whileTrue(shooterBase.leftSysIdDynamicForward());
-//
-//		new JoystickButton(buttonBox, 4)
-//		  .whileTrue(shooterBase.leftSysIdDynamicReverse());
-
-		// new JoystickButton(buttonBox, 1)
-		//   .whileTrue(shooterBase.rightSysIdQuasistaticForward());
-
-		// new JoystickButton(buttonBox, 2)
-		//   .whileTrue(shooterBase.rightSysIdQuasistaticReverse());
-
-		// new JoystickButton(buttonBox, 3)
-		//   .whileTrue(shooterBase.rightSysIdDynamicForward());
-
-		// new JoystickButton(buttonBox, 4)
-		//   .whileTrue(shooterBase.rightSysIdDynamicReverse());
-
-
-		// new JoystickButton(buttonBox, 1)
-		//   .whileTrue(Commands.run(() -> shooterBase.setLeftShooterRPM(1500), shooterBase));
-
-		// new JoystickButton(buttonBox, 2)
-		//   .whileTrue(Commands.run(() -> shooterBase.setLeftShooterRPM(3000), shooterBase));
-
-		// new JoystickButton(buttonBox, 3)
-		//   .whileTrue(Commands.run(() -> shooterBase.setLeftShooterRPM(5000), shooterBase));
-
-		// new JoystickButton(buttonBox, 4)
-		//   .whileTrue(Commands.run(() -> shooterBase.stopLeftShooter()));
-
-		new JoystickButton(buttonBox, 1)
-		  .whileTrue(Commands.run(() -> shooterBase.setRightShooterRPM(1500), shooterBase));
-
-		new JoystickButton(buttonBox, 2)
-		  .whileTrue(Commands.run(() -> shooterBase.setRightShooterRPM(3000), shooterBase));
-
-		new JoystickButton(buttonBox, 3)
-		  .whileTrue(Commands.run(() -> shooterBase.setRightShooterRPM(5000), shooterBase));
-
-		new JoystickButton(buttonBox, 4)
-		  .whileTrue(Commands.run(() -> shooterBase.stopRightShooter()));
-
-		new JoystickButton(buttonBox, 5)
-		  .whileTrue(Commands.run(() -> shooterBase.runIndexer()))
-		  .onFalse(Commands.run(() -> shooterBase.stopIndexer()));
-
 	}
 
 	/**
