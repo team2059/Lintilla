@@ -18,10 +18,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.units.LinearAccelerationUnit;
-import edu.wpi.first.units.Measure;
-import edu.wpi.first.units.Units;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 
 import static edu.wpi.first.units.Units.*;
@@ -234,7 +230,7 @@ public final class Constants {
 		public static final double thruBoreOffset = 0;
 		
 		// TODO: Change these
-        public static final double thruBoreIn = 2.102;
-		public static final double thruBoreOut = 3.555; 
+        public static final double thruBoreOut = 2.75;
+		public static final double thruBoreIn = 4.69;
 	}
 }

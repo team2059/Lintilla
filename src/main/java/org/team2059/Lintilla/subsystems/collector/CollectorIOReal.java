@@ -24,17 +24,16 @@ import com.revrobotics.ResetMode;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class CollectorIOReal implements CollectorIO {
 
-  private SparkFlex tiltMotor;
-  private SparkFlex intakeMotor;
+  public SparkFlex tiltMotor;
+  public SparkFlex intakeMotor;
 
-  private SparkClosedLoopController tiltController;
+  public SparkClosedLoopController tiltController;
 
-  private SparkFlexConfig tiltConfig = new SparkFlexConfig();
-  private SparkFlexConfig intakeConfig = new SparkFlexConfig();
+  public static SparkFlexConfig tiltConfig = new SparkFlexConfig();
+  public SparkFlexConfig intakeConfig = new SparkFlexConfig();
 
   public AbsoluteEncoder thruBoreEnc;
 
@@ -53,13 +52,13 @@ public class CollectorIOReal implements CollectorIO {
 
     tiltConfig.absoluteEncoder
         .zeroOffset(CollectorConstants.thruBoreOffset)
-        .inverted(false);
-    
+        .inverted(true);
 
     tiltMotor.configure(tiltConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     tiltMotor.clearFaults();
 
     thruBoreEnc = tiltMotor.getAbsoluteEncoder();
+    SmartDashboard.putNumber("ThruBorePos", thruBoreEnc.getPosition());
 
     intakeConfig
         .inverted(false)
@@ -87,8 +86,14 @@ public class CollectorIOReal implements CollectorIO {
 
   @Override
   public void setTiltPosition(double position) {
-    tiltController.setSetpoint(MathUtil.clamp(position, CollectorConstants.thruBoreIn, CollectorConstants.thruBoreOut), ControlType.kPosition);
-    Logger.recordOutput("Setpoint", MathUtil.clamp(position, CollectorConstants.thruBoreIn, CollectorConstants.thruBoreOut));
+    // tiltController.setSetpoint(MathUtil.clamp(position,
+    // CollectorConstants.thruBoreIn, CollectorConstants.thruBoreOut),
+    // ControlType.kPosition);
+    tiltController.setSetpoint(MathUtil.clamp(position, CollectorConstants.thruBoreOut, CollectorConstants.thruBoreIn),
+        ControlType.kPosition);
+    Logger.recordOutput("Setpoint",
+        tiltController.getSetpoint());
+    
   }
 
   @Override

@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.team2059.Lintilla.Constants.*;
 
+import com.fasterxml.jackson.databind.deser.std.CollectionDeserializer;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -28,7 +29,6 @@ import org.team2059.Lintilla.subsystems.drivetrain.MK5nModule;
 import org.team2059.Lintilla.subsystems.drivetrain.Pigeon2Gyroscope;
 import org.team2059.Lintilla.subsystems.shooter.NullShooter;
 import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
-import org.team2059.Lintilla.subsystems.shooter.VortexShooter;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -191,7 +191,10 @@ public class RobotContainer {
       .whileTrue(new InstantCommand(() -> collector.collectorIO.setTiltPosition(CollectorConstants.thruBoreOut)))
       .whileFalse(new InstantCommand(() -> collector.collectorIO.setTiltVolts(0)));
     new JoystickButton(buttonBox, 9)
-      .whileTrue(new InstantCommand(() -> collector.collectorIO.setTiltPosition(CollectorConstants.thruBoreIn)))
+      .whileTrue(new InstantCommand(() -> {
+        //CollectorIOReal.tiltConfig.inverted(true);
+        collector.collectorIO.setTiltPosition(CollectorConstants.thruBoreIn);
+      }))
       .whileFalse(new InstantCommand(() -> collector.collectorIO.setTiltVolts(0)));
     //new JoystickButton(buttonBox, 10).whileTrue(new InstantCommand(() -> ))
     }
