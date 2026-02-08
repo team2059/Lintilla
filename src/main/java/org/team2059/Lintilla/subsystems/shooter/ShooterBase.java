@@ -99,10 +99,15 @@ public class ShooterBase extends SubsystemBase {
 		);
 	}
 
-	public double getTargetFuelVelocityMps(double directDistanceToHubMeters) {
+	/**
+	 * Calculate the needed velocity (in meters per second) of the fuel as it exits
+	 * @param d horizontal magnitude (along floor only, in meters)
+	 * @return velocity in meters/sec
+	 */
+	public double getTargetFuelVelocityMps(double d) {
 		return Math.sqrt(
-		  (ShooterConstants.gravitationalAccelerationMpss * Math.pow(directDistanceToHubMeters, 2))
-			/ (2 * Math.pow(Math.cos(ShooterConstants.fuelExitAngleRadians), 2) * ((directDistanceToHubMeters * Math.tan(ShooterConstants.fuelExitAngleRadians)) - ShooterConstants.hubHeightMeters + ShooterConstants.shooterHeightMeters))
+		  (ShooterConstants.gravitationalAccelerationMpss * d * d)
+			/ (2 * ShooterConstants.cosineShooterAngleSquared * ((d * ShooterConstants.tangentShooterAngle) - ShooterConstants.dY))
 		);
 	}
 

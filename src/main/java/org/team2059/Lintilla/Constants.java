@@ -211,6 +211,11 @@ public final class Constants {
 		public static final double shooterHeightMeters = 0.5; // Start height of trajectory
 		public static final double fuelExitAngleRadians = 40 * Math.PI / 180; // RADIANS At what angle does fuel leave the shooter
 
+		// DO NOT TOUCH the following
+		public static final double tangentShooterAngle = Math.tan(fuelExitAngleRadians);
+		public static final double cosineShooterAngleSquared = Math.pow(Math.cos(fuelExitAngleRadians), 2);
+		public static final double dY = hubHeightMeters - shooterHeightMeters;
+
 		// LEFT SHOOTER CONSTANTS
 		public static final boolean leftFlywheelInverted = true;
 		public static final boolean leftIndexerInverted = false;
