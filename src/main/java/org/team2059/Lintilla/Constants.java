@@ -215,6 +215,7 @@ public final class Constants {
 		public static final double tangentShooterAngle = Math.tan(fuelExitAngleRadians);
 		public static final double cosineShooterAngleSquared = Math.pow(Math.cos(fuelExitAngleRadians), 2);
 		public static final double dY = hubHeightMeters - shooterHeightMeters;
+		public static final double minimumShotDistanceMeters = dY / tangentShooterAngle;
 
 		// LEFT SHOOTER CONSTANTS
 		public static final boolean leftFlywheelInverted = true;

@@ -105,6 +105,11 @@ public class ShooterBase extends SubsystemBase {
 	 * @return velocity in meters/sec
 	 */
 	public double getTargetFuelVelocityMps(double d) {
+		// Ensure minimum shot, won't cause NaN
+		if (d <= ShooterConstants.minimumShotDistanceMeters) {
+			return 0.0;
+		}
+
 		return Math.sqrt(
 		  (ShooterConstants.gravitationalAccelerationMpss * d * d)
 			/ (2 * ShooterConstants.cosineShooterAngleSquared * ((d * ShooterConstants.tangentShooterAngle) - ShooterConstants.dY))
