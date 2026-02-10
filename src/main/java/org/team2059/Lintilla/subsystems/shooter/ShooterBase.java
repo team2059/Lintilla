@@ -99,6 +99,27 @@ public class ShooterBase extends SubsystemBase {
 		);
 	}
 
+	// SysID getters
+	public Command leftShooterQuasiForward() { return leftFlywheelRoutine.quasistatic(SysIdRoutine.Direction.kForward); }
+	public Command rightShooterQuasiForward() { return rightFlywheelRoutine.quasistatic(SysIdRoutine.Direction.kForward); }
+	public Command leftIndexerQuasiForward() { return leftIndexerRoutine.quasistatic(SysIdRoutine.Direction.kForward); }
+	public Command rightIndexerQuasiForward() { return rightIndexerRoutine.quasistatic(SysIdRoutine.Direction.kForward); }
+
+	public Command leftShooterQuasiReverse() { return leftFlywheelRoutine.quasistatic(SysIdRoutine.Direction.kReverse); }
+	public Command rightShooterQuasiReverse() { return rightFlywheelRoutine.quasistatic(SysIdRoutine.Direction.kReverse); }
+	public Command leftIndexerQuasiReverse() { return leftIndexerRoutine.quasistatic(SysIdRoutine.Direction.kReverse); }
+	public Command rightIndexerQuasiReverse() { return rightIndexerRoutine.quasistatic(SysIdRoutine.Direction.kReverse); }
+
+	public Command leftShooterDynamicForward() { return leftFlywheelRoutine.dynamic(SysIdRoutine.Direction.kForward); }
+	public Command rightShooterDynamicForward() { return rightFlywheelRoutine.dynamic(SysIdRoutine.Direction.kForward); }
+	public Command leftIndexerDynamicForward() { return leftIndexerRoutine.dynamic(SysIdRoutine.Direction.kForward); }
+	public Command rightIndexerDynamicForward() { return rightIndexerRoutine.dynamic(SysIdRoutine.Direction.kForward); }
+
+	public Command leftShooterDynamicReverse() { return leftFlywheelRoutine.dynamic(SysIdRoutine.Direction.kReverse); }
+	public Command rightShooterDynamicReverse() { return rightFlywheelRoutine.dynamic(SysIdRoutine.Direction.kReverse); }
+	public Command leftIndexerDynamicReverse() { return leftIndexerRoutine.dynamic(SysIdRoutine.Direction.kReverse); }
+	public Command rightIndexerDynamicReverse() { return rightIndexerRoutine.dynamic(SysIdRoutine.Direction.kReverse); }
+
 	/**
 	 * Calculate the needed velocity (in meters per second) of the fuel as it exits
 	 * @param d horizontal magnitude (along floor only, in meters)
