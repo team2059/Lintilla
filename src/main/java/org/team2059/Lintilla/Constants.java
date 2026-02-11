@@ -188,7 +188,11 @@ public final class Constants {
 		public static final int leftShooterIndexerMotor = 54; // Same ID for both shooters for now (will be changed later)
 		public static final int rightShooterIndexerMotor = 54;
 		public static final int leftShooterFlywheel = 53;
-		public static final int rightShooterFlywheel = 55;
+		public static final int rightShooterFlywheel = -1;
+
+		public static final int collectorTiltMotor = 57;
+		public static final int collectorIntakeMotor = 58;
+		public static final int conveyorMotor = 59;
 	}
 
 	public static final class ShooterConstants {
@@ -252,5 +256,20 @@ public final class Constants {
 		public static final double rightFlywheelkS = 0.13506;
 		public static final double rightFlywheelkV = 0.10641 / 60;
 		public static final double rightFlywheelkA = 0.017354 / 60;
+	}
+
+	public static final class CollectorConstants {
+		public static final double kPTilt = 0;
+		public static final double kITilt = 0;
+		public static final double kDTilt = 0;
+		public static final double kCosTilt = 0;
+		public static final double kSTilt = 0;
+		public static final double kVTilt = 0;
+		public static final double kATilt = 0;
+
+		public static final double thruBoreOffset = 0.91;
+
+		public static final double thruBoreOut = 0;
+		public static final double thruBoreIn = 0.25;
 	}
 }
