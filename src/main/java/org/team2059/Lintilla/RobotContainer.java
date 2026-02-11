@@ -98,12 +98,6 @@ public class RobotContainer {
 		  new NullShooter(),
 		  -1);
 
-		collector = new Collector(
-		  new CollectorIOReal(
-			new SparkFlex(CANConstants.tiltMotor, MotorType.kBrushless),
-			new SparkFlex(CANConstants.intakeMotor, MotorType.kBrushless),
-			new SparkFlex(CANConstants.conveyorMotor, MotorType.kBrushless)));
-
 		/* =========== */
 		/* CONTROLLERS */
 		/* =========== */

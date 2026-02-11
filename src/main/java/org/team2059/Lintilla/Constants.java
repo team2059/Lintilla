@@ -182,8 +182,8 @@ public final class Constants {
 		public static final int leftShooterFlywheel = 53;
 		public static final int rightShooterFlywheel = -1;
 
-		public static final int tiltMotor = 57;
-		public static final int intakeMotor = 58;
+		public static final int collectorTiltMotor = 57;
+		public static final int collectorIntakeMotor = 58;
 		public static final int conveyorMotor = 59;
 	}
 
@@ -226,11 +226,12 @@ public final class Constants {
 		public static final double kPTilt = 0;
 		public static final double kITilt = 0;
 		public static final double kDTilt = 0;
+		public static final double kCosTilt = 0;
 		public static final double kSTilt = 0;
 		public static final double kVTilt = 0;
 		public static final double kATilt = 0;
 
-		public static final double thruBoreOffset = 0;
+		public static final double thruBoreOffset = 0.91;
 
 		public static final double thruBoreOut = 0;
 		public static final double thruBoreIn = 0.25;

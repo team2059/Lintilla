@@ -11,10 +11,12 @@ import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.MathUtil;
 import org.littletonrobotics.junction.Logger;
 import org.team2059.Lintilla.util.LoggedTunableNumber;
+import org.team2059.Lintilla.Constants.CollectorConstants;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -30,12 +32,11 @@ public class CollectorIOReal implements CollectorIO {
 	public SparkFlexConfig intakeConfig = new SparkFlexConfig();
 	public SparkFlexConfig conveyorConfig = new SparkFlexConfig();
 	public AbsoluteEncoder thruBoreEnc;
-	LoggedTunableNumber kPTilt = new LoggedTunableNumber("Collector/kPTilt", 0.1);
 
-	public CollectorIOReal(SparkFlex tiltMotor, SparkFlex intakeMotor, SparkFlex conveyorMotor) {
-		this.intakeMotor = intakeMotor;
-		this.tiltMotor = tiltMotor;
-		this.conveyorMotor = conveyorMotor;
+	public CollectorIOReal(int tiltMotorCanId, int intakeMotorCanId, int conveyorMotorCanId) {
+		intakeMotor = new SparkFlex(intakeMotorCanId, SparkLowLevel.MotorType.kBrushless);
+		tiltMotor = new SparkFlex(tiltMotorCanId, SparkLowLevel.MotorType.kBrushless);
+		conveyorMotor = new SparkFlex(conveyorMotorCanId, SparkLowLevel.MotorType.kBrushless);
 
 		tiltConfig
 		  .inverted(false)
@@ -43,13 +44,19 @@ public class CollectorIOReal implements CollectorIO {
 
 		tiltConfig.closedLoop
 		  .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-		  .pid(kPTilt.get(), 0.0, 0.0)
-		  .outputRange(-0.7, 0.7);
+		  .pid(CollectorConstants.kPTilt, CollectorConstants.kITilt, CollectorConstants.kDTilt)
+		  .outputRange(-1, 1);
+
+		tiltConfig.closedLoop.feedForward
+		  .kCos(CollectorConstants.kCosTilt)
+		  .kS(CollectorConstants.kSTilt)
+		  .kV(CollectorConstants.kVTilt)
+		  .kA(CollectorConstants.kATilt);
 
 		tiltConfig.absoluteEncoder
 		  .inverted(true)
 		  .zeroCentered(true)
-		  .zeroOffset(0.91);
+		  .zeroOffset(CollectorConstants.thruBoreOffset);
 
 		tiltMotor.configure(tiltConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 		tiltMotor.clearFaults();
@@ -114,15 +121,6 @@ public class CollectorIOReal implements CollectorIO {
 
 	@Override
 	public void updateInputs(CollectorIOInputs inputs) {
-
-		LoggedTunableNumber.ifChanged(
-		  hashCode(),
-		  () -> {
-			  SparkFlexConfig tempTiltConfig = new SparkFlexConfig();
-			  tempTiltConfig.closedLoop.pid(kPTilt.get(), 0, 0);
-			  tiltMotor.configure(tempTiltConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
-		  },
-		  kPTilt);
 
 		inputs.intakeAppliedVolts.mut_replace(intakeMotor.getAppliedOutput() * intakeMotor.getBusVoltage(), Volts);
 		inputs.intakeCurrent.mut_replace(intakeMotor.getOutputCurrent(), Amps);
