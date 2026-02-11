@@ -188,6 +188,12 @@ public final class Constants {
 		public static final int shooterIndexerMotor = 54; // Same ID for both shooters for now (will be changed later)
 		public static final int leftShooterFlywheel = 53;
 		public static final int rightShooterFlywheel = 55;
+		public static final int leftShooterFlywheel = 53;
+		public static final int rightShooterFlywheel = -1;
+
+		public static final int collectorTiltMotor = 57;
+		public static final int collectorIntakeMotor = 58;
+		public static final int conveyorMotor = 59;
 	}
 
 	public static final class ShooterConstants {
