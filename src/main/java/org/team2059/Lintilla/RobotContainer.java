@@ -28,6 +28,7 @@ import org.team2059.Lintilla.subsystems.drivetrain.MK5nModule;
 import org.team2059.Lintilla.subsystems.drivetrain.Pigeon2Gyroscope;
 import org.team2059.Lintilla.subsystems.shooter.NullShooter;
 import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
+import org.team2059.Lintilla.subsystems.shooter.VortexShooter;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
