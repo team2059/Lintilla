@@ -8,32 +8,44 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
+import org.team2059.Lintilla.Constants.CollectorConstants;
+
+import static edu.wpi.first.units.Units.Rotations;
 
 public class Collector extends SubsystemBase {
-	public CollectorIO collectorIO;
-	public CollectorIOInputsAutoLogged collectorInputs;
+
+	public CollectorIO io;
+	public CollectorIOInputsAutoLogged inputs;
 
 	/**
 	 * Creates a new Collector.
 	 */
-	public Collector(CollectorIO collectorIO) {
-		this.collectorIO = collectorIO;
-		collectorInputs = new CollectorIOInputsAutoLogged();
+	public Collector(CollectorIO io) {
+		this.io = io;
+		inputs = new CollectorIOInputsAutoLogged();
 	}
 
-	public Command setTiltPos(double position) {
-		return Commands.run(() -> collectorIO.setTiltPosition(position));
+	/**
+	 * @return Command which sets the tilt position to the outward position, then stops once tolerance reached.
+	 */
+	public Command collectorOut() {
+		return this.runOnce(() -> io.setTiltPosition(CollectorConstants.thruBoreOut))
+		  .andThen(Commands.waitUntil(() -> inputs.tiltPosition.isNear(Rotations.of(CollectorConstants.thruBoreOut), 0.05)))
+		  .andThen(this.runOnce(() -> io.stopTilt()));
 	}
 
-	// public Command intakeFuel() {
-	// return Commands.run(() -> collectorIO.)
-	// }
+	/**
+	 * @return Command which sets the tilt position to the inward position, then stops once tolerance reached.
+	 */
+	public Command collectorIn() {
+		return this.runOnce(() -> io.setTiltPosition(CollectorConstants.thruBoreIn))
+		  .andThen(Commands.waitUntil(() -> inputs.tiltPosition.isNear(Rotations.of(CollectorConstants.thruBoreIn), 0.05)))
+		  .andThen(this.runOnce(() -> io.stopTilt()));
+	}
 
 	@Override
 	public void periodic() {
-		// This method will be called once per scheduler run
-		//SmartDashboard.putNumber("ThruBorePos", this.collectorIO.thruBoreEnc.getPosition());
-		collectorIO.updateInputs(collectorInputs);
-		Logger.processInputs("Collector", collectorInputs);
+		io.updateInputs(inputs);
+		Logger.processInputs("Collector", inputs);
 	}
 }

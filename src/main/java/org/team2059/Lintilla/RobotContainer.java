@@ -160,48 +160,6 @@ public class RobotContainer {
 		/* SWITCH FIELD/ROBOT RELATIVITY IN TELEOP */
 		new JoystickButton(logitech, OperatorConstants.JoystickRobotRelative)
 		  .whileTrue(new InstantCommand(() -> drivetrain.setFieldRelativity()));
-
-		// new JoystickButton(buttonBox, 1)
-		//   .whileTrue(new InstantCommand(() -> shooterBase.setLeftShooterVoltage(4)));
-
-		// new JoystickButton(buttonBox, 2)
-		//   .whileTrue(new InstantCommand(() -> shooterBase.setLeftShooterVoltage(8)));
-
-		// new JoystickButton(buttonBox, 3)
-		//   .whileTrue(new InstantCommand(() -> shooterBase.setLeftShooterVoltage(12)));
-
-		// new JoystickButton(buttonBox, 4)
-		//   .whileTrue(new InstantCommand(() -> shooterBase.stopBothShooters()));
-
-		new JoystickButton(buttonBox, 6)
-		  .whileTrue(new InstantCommand(() -> {
-			  collector.collectorIO.setIntakeSpeed(0.5);
-			  collector.collectorIO.runConveyor(0.25);
-		  }))
-		  .whileFalse(new InstantCommand(() -> {
-			  collector.collectorIO.setIntakeSpeed(0);
-			  collector.collectorIO.stopConveyor();
-		  }));
-
-		new JoystickButton(buttonBox, 7)
-		  .whileTrue(new InstantCommand(() -> {
-			  collector.collectorIO.setIntakeSpeed(-0.5);
-			  collector.collectorIO.runConveyor(0.25);
-		  }))
-		  .whileFalse(new InstantCommand(() -> {
-			  collector.collectorIO.setIntakeSpeed(0);
-			  collector.collectorIO.stopConveyor();
-		  }));
-		// new JoystickButton(buttonBox, 7)
-		//   .whileTrue(new InstantCommand(() -> collector.setTiltPos(CollectorConstants.thruBoreMin)));
-
-		new JoystickButton(buttonBox, 8)
-		  .onTrue(new InstantCommand(() -> collector.collectorIO.setTiltPosition(CollectorConstants.thruBoreOut)))
-		  .onFalse(new InstantCommand(() -> collector.collectorIO.stopTilt()));
-		new JoystickButton(buttonBox, 9)
-		  .onTrue(new InstantCommand(() -> collector.collectorIO.setTiltPosition(CollectorConstants.thruBoreIn)))
-		  .onFalse(new InstantCommand(() -> collector.collectorIO.stopTilt()));
-		//new JoystickButton(buttonBox, 10).whileTrue(new InstantCommand(() -> ))
 	}
 
 	/**
