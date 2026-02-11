@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -89,17 +88,17 @@ public class RobotContainer {
 		);
 
 		shooterBase = new ShooterBase(
-		//   new VortexShooter(
-		// 	CANConstants.leftShooterFlywheel,
-		// 	ShooterConstants.leftFlywheelInverted,
-		// 	ShooterConstants.leftkP,
-		// 	ShooterConstants.leftkI,
-		// 	ShooterConstants.leftkD,
-		// 	ShooterConstants.leftkS,
-		// 	ShooterConstants.leftkV,
-		// 	ShooterConstants.leftkA
-		//   )
-		new NullShooter(),
+		  //   new VortexShooter(
+		  // 	CANConstants.leftShooterFlywheel,
+		  // 	ShooterConstants.leftFlywheelInverted,
+		  // 	ShooterConstants.leftkP,
+		  // 	ShooterConstants.leftkI,
+		  // 	ShooterConstants.leftkD,
+		  // 	ShooterConstants.leftkS,
+		  // 	ShooterConstants.leftkV,
+		  // 	ShooterConstants.leftkA
+		  //   )
+		  new NullShooter(),
 		  new VortexShooter(
 			CANConstants.rightShooterFlywheel,
 			ShooterConstants.rightFlywheelInverted,
@@ -109,15 +108,15 @@ public class RobotContainer {
 			ShooterConstants.rightkS,
 			ShooterConstants.rightkV,
 			ShooterConstants.rightkA
-		),
+		  ),
 		  CANConstants.shooterIndexerMotor
 		);
 
 		collector = new Collector(
 		  new CollectorIOReal(
 			CANConstants.collectorTiltMotor,
-		    CANConstants.collectorIntakeMotor,
-		    CANConstants.conveyorMotor
+			CANConstants.collectorIntakeMotor,
+			CANConstants.conveyorMotor
 		  )
 		);
 
@@ -178,7 +177,6 @@ public class RobotContainer {
 		/* SWITCH FIELD/ROBOT RELATIVITY IN TELEOP */
 		new JoystickButton(logitech, OperatorConstants.JoystickRobotRelative)
 		  .whileTrue(new InstantCommand(() -> drivetrain.setFieldRelativity()));
-
 
 
 	}

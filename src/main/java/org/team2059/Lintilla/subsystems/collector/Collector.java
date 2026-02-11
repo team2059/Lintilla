@@ -39,21 +39,21 @@ public class Collector extends SubsystemBase {
 		routine = new SysIdRoutine(
 		  new SysIdRoutine.Config(
 			Volts.of(0.5).per(Second), // Ramp rate in volts per second
-		    Volts.of(2), // Dynamic step voltage
-		    Time.ofBaseUnits(4, Second), // Test duration in seconds
-		    null
+			Volts.of(2), // Dynamic step voltage
+			Time.ofBaseUnits(4, Second), // Test duration in seconds
+			null
 		  ),
 		  new SysIdRoutine.Mechanism(
 			voltage -> {
 				io.setTiltVolts(voltage.in(Volts));
 			},
-		    log -> {
+			log -> {
 				log.motor("collector-tiltmotor")
 				  .voltage(appliedVoltageRoutine.mut_replace(inputs.tiltAppliedVolts))
 				  .angularPosition(angleRoutine.mut_replace(inputs.tiltPosition))
 				  .angularVelocity(angularVelocityRoutine.mut_replace(inputs.tiltVelocity));
-		    },
-		    this
+			},
+			this
 		  )
 		);
 	}

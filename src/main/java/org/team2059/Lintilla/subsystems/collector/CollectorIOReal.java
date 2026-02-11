@@ -13,9 +13,6 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.config.SparkFlexConfig;
-import edu.wpi.first.math.MathUtil;
-import org.littletonrobotics.junction.Logger;
-import org.team2059.Lintilla.util.LoggedTunableNumber;
 import org.team2059.Lintilla.Constants.CollectorConstants;
 
 import static edu.wpi.first.units.Units.*;
