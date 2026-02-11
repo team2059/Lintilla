@@ -1,13 +1,6 @@
 package org.team2059.Lintilla.subsystems.shooter;
 
-import com.revrobotics.PersistMode;
-import com.revrobotics.ResetMode;
-import com.revrobotics.spark.SparkBase;
-import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.SparkLowLevel;
-import com.revrobotics.spark.config.SparkBaseConfig;
-import com.revrobotics.spark.config.SparkFlexConfig;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
@@ -21,57 +14,31 @@ import static org.team2059.Lintilla.Constants.ShooterConstants;
 
 public class ShooterBase extends SubsystemBase {
 
-	private final ShooterIO leftShooter;
-	private final ShooterIO rightShooter;
+	public final ShooterIO leftShooter;
+	public final ShooterIO rightShooter;
 
-	private final ShooterIOInputsAutoLogged leftShooterInputs = new ShooterIOInputsAutoLogged();
-	private final ShooterIOInputsAutoLogged rightShooterInputs = new ShooterIOInputsAutoLogged();
+	public final ShooterIOInputsAutoLogged leftShooterInputs = new ShooterIOInputsAutoLogged();
+	public final ShooterIOInputsAutoLogged rightShooterInputs = new ShooterIOInputsAutoLogged();
 
-	private final SparkFlex indexerMotor;
-	private final SparkFlexConfig indexerMotorConfig = new SparkFlexConfig();
-
-	private final SparkClosedLoopController indexerClosedLoopController;
-
-	private final SysIdRoutine leftRoutine;
-	private final SysIdRoutine rightRoutine;
+	private final SysIdRoutine leftFlywheelRoutine;
+	private final SysIdRoutine leftIndexerRoutine;
+	private final SysIdRoutine rightFlywheelRoutine;
+	private final SysIdRoutine rightIndexerRoutine;
 
 	// Variables below are used exclusively for SysID routine logging.
-	private final MutVoltage leftAppliedVoltsRoutine = Volts.mutable(0);
-	private final MutAngle leftAngleRoutine = Rotations.mutable(0);
-	private final MutAngularVelocity leftAngularVelocityRoutine = RPM.mutable(0);
-	private final MutVoltage rightAppliedVoltsRoutine = Volts.mutable(0);
-	private final MutAngle rightAngleRoutine = Rotations.mutable(0);
-	private final MutAngularVelocity rightAngularVelocityRoutine = RPM.mutable(0);
+	private final MutVoltage appliedVoltsRoutine = Volts.mutable(0);
+	private final MutAngle angleRoutine = Rotations.mutable(0);
+	private final MutAngularVelocity angularVelocityRoutine = RPM.mutable(0);
 
 	public ShooterBase(
 	  ShooterIO leftShooter,
-	  ShooterIO rightShooter,
-	  int indexerMotorCanId
+	  ShooterIO rightShooter
 	) {
 		this.leftShooter = leftShooter;
 		this.rightShooter = rightShooter;
 
-		// Configure indexer motor (account for prototypes which have no indexer)
-		if (indexerMotorCanId != -1) {
-			indexerMotor = new SparkFlex(indexerMotorCanId, SparkLowLevel.MotorType.kBrushless);
-			indexerMotorConfig
-			  .inverted(false)
-			  .idleMode(SparkBaseConfig.IdleMode.kBrake);
-			indexerMotorConfig.closedLoop
-			  .pid(ShooterConstants.indexerkP, ShooterConstants.indexerkI, ShooterConstants.indexerkD)
-			  .feedForward
-			  .kS(ShooterConstants.indexerkS).kV(ShooterConstants.indexerkV).kA(ShooterConstants.indexerkA);
-			indexerMotor.configure(indexerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-			indexerMotor.clearFaults();
-
-			indexerClosedLoopController = indexerMotor.getClosedLoopController();
-		} else {
-			indexerMotor = null;
-			indexerClosedLoopController = null;
-		}
-
-		leftRoutine = new SysIdRoutine(
-		  // Empty config defaults to 1 volt/second ramp rate and 7 volt step voltage.
+		// Declare SysID routines
+		leftFlywheelRoutine = new SysIdRoutine(
 		  new SysIdRoutine.Config(),
 		  new SysIdRoutine.Mechanism(
 			voltage -> {
@@ -79,16 +46,14 @@ public class ShooterBase extends SubsystemBase {
 			},
 			log -> {
 				log.motor("left-shooter-motor")
-				  .voltage(leftAppliedVoltsRoutine.mut_replace(leftShooterInputs.flywheelAppliedVolts))
-				  .angularPosition(leftAngleRoutine.mut_replace(leftShooterInputs.flywheelPosition))
-				  .angularVelocity(leftAngularVelocityRoutine.mut_replace(leftShooterInputs.flywheelVelocity));
+				  .voltage(appliedVoltsRoutine.mut_replace(leftShooterInputs.flywheelAppliedVolts))
+				  .angularPosition(angleRoutine.mut_replace(leftShooterInputs.flywheelPosition))
+				  .angularVelocity(angularVelocityRoutine.mut_replace(leftShooterInputs.flywheelVelocity));
 			},
 			this
 		  )
 		);
-
-		rightRoutine = new SysIdRoutine(
-		  // Empty config defaults to 1 volt/second ramp rate and 7 volt step voltage.
+		rightFlywheelRoutine = new SysIdRoutine(
 		  new SysIdRoutine.Config(),
 		  new SysIdRoutine.Mechanism(
 			voltage -> {
@@ -96,93 +61,88 @@ public class ShooterBase extends SubsystemBase {
 			},
 			log -> {
 				log.motor("right-shooter-motor")
-				  .voltage(rightAppliedVoltsRoutine.mut_replace(rightShooterInputs.flywheelAppliedVolts))
-				  .angularPosition(rightAngleRoutine.mut_replace(rightShooterInputs.flywheelPosition))
-				  .angularVelocity(rightAngularVelocityRoutine.mut_replace(rightShooterInputs.flywheelVelocity));
+				  .voltage(appliedVoltsRoutine.mut_replace(rightShooterInputs.flywheelAppliedVolts))
+				  .angularPosition(angleRoutine.mut_replace(rightShooterInputs.flywheelPosition))
+				  .angularVelocity(angularVelocityRoutine.mut_replace(rightShooterInputs.flywheelVelocity));
+			},
+			this
+		  )
+		);
+		leftIndexerRoutine = new SysIdRoutine(
+		  new SysIdRoutine.Config(),
+		  new SysIdRoutine.Mechanism(
+			voltage -> {
+				leftShooter.setIndexerVoltage(voltage.in(Volts));
+			},
+			log -> {
+				log.motor("left-shooter-motor")
+				  .voltage(appliedVoltsRoutine.mut_replace(leftShooterInputs.indexerAppliedVolts))
+				  .angularPosition(angleRoutine.mut_replace(leftShooterInputs.indexerPosition))
+				  .angularVelocity(angularVelocityRoutine.mut_replace(leftShooterInputs.indexerVelocity));
+			},
+			this
+		  )
+		);
+		rightIndexerRoutine = new SysIdRoutine(
+		  new SysIdRoutine.Config(),
+		  new SysIdRoutine.Mechanism(
+			voltage -> {
+				rightShooter.setIndexerVoltage(voltage.in(Volts));
+			},
+			log -> {
+				log.motor("right-shooter-motor")
+				  .voltage(appliedVoltsRoutine.mut_replace(rightShooterInputs.indexerAppliedVolts))
+				  .angularPosition(angleRoutine.mut_replace(rightShooterInputs.indexerPosition))
+				  .angularVelocity(angularVelocityRoutine.mut_replace(rightShooterInputs.indexerVelocity));
 			},
 			this
 		  )
 		);
 	}
 
-	public double getTargetFuelVelocityMps(double directDistanceToHubMeters) {
+	// SysID getters
+	public Command leftShooterQuasiForward() { return leftFlywheelRoutine.quasistatic(SysIdRoutine.Direction.kForward); }
+	public Command rightShooterQuasiForward() { return rightFlywheelRoutine.quasistatic(SysIdRoutine.Direction.kForward); }
+	public Command leftIndexerQuasiForward() { return leftIndexerRoutine.quasistatic(SysIdRoutine.Direction.kForward); }
+	public Command rightIndexerQuasiForward() { return rightIndexerRoutine.quasistatic(SysIdRoutine.Direction.kForward); }
+
+	public Command leftShooterQuasiReverse() { return leftFlywheelRoutine.quasistatic(SysIdRoutine.Direction.kReverse); }
+	public Command rightShooterQuasiReverse() { return rightFlywheelRoutine.quasistatic(SysIdRoutine.Direction.kReverse); }
+	public Command leftIndexerQuasiReverse() { return leftIndexerRoutine.quasistatic(SysIdRoutine.Direction.kReverse); }
+	public Command rightIndexerQuasiReverse() { return rightIndexerRoutine.quasistatic(SysIdRoutine.Direction.kReverse); }
+
+	public Command leftShooterDynamicForward() { return leftFlywheelRoutine.dynamic(SysIdRoutine.Direction.kForward); }
+	public Command rightShooterDynamicForward() { return rightFlywheelRoutine.dynamic(SysIdRoutine.Direction.kForward); }
+	public Command leftIndexerDynamicForward() { return leftIndexerRoutine.dynamic(SysIdRoutine.Direction.kForward); }
+	public Command rightIndexerDynamicForward() { return rightIndexerRoutine.dynamic(SysIdRoutine.Direction.kForward); }
+
+	public Command leftShooterDynamicReverse() { return leftFlywheelRoutine.dynamic(SysIdRoutine.Direction.kReverse); }
+	public Command rightShooterDynamicReverse() { return rightFlywheelRoutine.dynamic(SysIdRoutine.Direction.kReverse); }
+	public Command leftIndexerDynamicReverse() { return leftIndexerRoutine.dynamic(SysIdRoutine.Direction.kReverse); }
+	public Command rightIndexerDynamicReverse() { return rightIndexerRoutine.dynamic(SysIdRoutine.Direction.kReverse); }
+
+	/**
+	 * Calculate the needed velocity (in meters per second) of the fuel as it exits
+	 * @param d horizontal magnitude (along floor only, in meters)
+	 * @return velocity in meters/sec
+	 */
+	public double getTargetFuelVelocityMps(double d) {
+		// Ensure minimum shot, won't cause NaN
+		if (d <= ShooterConstants.minimumShotDistanceMeters) {
+			return 0.0;
+		}
+
 		return Math.sqrt(
-		  (ShooterConstants.gravitationalAccelerationMpss * Math.pow(directDistanceToHubMeters, 2))
-			/ (2 * Math.pow(Math.cos(ShooterConstants.fuelExitAngleRadians), 2) * ((directDistanceToHubMeters * Math.tan(ShooterConstants.fuelExitAngleRadians)) - ShooterConstants.hubHeightMeters + ShooterConstants.shooterHeightMeters))
+		  (ShooterConstants.gravitationalAccelerationMpss * d * d)
+			/ (2 * ShooterConstants.cosineShooterAngleSquared * ((d * ShooterConstants.tangentShooterAngle) - ShooterConstants.dY))
 		);
 	}
 
-	public void setLeftShooterVoltage(double volts) {
-		leftShooter.setFlywheelVoltage(volts);
-	}
-
-	public void setRightShooterVoltage(double volts) {
-		leftShooter.setFlywheelVoltage(volts);
-	}
-
-	public void setIndexerRPM(double rpm) {
-		indexerClosedLoopController.setSetpoint(rpm, SparkBase.ControlType.kVelocity);
-	}
-
-	public void setLeftShooterRPM(double rpm) {
-		leftShooter.setFlywheelRpm(rpm);
-	}
-
-	public void setRightShooterRPM(double rpm) {
-		rightShooter.setFlywheelRpm(rpm);
-	}
-
-	public void stopLeftShooter() {
+	public void stopAllSubsystemMotors() {
 		leftShooter.stopFlywheel();
-	}
-
-	public void stopRightShooter() {
+		leftShooter.stopIndexer();
 		rightShooter.stopFlywheel();
-	}
-
-	public void stopBothShooters() {
-		stopLeftShooter();
-		stopRightShooter();
-	}
-
-	public void runIndexer() {
-		indexerMotor.set(0.5);
-	}
-
-	public void stopIndexer() {
-		indexerMotor.set(0);
-	}
-
-	public Command leftSysIdQuasistaticForward() {
-		return leftRoutine.quasistatic(SysIdRoutine.Direction.kForward);
-	}
-
-	public Command leftSysIdQuasistaticReverse() {
-		return leftRoutine.quasistatic(SysIdRoutine.Direction.kReverse);
-	}
-
-	public Command rightSysIdQuasistaticForward() {
-		return rightRoutine.quasistatic(SysIdRoutine.Direction.kForward);
-	}
-
-	public Command rightSysIdQuasistaticReverse() {
-		return rightRoutine.quasistatic(SysIdRoutine.Direction.kReverse);
-	}
-
-	public Command leftSysIdDynamicForward() {
-		return leftRoutine.dynamic(SysIdRoutine.Direction.kForward);
-	}
-
-	public Command leftSysIdDynamicReverse() {
-		return leftRoutine.dynamic(SysIdRoutine.Direction.kReverse);
-	}
-
-	public Command rightSysIdDynamicForward() {
-		return rightRoutine.dynamic(SysIdRoutine.Direction.kForward);
-	}
-
-	public Command rightSysIdDynamicReverse() {
-		return rightRoutine.dynamic(SysIdRoutine.Direction.kReverse);
+		rightShooter.stopIndexer();
 	}
 
 	@Override

@@ -15,37 +15,57 @@ import static edu.wpi.first.units.Units.*;
 public class VortexShooter implements ShooterIO {
 
 	private final SparkFlex flywheelMotor;
+	private final SparkFlex indexerMotor;
+
 	private final SparkFlexConfig flywheelMotorConfig = new SparkFlexConfig();
+	private final SparkFlexConfig indexerMotorConfig = new SparkFlexConfig();
 
-	private final SparkClosedLoopController closedLoopController;
+	private final SparkClosedLoopController flywheelController;
+	private final SparkClosedLoopController indexerController;
 
-	private final RelativeEncoder encoder;
+	private final RelativeEncoder flywheelEncoder;
+	private final RelativeEncoder indexerEncoder;
 
 	public VortexShooter(
 	  int flywheelMotorCanId,
+	  int indexerMotorCanId,
 	  boolean flywheelMotorInverted,
-	  double kP, double kI, double kD,
-	  double kS, double kV, double kA
+	  boolean indexerMotorInverted,
+	  double kPFlywheel, double kIFlywheel, double kDFlywheel, double kSFlywheel, double kVFlywheel, double kAFlywheel,
+	  double kPIndexer, double kIIndexer, double kDIndexer, double kSIndexer, double kVIndexer, double kAIndexer
 	) {
 
 		flywheelMotor = new SparkFlex(flywheelMotorCanId, SparkLowLevel.MotorType.kBrushless);
+		indexerMotor = new SparkFlex(indexerMotorCanId, SparkLowLevel.MotorType.kBrushless);
 
 		flywheelMotorConfig
 		  .inverted(flywheelMotorInverted)
 		  .idleMode(SparkBaseConfig.IdleMode.kCoast);
+		indexerMotorConfig
+		  .inverted(indexerMotorInverted)
+		  .idleMode(SparkBaseConfig.IdleMode.kBrake);
 
 		// Set initial closed-loop gains
 		flywheelMotorConfig.closedLoop
-		  .pid(kP, kI, kD)
+		  .pid(kPFlywheel, kIFlywheel, kDFlywheel)
 		  .feedForward
-		  .kS(kS).kV(kV).kA(kA);
+		  .kS(kSFlywheel).kV(kVFlywheel).kA(kAFlywheel);
+		indexerMotorConfig.closedLoop
+		  .pid(kPIndexer, kIIndexer, kDIndexer)
+		  .feedForward
+		  .kS(kSIndexer).kV(kVIndexer).kA(kAIndexer);
 
 		flywheelMotor.configure(flywheelMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+		indexerMotor.configure(indexerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
 		flywheelMotor.clearFaults();
+		indexerMotor.clearFaults();
 
-		closedLoopController = flywheelMotor.getClosedLoopController();
+		flywheelController = flywheelMotor.getClosedLoopController();
+		indexerController = indexerMotor.getClosedLoopController();
 
-		encoder = flywheelMotor.getEncoder();
+		flywheelEncoder = flywheelMotor.getEncoder();
+		indexerEncoder = indexerMotor.getEncoder();
 	}
 
 	@Override
@@ -55,9 +75,21 @@ public class VortexShooter implements ShooterIO {
 	}
 
 	@Override
+	public void setIndexerkP(double kP) {
+		indexerMotorConfig.closedLoop.p(kP);
+		indexerMotor.configure(indexerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+	}
+
+	@Override
 	public void setFlywheelkI(double kI) {
 		flywheelMotorConfig.closedLoop.i(kI);
 		flywheelMotor.configure(flywheelMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+	}
+
+	@Override
+	public void setIndexerkI(double kI) {
+		indexerMotorConfig.closedLoop.i(kI);
+		indexerMotor.configure(indexerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 	}
 
 	@Override
@@ -67,9 +99,21 @@ public class VortexShooter implements ShooterIO {
 	}
 
 	@Override
+	public void setIndexerkD(double kD) {
+		indexerMotorConfig.closedLoop.d(kD);
+		indexerMotor.configure(indexerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+	}
+
+	@Override
 	public void setFlywheelkS(double kS) {
 		flywheelMotorConfig.closedLoop.feedForward.kS(kS);
 		flywheelMotor.configure(flywheelMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+	}
+
+	@Override
+	public void setIndexerkS(double kS) {
+		indexerMotorConfig.closedLoop.feedForward.kS(kS);
+		indexerMotor.configure(indexerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 	}
 
 	@Override
@@ -79,9 +123,21 @@ public class VortexShooter implements ShooterIO {
 	}
 
 	@Override
+	public void setIndexerkV(double kV) {
+		indexerMotorConfig.closedLoop.feedForward.kV(kV);
+		indexerMotor.configure(indexerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+	}
+
+	@Override
 	public void setFlywheelkA(double kA) {
 		flywheelMotorConfig.closedLoop.feedForward.kA(kA);
 		flywheelMotor.configure(flywheelMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+	}
+
+	@Override
+	public void setIndexerkA(double kA) {
+		indexerMotorConfig.closedLoop.feedForward.kA(kA);
+		indexerMotor.configure(indexerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 	}
 
 	@Override
@@ -90,8 +146,18 @@ public class VortexShooter implements ShooterIO {
 	}
 
 	@Override
+	public void setIndexerVoltage(double volts) {
+		indexerMotor.setVoltage(volts);
+	}
+
+	@Override
 	public void setFlywheelRpm(double rpm) {
-		closedLoopController.setSetpoint(rpm, SparkBase.ControlType.kVelocity);
+		flywheelController.setSetpoint(rpm, SparkBase.ControlType.kVelocity);
+	}
+
+	@Override
+	public void setIndexerRpm(double rpm) {
+		indexerController.setSetpoint(rpm, SparkBase.ControlType.kVelocity);
 	}
 
 	@Override
@@ -100,11 +166,25 @@ public class VortexShooter implements ShooterIO {
 	}
 
 	@Override
+	public void stopIndexer() {
+		indexerMotor.stopMotor();
+	}
+
+	@Override
 	public void updateInputs(ShooterIOInputs inputs) {
-		inputs.flywheelPosition.mut_replace(encoder.getPosition(), Rotations);
-		inputs.flywheelVelocity.mut_replace(encoder.getVelocity(), RPM);
+		inputs.flywheelPosition.mut_replace(flywheelEncoder.getPosition(), Rotations);
+		inputs.indexerPosition.mut_replace(indexerEncoder.getPosition(), Rotations);
+
+		inputs.flywheelVelocity.mut_replace(indexerEncoder.getVelocity(), RPM);
+		inputs.indexerVelocity.mut_replace(indexerEncoder.getVelocity(), RPM);
+
 		inputs.flywheelAppliedVolts.mut_replace(flywheelMotor.getAppliedOutput() * flywheelMotor.getBusVoltage(), Volts);
+		inputs.indexerAppliedVolts.mut_replace(indexerMotor.getAppliedOutput() * indexerMotor.getBusVoltage(), Volts);
+
 		inputs.flywheelCurrent.mut_replace(flywheelMotor.getOutputCurrent(), Amps);
+		inputs.indexerCurrent.mut_replace(indexerMotor.getOutputCurrent(), Amps);
+
 		inputs.flywheelTemp.mut_replace(flywheelMotor.getMotorTemperature(), Celsius);
+		inputs.indexerTemp.mut_replace(indexerMotor.getMotorTemperature(), Celsius);
 	}
 }

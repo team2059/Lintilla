@@ -88,28 +88,42 @@ public class RobotContainer {
 		);
 
 		shooterBase = new ShooterBase(
-		  //   new VortexShooter(
-		  // 	CANConstants.leftShooterFlywheel,
-		  // 	ShooterConstants.leftFlywheelInverted,
-		  // 	ShooterConstants.leftkP,
-		  // 	ShooterConstants.leftkI,
-		  // 	ShooterConstants.leftkD,
-		  // 	ShooterConstants.leftkS,
-		  // 	ShooterConstants.leftkV,
-		  // 	ShooterConstants.leftkA
-		  //   )
-		  new NullShooter(),
-		  new VortexShooter(
-			CANConstants.rightShooterFlywheel,
-			ShooterConstants.rightFlywheelInverted,
-			ShooterConstants.rightkP,
-			ShooterConstants.rightkI,
-			ShooterConstants.rightkD,
-			ShooterConstants.rightkS,
-			ShooterConstants.rightkV,
-			ShooterConstants.rightkA
+		  new VortexShooter( // LEFT SHOOTER
+			CANConstants.leftShooterFlywheel,
+		    CANConstants.leftShooterIndexerMotor,
+			ShooterConstants.leftFlywheelInverted,
+			ShooterConstants.leftIndexerInverted,
+		    ShooterConstants.leftFlywheelkP,
+		    ShooterConstants.leftFlywheelkI,
+		    ShooterConstants.leftFlywheelkD,
+		    ShooterConstants.leftFlywheelkS,
+		    ShooterConstants.leftFlywheelkV,
+		    ShooterConstants.leftFlywheelkA,
+		    ShooterConstants.leftIndexerkP,
+		    ShooterConstants.leftIndexerkI,
+		    ShooterConstants.leftIndexerkD,
+		    ShooterConstants.leftIndexerkS,
+		    ShooterConstants.leftIndexerkV,
+		    ShooterConstants.leftIndexerkA
 		  ),
-		  CANConstants.shooterIndexerMotor
+		  new VortexShooter( // RIGHT SHOOTER
+			CANConstants.rightShooterFlywheel,
+			CANConstants.rightShooterIndexerMotor,
+			ShooterConstants.rightFlywheelInverted,
+			ShooterConstants.rightIndexerInverted,
+			ShooterConstants.rightFlywheelkP,
+			ShooterConstants.rightFlywheelkI,
+			ShooterConstants.rightFlywheelkD,
+			ShooterConstants.rightFlywheelkS,
+			ShooterConstants.rightFlywheelkV,
+			ShooterConstants.rightFlywheelkA,
+			ShooterConstants.rightIndexerkP,
+			ShooterConstants.rightIndexerkI,
+			ShooterConstants.rightIndexerkD,
+			ShooterConstants.rightIndexerkS,
+			ShooterConstants.rightIndexerkV,
+			ShooterConstants.rightIndexerkA
+		  )
 		);
 
 		collector = new Collector(
@@ -177,8 +191,6 @@ public class RobotContainer {
 		/* SWITCH FIELD/ROBOT RELATIVITY IN TELEOP */
 		new JoystickButton(logitech, OperatorConstants.JoystickRobotRelative)
 		  .whileTrue(new InstantCommand(() -> drivetrain.setFieldRelativity()));
-
-
 	}
 
 	/**
