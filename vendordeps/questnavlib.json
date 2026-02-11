@@ -16,6 +16,6 @@
       "version": "2026-1.0.0"
     }
   ],
-    "cppDependencies": [],
-    "jniDependencies": []
+  "cppDependencies": [],
+  "jniDependencies": []
 }

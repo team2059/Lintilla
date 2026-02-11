@@ -7,16 +7,20 @@ import org.littletonrobotics.junction.AutoLog;
 import static edu.wpi.first.units.Units.Rotations;
 
 public interface GyroscopeIO {
-  @AutoLog
-  class GyroscopeIOInputs {
-    public MutAngle roll = Rotations.mutable(0);
-    public MutAngle yaw = Rotations.mutable(0);
-    public MutAngle pitch = Rotations.mutable(0);
-  }
+	default public void updateInputs(GyroscopeIOInputs inputs) {}
 
-  default public void updateInputs(GyroscopeIOInputs inputs) {};
+	default public Rotation2d getRotation2d() {return Rotation2d.kZero;}
 
-  default public Rotation2d getRotation2d() { return Rotation2d.kZero; }
+	;
 
-  default public void reset() {};
+	default public void reset() {}
+
+	@AutoLog
+	class GyroscopeIOInputs {
+		public MutAngle roll = Rotations.mutable(0);
+		public MutAngle yaw = Rotations.mutable(0);
+		public MutAngle pitch = Rotations.mutable(0);
+	}
+
+	;
 }

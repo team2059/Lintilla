@@ -4,35 +4,36 @@
 
 package org.team2059.Lintilla.subsystems.collector;
 
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.Logger;
 
 public class Collector extends SubsystemBase {
-  public CollectorIO collectorIO;
-  public CollectorIOInputsAutoLogged collectorInputs;
+	public CollectorIO collectorIO;
+	public CollectorIOInputsAutoLogged collectorInputs;
 
-  /** Creates a new Collector. */
-  public Collector(CollectorIO collectorIO) {
-    this.collectorIO = collectorIO;
-    collectorInputs = new CollectorIOInputsAutoLogged();
-  }
+	/**
+	 * Creates a new Collector.
+	 */
+	public Collector(CollectorIO collectorIO) {
+		this.collectorIO = collectorIO;
+		collectorInputs = new CollectorIOInputsAutoLogged();
+	}
 
-  public Command setTiltPos(double position) {
-    return Commands.run(() -> collectorIO.setTiltPosition(position));
-  }
+	public Command setTiltPos(double position) {
+		return Commands.run(() -> collectorIO.setTiltPosition(position));
+	}
 
-  // public Command intakeFuel() {
-  // return Commands.run(() -> collectorIO.)
-  // }
+	// public Command intakeFuel() {
+	// return Commands.run(() -> collectorIO.)
+	// }
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-    //SmartDashboard.putNumber("ThruBorePos", this.collectorIO.thruBoreEnc.getPosition());
-    collectorIO.updateInputs(collectorInputs);
-    Logger.processInputs("Collector", collectorInputs);
-  }
+	@Override
+	public void periodic() {
+		// This method will be called once per scheduler run
+		//SmartDashboard.putNumber("ThruBorePos", this.collectorIO.thruBoreEnc.getPosition());
+		collectorIO.updateInputs(collectorInputs);
+		Logger.processInputs("Collector", collectorInputs);
+	}
 }
