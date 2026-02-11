@@ -19,9 +19,10 @@ import static edu.wpi.first.units.Units.*;
 
 public class Collector extends SubsystemBase {
 
-	public CollectorIO io;
-	public CollectorIOInputsAutoLogged inputs;
+	public final CollectorIO io;
+	public final CollectorIOInputsAutoLogged inputs;
 
+	// Declare all stuff for a SysID routine
 	private final SysIdRoutine routine;
 	private final MutVoltage appliedVoltageRoutine = Volts.mutable(0);
 	private final MutAngle angleRoutine = Rotations.mutable(0);
@@ -34,24 +35,25 @@ public class Collector extends SubsystemBase {
 		this.io = io;
 		inputs = new CollectorIOInputsAutoLogged();
 
+		// Configure SysID routine
 		routine = new SysIdRoutine(
 		  new SysIdRoutine.Config(
 			Volts.of(0.5).per(Second), // Ramp rate in volts per second
-		    Volts.of(2), // Dynamic step voltage
-		    Time.ofBaseUnits(4, Second), // Test duration in seconds
-		    null
+			Volts.of(2), // Dynamic step voltage
+			Time.ofBaseUnits(4, Second), // Test duration in seconds
+			null
 		  ),
 		  new SysIdRoutine.Mechanism(
 			voltage -> {
 				io.setTiltVolts(voltage.in(Volts));
 			},
-		    log -> {
+			log -> {
 				log.motor("collector-tiltmotor")
 				  .voltage(appliedVoltageRoutine.mut_replace(inputs.tiltAppliedVolts))
 				  .angularPosition(angleRoutine.mut_replace(inputs.tiltPosition))
 				  .angularVelocity(angularVelocityRoutine.mut_replace(inputs.tiltVelocity));
-		    },
-		    this
+			},
+			this
 		  )
 		);
 	}
@@ -69,9 +71,9 @@ public class Collector extends SubsystemBase {
 	 * @return Command which sets the tilt position to the inward position, then stops once tolerance reached.
 	 */
 	public Command collectorIn() {
-		return this.runOnce(() -> io.setTiltPosition(CollectorConstants.thruBoreIn))
-		  .andThen(Commands.waitUntil(() -> inputs.tiltPosition.isNear(Rotations.of(CollectorConstants.thruBoreIn), 0.05)))
-		  .andThen(this.runOnce(() -> io.stopTilt()));
+		return this.runOnce(() -> io.setTiltPosition(CollectorConstants.thruBoreIn)) // Set reference for PID/FF controller
+		  .andThen(Commands.waitUntil(() -> inputs.tiltPosition.isNear(Rotations.of(CollectorConstants.thruBoreIn), 0.05))) // Keep checking how close we are
+		  .andThen(this.runOnce(() -> io.stopTilt())); // Stop when close enough
 	}
 
 	public Command sysIdQuasiForward() {
