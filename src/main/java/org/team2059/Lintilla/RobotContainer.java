@@ -106,7 +106,8 @@ public class RobotContainer {
     collector = new Collector(
         new CollectorIOReal(
             new SparkFlex(CANConstants.tiltMotor, MotorType.kBrushless),
-            new SparkFlex(CANConstants.intakeMotor, MotorType.kBrushless)));
+            new SparkFlex(CANConstants.intakeMotor, MotorType.kBrushless),
+            new SparkFlex(CANConstants.conveyorMotor, MotorType.kBrushless)));
 
     /* =========== */
     /* CONTROLLERS */
@@ -178,24 +179,33 @@ public class RobotContainer {
         //   .whileTrue(new InstantCommand(() -> shooterBase.stopBothShooters()));
 
 		new JoystickButton(buttonBox, 6) 
-		  .whileTrue(new InstantCommand(() -> collector.collectorIO.setIntakeSpeed(0.5)))
-      .whileFalse(new InstantCommand(() -> collector.collectorIO.setIntakeSpeed(0)));
+		  .whileTrue(new InstantCommand(() -> {
+        collector.collectorIO.setIntakeSpeed(0.5);
+        collector.collectorIO.runConveyor(0.25);
+        }))
+      .whileFalse(new InstantCommand(() -> {
+        collector.collectorIO.setIntakeSpeed(0);
+        collector.collectorIO.stopConveyor();
+        }));
 
-		new JoystickButton(buttonBox, 7)
-		   .whileTrue(new InstantCommand((() -> collector.collectorIO.setIntakeSpeed(-0.5))))
-       .whileFalse(new InstantCommand(() -> collector.collectorIO.setIntakeSpeed(0)));
+    new JoystickButton(buttonBox, 7)
+      .whileTrue(new InstantCommand(() -> {
+          collector.collectorIO.setIntakeSpeed(-0.5);
+          collector.collectorIO.runConveyor(0.25);
+      }))
+      .whileFalse(new InstantCommand(() -> {
+          collector.collectorIO.setIntakeSpeed(0);
+          collector.collectorIO.stopConveyor();
+      }));
 		// new JoystickButton(buttonBox, 7)
 		//   .whileTrue(new InstantCommand(() -> collector.setTiltPos(CollectorConstants.thruBoreMin)));
 
     new JoystickButton(buttonBox, 8)
-      .whileTrue(new InstantCommand(() -> collector.collectorIO.setTiltPosition(CollectorConstants.thruBoreOut)))
-      .whileFalse(new InstantCommand(() -> collector.collectorIO.setTiltVolts(0)));
+      .onTrue(new InstantCommand(() -> collector.collectorIO.setTiltPosition(CollectorConstants.thruBoreOut)))
+      .onFalse(new InstantCommand(() -> collector.collectorIO.stopTilt()));
     new JoystickButton(buttonBox, 9)
-      .whileTrue(new InstantCommand(() -> {
-        //CollectorIOReal.tiltConfig.inverted(true);
-        collector.collectorIO.setTiltPosition(CollectorConstants.thruBoreIn);
-      }))
-      .whileFalse(new InstantCommand(() -> collector.collectorIO.setTiltVolts(0)));
+      .onTrue(new InstantCommand(() -> collector.collectorIO.setTiltPosition(CollectorConstants.thruBoreIn)))
+      .onFalse(new InstantCommand(() -> collector.collectorIO.stopTilt()));
     //new JoystickButton(buttonBox, 10).whileTrue(new InstantCommand(() -> ))
     }
 

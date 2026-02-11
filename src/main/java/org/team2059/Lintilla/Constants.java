@@ -187,6 +187,7 @@ public final class Constants {
 
 		public static final int tiltMotor = 57;
 		public static final int intakeMotor = 58;
+        public static final int conveyorMotor = 59;
     }
 
     public static final class ShooterConstants {
@@ -225,12 +226,12 @@ public final class Constants {
     }
 
 	public static final class CollectorConstants {
-		public static final double kPTilt = 0.05;
+		public static final double kPTilt = 0.1;
 
 		public static final double thruBoreOffset = 0;
 		
 		// TODO: Change these
-        public static final double thruBoreOut = 2.75;
-		public static final double thruBoreIn = 4.69;
+        public static final double thruBoreOut = 0;
+		public static final double thruBoreIn = 0.25;
 	}
 }

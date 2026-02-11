@@ -12,6 +12,7 @@ import static edu.wpi.first.units.Units.Volts;
 
 import org.littletonrobotics.junction.Logger;
 import org.team2059.Lintilla.Constants.CollectorConstants;
+import org.team2059.Lintilla.util.LoggedTunableNumber;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.PersistMode;
@@ -22,6 +23,7 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.ResetMode;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -29,17 +31,22 @@ public class CollectorIOReal implements CollectorIO {
 
   public SparkFlex tiltMotor;
   public SparkFlex intakeMotor;
+  public SparkFlex conveyorMotor;
 
   public SparkClosedLoopController tiltController;
 
-  public static SparkFlexConfig tiltConfig = new SparkFlexConfig();
+  public SparkFlexConfig tiltConfig = new SparkFlexConfig();
   public SparkFlexConfig intakeConfig = new SparkFlexConfig();
+  public SparkFlexConfig conveyorConfig = new SparkFlexConfig();
+
+  LoggedTunableNumber kPTilt = new LoggedTunableNumber("Collector/kPTilt", 0.1);
 
   public AbsoluteEncoder thruBoreEnc;
 
-  public CollectorIOReal(SparkFlex tiltMotor, SparkFlex intakeMotor) {
+  public CollectorIOReal(SparkFlex tiltMotor, SparkFlex intakeMotor, SparkFlex conveyorMotor) {
     this.intakeMotor = intakeMotor;
     this.tiltMotor = tiltMotor;
+    this.conveyorMotor = conveyorMotor;
 
     tiltConfig
         .inverted(false)
@@ -47,24 +54,31 @@ public class CollectorIOReal implements CollectorIO {
 
     tiltConfig.closedLoop
         .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-        .pid(CollectorConstants.kPTilt, 0.0, 0.0)
-        .outputRange(-1, 1);
+        .pid(kPTilt.get(), 0.0, 0.0)
+        .outputRange(-0.7, 0.7);
 
     tiltConfig.absoluteEncoder
-        .zeroOffset(CollectorConstants.thruBoreOffset)
-        .inverted(true);
+    .inverted(true)
+        .zeroCentered(true)
+        .zeroOffset(0.91);
 
     tiltMotor.configure(tiltConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     tiltMotor.clearFaults();
 
     thruBoreEnc = tiltMotor.getAbsoluteEncoder();
-    SmartDashboard.putNumber("ThruBorePos", thruBoreEnc.getPosition());
 
     intakeConfig
         .inverted(false)
         .idleMode(SparkFlexConfig.IdleMode.kBrake);
     intakeMotor.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     intakeMotor.clearFaults();
+
+    conveyorConfig
+        .inverted(false)
+        .idleMode(SparkFlexConfig.IdleMode.kBrake); 
+
+    conveyorMotor.configure(conveyorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    conveyorMotor.clearFaults();
 
     tiltController = tiltMotor.getClosedLoopController();
   }
@@ -81,7 +95,7 @@ public class CollectorIOReal implements CollectorIO {
 
   @Override
   public void setTiltSpeed(double speed) {
-    tiltMotor.set(speed);
+    tiltMotor.set(MathUtil.clamp(speed, -0.3, 0.3));
   }
 
   @Override
@@ -89,7 +103,8 @@ public class CollectorIOReal implements CollectorIO {
     // tiltController.setSetpoint(MathUtil.clamp(position,
     // CollectorConstants.thruBoreIn, CollectorConstants.thruBoreOut),
     // ControlType.kPosition);
-    tiltController.setSetpoint(MathUtil.clamp(position, CollectorConstants.thruBoreOut, CollectorConstants.thruBoreIn),
+    Logger.recordOutput("position", position);
+    tiltController.setSetpoint(position,
         ControlType.kPosition);
     Logger.recordOutput("Setpoint",
         tiltController.getSetpoint());
@@ -107,14 +122,39 @@ public class CollectorIOReal implements CollectorIO {
   }
 
   @Override
+  public void runConveyor(double speed) {
+    conveyorMotor.set(speed);
+  }
+
+  @Override
+  public void stopConveyor() {
+    conveyorMotor.set(0);
+  }
+
+  @Override
   public void updateInputs(CollectorIOInputs inputs) {
+
+    LoggedTunableNumber.ifChanged(
+      hashCode(), 
+      () -> {
+        SparkFlexConfig tempTiltConfig = new SparkFlexConfig();
+        tempTiltConfig.closedLoop.pid(kPTilt.get(), 0, 0);
+        tiltMotor.configure(tempTiltConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+      }, 
+      kPTilt);
+
     inputs.intakeAppliedVolts.mut_replace(intakeMotor.getAppliedOutput() * intakeMotor.getBusVoltage(), Volts);
     inputs.intakeCurrent.mut_replace(intakeMotor.getOutputCurrent(), Amps);
     inputs.intakeTemp.mut_replace(intakeMotor.getMotorTemperature(), Celsius);
+
     inputs.tiltAppliedVolts.mut_replace(tiltMotor.getAppliedOutput() * tiltMotor.getBusVoltage(), Volts);
     inputs.tiltCurrent.mut_replace(tiltMotor.getOutputCurrent(), Amps);
     inputs.tiltTemp.mut_replace(tiltMotor.getMotorTemperature(), Celsius);
     inputs.tiltPosition.mut_replace(thruBoreEnc.getPosition(), Rotations);
     inputs.tiltVelocity.mut_replace(thruBoreEnc.getVelocity(), RPM);
+
+    inputs.conveyorAppliedVolts.mut_replace(conveyorMotor.getAppliedOutput() * conveyorMotor.getBusVoltage(), Volts);
+    inputs.conveyorCurrent.mut_replace(conveyorMotor.getOutputCurrent(), Amps);
+    inputs.conveyorTemp.mut_replace(conveyorMotor.getMotorTemperature(), Celsius);
   }
 }

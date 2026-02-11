@@ -16,6 +16,10 @@ public interface CollectorIO {
     public MutVoltage intakeAppliedVolts = Volts.mutable(0);
     public MutCurrent intakeCurrent = Amps.mutable(0);
 
+    public MutTemperature conveyorTemp = Celsius.mutable(0);
+    public MutVoltage conveyorAppliedVolts = Volts.mutable(0);
+    public MutCurrent conveyorCurrent = Amps.mutable(0);
+
     public MutTemperature tiltTemp = Celsius.mutable(0);
     public MutVoltage tiltAppliedVolts = Volts.mutable(0);
     public MutCurrent tiltCurrent = Amps.mutable(0);
@@ -34,6 +38,10 @@ public interface CollectorIO {
   default public void stopTilt() {}
 
   default public void setTiltPosition(double position) {}
+
+  default public void runConveyor(double speed) {}
+
+  default public void stopConveyor() {}
 
   default public void updateInputs(CollectorIOInputs inputs) {}
 }
