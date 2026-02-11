@@ -5,22 +5,21 @@
 package org.team2059.Lintilla;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import org.team2059.Lintilla.Constants.CANConstants;
-import org.team2059.Lintilla.Constants.CollectorConstants;
 import org.team2059.Lintilla.Constants.DrivetrainConstants;
 import org.team2059.Lintilla.Constants.OperatorConstants;
+import org.team2059.Lintilla.Constants.ShooterConstants;
 import org.team2059.Lintilla.commands.TeleopDriveCmd;
 import org.team2059.Lintilla.subsystems.collector.Collector;
 import org.team2059.Lintilla.subsystems.collector.CollectorIOReal;
@@ -45,7 +44,6 @@ public class RobotContainer {
 	public static GenericHID buttonBox;
 	public static Drivetrain drivetrain;
 	public static ShooterBase shooterBase;
-	public static Collector collector;
 	SendableChooser<Command> autoChooser;
 
 	/**
@@ -63,40 +61,55 @@ public class RobotContainer {
 			CANConstants.frontLeftTurnMotor,
 			CANConstants.frontLeftCancoder,
 			DrivetrainConstants.frontLeftEncoderOffset,
-			DrivetrainConstants.frontLeftInverted),
+			DrivetrainConstants.frontLeftInverted
+		  ),
 		  new MK5nModule(
 			CANConstants.frontRightDriveMotor,
 			CANConstants.frontRightTurnMotor,
 			CANConstants.frontRightCancoder,
 			DrivetrainConstants.frontRightEncoderOffset,
-			DrivetrainConstants.frontRightInverted),
+			DrivetrainConstants.frontRightInverted
+		  ),
 		  new MK5nModule(
 			CANConstants.backLeftDriveMotor,
 			CANConstants.backLeftTurnMotor,
 			CANConstants.backLeftCancoder,
 			DrivetrainConstants.backLeftEncoderOffset,
-			DrivetrainConstants.backLeftInverted),
+			DrivetrainConstants.backLeftInverted
+		  ),
 		  new MK5nModule(
 			CANConstants.backRightDriveMotor,
 			CANConstants.backRightTurnMotor,
 			CANConstants.backRightCancoder,
 			DrivetrainConstants.backRightEncoderOffset,
-			DrivetrainConstants.backRightInverted));
+			DrivetrainConstants.backRightInverted
+		  )
+		);
 
 		shooterBase = new ShooterBase(
-		  // new VortexShooter(
-		  // CANConstants.leftShooterFlywheel,
-		  // ShooterConstants.leftFlywheelInverted,
-		  // ShooterConstants.leftkP,
-		  // ShooterConstants.leftkI,
-		  // ShooterConstants.leftkD,
-		  // ShooterConstants.leftkS,
-		  // ShooterConstants.leftkV,
-		  // ShooterConstants.leftkA
-		  // )
-		  new NullShooter(),
-		  new NullShooter(),
-		  -1);
+		//   new VortexShooter(
+		// 	CANConstants.leftShooterFlywheel,
+		// 	ShooterConstants.leftFlywheelInverted,
+		// 	ShooterConstants.leftkP,
+		// 	ShooterConstants.leftkI,
+		// 	ShooterConstants.leftkD,
+		// 	ShooterConstants.leftkS,
+		// 	ShooterConstants.leftkV,
+		// 	ShooterConstants.leftkA
+		//   )
+		new NullShooter(),
+		  new VortexShooter(
+			CANConstants.rightShooterFlywheel,
+			ShooterConstants.rightFlywheelInverted,
+			ShooterConstants.rightkP,
+			ShooterConstants.rightkI,
+			ShooterConstants.rightkD,
+			ShooterConstants.rightkS,
+			ShooterConstants.rightkV,
+			ShooterConstants.rightkA
+		),
+		  CANConstants.shooterIndexerMotor
+		);
 
 		/* =========== */
 		/* CONTROLLERS */
@@ -115,7 +128,8 @@ public class RobotContainer {
 			() -> logitech.getRawAxis(OperatorConstants.JoystickSliderAxis), // slider
 			() -> logitech.getRawButton(OperatorConstants.JoystickStrafeOnly), // Strafe Only Button
 			() -> logitech.getRawButton(OperatorConstants.JoystickInvertedDrive) // Inverted button
-		  ));
+		  )
+		);
 
 		/* ========== */
 		/* AUTONOMOUS */
@@ -154,6 +168,60 @@ public class RobotContainer {
 		/* SWITCH FIELD/ROBOT RELATIVITY IN TELEOP */
 		new JoystickButton(logitech, OperatorConstants.JoystickRobotRelative)
 		  .whileTrue(new InstantCommand(() -> drivetrain.setFieldRelativity()));
+
+//		new JoystickButton(buttonBox, 1)
+//		  .whileTrue(shooterBase.leftSysIdQuasistaticForward());
+//
+//		new JoystickButton(buttonBox, 2)
+//		  .whileTrue(shooterBase.leftSysIdQuasistaticReverse());
+//
+//		new JoystickButton(buttonBox, 3)
+//		  .whileTrue(shooterBase.leftSysIdDynamicForward());
+//
+//		new JoystickButton(buttonBox, 4)
+//		  .whileTrue(shooterBase.leftSysIdDynamicReverse());
+
+		// new JoystickButton(buttonBox, 1)
+		//   .whileTrue(shooterBase.rightSysIdQuasistaticForward());
+
+		// new JoystickButton(buttonBox, 2)
+		//   .whileTrue(shooterBase.rightSysIdQuasistaticReverse());
+
+		// new JoystickButton(buttonBox, 3)
+		//   .whileTrue(shooterBase.rightSysIdDynamicForward());
+
+		// new JoystickButton(buttonBox, 4)
+		//   .whileTrue(shooterBase.rightSysIdDynamicReverse());
+
+
+		// new JoystickButton(buttonBox, 1)
+		//   .whileTrue(Commands.run(() -> shooterBase.setLeftShooterRPM(1500), shooterBase));
+
+		// new JoystickButton(buttonBox, 2)
+		//   .whileTrue(Commands.run(() -> shooterBase.setLeftShooterRPM(3000), shooterBase));
+
+		// new JoystickButton(buttonBox, 3)
+		//   .whileTrue(Commands.run(() -> shooterBase.setLeftShooterRPM(5000), shooterBase));
+
+		// new JoystickButton(buttonBox, 4)
+		//   .whileTrue(Commands.run(() -> shooterBase.stopLeftShooter()));
+
+		new JoystickButton(buttonBox, 1)
+		  .whileTrue(Commands.run(() -> shooterBase.setRightShooterRPM(1500), shooterBase));
+
+		new JoystickButton(buttonBox, 2)
+		  .whileTrue(Commands.run(() -> shooterBase.setRightShooterRPM(3000), shooterBase));
+
+		new JoystickButton(buttonBox, 3)
+		  .whileTrue(Commands.run(() -> shooterBase.setRightShooterRPM(5000), shooterBase));
+
+		new JoystickButton(buttonBox, 4)
+		  .whileTrue(Commands.run(() -> shooterBase.stopRightShooter()));
+
+		new JoystickButton(buttonBox, 5)
+		  .whileTrue(Commands.run(() -> shooterBase.runIndexer()))
+		  .onFalse(Commands.run(() -> shooterBase.stopIndexer()));
+
 	}
 
 	/**

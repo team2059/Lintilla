@@ -6,43 +6,36 @@ import org.littletonrobotics.junction.AutoLog;
 import static edu.wpi.first.units.Units.*;
 
 public interface ShooterIO {
-	default public void setFlywheelkP(double kP) {}
+	default public void setFlywheelkP(double kP) {
+	}
 
-	default public void setFlywheelkI(double kI) {}
+	default public void setFlywheelkI(double kI) {
+	}
 
-	;
+	default public void setFlywheelkD(double kD) {
+	}
 
-	default public void setFlywheelkD(double kD) {}
+	default public void setFlywheelkS(double kS) {
+	}
 
-	;
+	default public void setFlywheelkV(double kV) {
+	}
 
-	default public void setFlywheelkS(double kS) {}
+	default public void setFlywheelkA(double kA) {
+	}
 
-	;
+	default public void setFlywheelVoltage(double volts) {
+	}
 
-	default public void setFlywheelkV(double kV) {}
+	default public void setFlywheelRpm(double rpm) {
+	}
 
-	;
+	default public void stopFlywheel() {
+	}
 
-	default public void setFlywheelkA(double kA) {}
+	default public void updateInputs(ShooterIOInputs inputs) {
+	}
 
-	;
-
-	default public void setFlywheelVoltage(double volts) {}
-
-	;
-
-	default public void setFlywheelRpm(double rpm) {}
-
-	;
-
-	default public void stopFlywheel() {}
-
-	;
-
-	default public void updateInputs(ShooterIOInputs inputs) {}
-
-	;
 
 	@AutoLog
 	class ShooterIOInputs {
@@ -52,6 +45,4 @@ public interface ShooterIO {
 		public MutCurrent flywheelCurrent = Amps.mutable(0);
 		public MutTemperature flywheelTemp = Celsius.mutable(0);
 	}
-
-	;
 }

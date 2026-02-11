@@ -7,29 +7,37 @@ import org.littletonrobotics.junction.AutoLog;
 import static edu.wpi.first.units.Units.*;
 
 public interface SwerveModuleIO {
-	default public void updateInputs(SwerveModuleIOInputs inputs) {}
+	default public void updateInputs(SwerveModuleIOInputs inputs) {
+	}
 
-	default public void resetEncoders() {}
-
-	;
-
-	default public void stop() {}
+	default public void resetEncoders() {
+	}
 
 	;
 
-	default public void setDriveVoltage(double volts) {}
+	default public void stop() {
+	}
 
 	;
 
-	default public void setAzimuthVoltage(double volts) {}
+	default public void setDriveVoltage(double volts) {
+	}
 
 	;
 
-	default public SwerveModuleState getState() {return new SwerveModuleState();}
+	default public void setAzimuthVoltage(double volts) {
+	}
 
 	;
 
-	default public void setState(SwerveModuleState desiredState) {}
+	default public SwerveModuleState getState() {
+		return new SwerveModuleState();
+	}
+
+	;
+
+	default public void setState(SwerveModuleState desiredState) {
+	}
 
 	;
 

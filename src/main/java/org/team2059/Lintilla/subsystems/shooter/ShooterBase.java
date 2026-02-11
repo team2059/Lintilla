@@ -2,6 +2,8 @@ package org.team2059.Lintilla.subsystems.shooter;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
+import com.revrobotics.spark.SparkBase;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.config.SparkBaseConfig;
@@ -28,6 +30,8 @@ public class ShooterBase extends SubsystemBase {
 	private final SparkFlex indexerMotor;
 	private final SparkFlexConfig indexerMotorConfig = new SparkFlexConfig();
 
+	private final SparkClosedLoopController indexerClosedLoopController;
+
 	private final SysIdRoutine leftRoutine;
 	private final SysIdRoutine rightRoutine;
 
@@ -53,10 +57,17 @@ public class ShooterBase extends SubsystemBase {
 			indexerMotorConfig
 			  .inverted(false)
 			  .idleMode(SparkBaseConfig.IdleMode.kBrake);
+			indexerMotorConfig.closedLoop
+			  .pid(ShooterConstants.indexerkP, ShooterConstants.indexerkI, ShooterConstants.indexerkD)
+			  .feedForward
+			  .kS(ShooterConstants.indexerkS).kV(ShooterConstants.indexerkV).kA(ShooterConstants.indexerkA);
 			indexerMotor.configure(indexerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 			indexerMotor.clearFaults();
+
+			indexerClosedLoopController = indexerMotor.getClosedLoopController();
 		} else {
 			indexerMotor = null;
+			indexerClosedLoopController = null;
 		}
 
 		leftRoutine = new SysIdRoutine(
@@ -109,6 +120,18 @@ public class ShooterBase extends SubsystemBase {
 		leftShooter.setFlywheelVoltage(volts);
 	}
 
+	public void setIndexerRPM(double rpm) {
+		indexerClosedLoopController.setSetpoint(rpm, SparkBase.ControlType.kVelocity);
+	}
+
+	public void setLeftShooterRPM(double rpm) {
+		leftShooter.setFlywheelRpm(rpm);
+	}
+
+	public void setRightShooterRPM(double rpm) {
+		rightShooter.setFlywheelRpm(rpm);
+	}
+
 	public void stopLeftShooter() {
 		leftShooter.stopFlywheel();
 	}
@@ -122,21 +145,45 @@ public class ShooterBase extends SubsystemBase {
 		stopRightShooter();
 	}
 
-	public Command leftSysIdQuasistaticForward() {return leftRoutine.quasistatic(SysIdRoutine.Direction.kForward);}
+	public void runIndexer() {
+		indexerMotor.set(0.5);
+	}
 
-	public Command leftSysIdQuasistaticReverse() {return leftRoutine.quasistatic(SysIdRoutine.Direction.kReverse);}
+	public void stopIndexer() {
+		indexerMotor.set(0);
+	}
 
-	public Command rightSysIdQuasistaticForward() {return rightRoutine.quasistatic(SysIdRoutine.Direction.kForward);}
+	public Command leftSysIdQuasistaticForward() {
+		return leftRoutine.quasistatic(SysIdRoutine.Direction.kForward);
+	}
 
-	public Command rightSysIdQuasistaticReverse() {return rightRoutine.quasistatic(SysIdRoutine.Direction.kReverse);}
+	public Command leftSysIdQuasistaticReverse() {
+		return leftRoutine.quasistatic(SysIdRoutine.Direction.kReverse);
+	}
 
-	public Command leftSysIdDynamicForward() {return leftRoutine.dynamic(SysIdRoutine.Direction.kForward);}
+	public Command rightSysIdQuasistaticForward() {
+		return rightRoutine.quasistatic(SysIdRoutine.Direction.kForward);
+	}
 
-	public Command leftSysIdDynamicReverse() {return leftRoutine.dynamic(SysIdRoutine.Direction.kReverse);}
+	public Command rightSysIdQuasistaticReverse() {
+		return rightRoutine.quasistatic(SysIdRoutine.Direction.kReverse);
+	}
 
-	public Command rightSysIdDynamicForward() {return rightRoutine.dynamic(SysIdRoutine.Direction.kForward);}
+	public Command leftSysIdDynamicForward() {
+		return leftRoutine.dynamic(SysIdRoutine.Direction.kForward);
+	}
 
-	public Command rightSysIdDynamicReverse() {return rightRoutine.dynamic(SysIdRoutine.Direction.kReverse);}
+	public Command leftSysIdDynamicReverse() {
+		return leftRoutine.dynamic(SysIdRoutine.Direction.kReverse);
+	}
+
+	public Command rightSysIdDynamicForward() {
+		return rightRoutine.dynamic(SysIdRoutine.Direction.kForward);
+	}
+
+	public Command rightSysIdDynamicReverse() {
+		return rightRoutine.dynamic(SysIdRoutine.Direction.kReverse);
+	}
 
 	@Override
 	public void periodic() {

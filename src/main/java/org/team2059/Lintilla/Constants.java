@@ -132,7 +132,13 @@ public final class Constants {
 		// Peak output of any x44 on the swerve modules
 		public static final double peakTorqueCurrentAmps = 60;
 
-		// CANcoder offsets, in rotations
+		/*
+		 * CANcoder offsets, in rotations
+		 * Instructions for finding these offsets:
+		 *
+		 * Open Phoenix Tuner X and locate your CANcoder. Run self-test.
+		 * Read value from "Absolute Position - No Offset". Add a negative. Paste the value here.
+		 */
 		public static final double frontRightEncoderOffset = -0.347656;
 		public static final double frontLeftEncoderOffset = -0.983887;
 		public static final double backRightEncoderOffset = -0.605713;
@@ -148,7 +154,7 @@ public final class Constants {
 	}
 
 	public static final class VisionConstants {
-		public static final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
+		public static final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
 		public static final Transform2d ROBOT_TO_QUEST_2D = new Transform2d(0.06445393, 0.23854354, Rotation2d.kCCW_90deg);
 		public static final Transform3d ROBOT_TO_QUEST = new Transform3d(ROBOT_TO_QUEST_2D);
 		public static Matrix<N3, N1> questNavStdDevs = VecBuilder.fill(
@@ -179,6 +185,9 @@ public final class Constants {
 
 		public static final int powerDistributionHub = 50;
 
+		public static final int shooterIndexerMotor = 54; // Same ID for both shooters for now (will be changed later)
+		public static final int leftShooterFlywheel = 53;
+		public static final int rightShooterFlywheel = 55;
 		public static final int leftShooterFlywheel = 53;
 		public static final int rightShooterFlywheel = -1;
 
@@ -190,14 +199,14 @@ public final class Constants {
 	public static final class ShooterConstants {
 
 		public static final boolean leftFlywheelInverted = true;
-		public static final boolean rightFlywheelInverted = false;
+		public static final boolean rightFlywheelInverted = true;
 
 		public static final double gravitationalAccelerationMpss = 9.80665;
 		public static final double hubHeightMeters = 1.83; // End height of trajectory
 		public static final double shooterHeightMeters = 0.5; // Start height of trajectory
 		public static final double fuelExitAngleRadians = 40 * Math.PI / 180; // RADIANS At what angle does fuel leave the shooter
 
-		/**
+		/*
 		 * Units of Flywheel Constants (Thanks Rev for good docs this year)
 		 * - kP: Duty cycle per rotation of error
 		 * - kI: Duty cycle per (rotation * ms)
@@ -207,33 +216,25 @@ public final class Constants {
 		 * - kA: Volts per RPM/sec
 		 */
 
+		public static final double indexerkP = 0.0;
+		public static final double indexerkI = 0.0;
+		public static final double indexerkD = 0.0;
+		public static final double indexerkS = 0;
+		public static final double indexerkV = 0;
+		public static final double indexerkA = 0;
+
 		public static final double leftkP = 0.0;
 		public static final double leftkI = 0.0;
 		public static final double leftkD = 0.0;
-		public static final double leftkS = 0.0;
-		public static final double leftkV = 0.0;
-		public static final double leftkA = 0.0;
+		public static final double leftkS = 0.071064;
+		public static final double leftkV = 0.10564 / 60;
+		public static final double leftkA = 0.017298 / 60;
 
 		public static final double rightkP = 0.0;
 		public static final double rightkI = 0.0;
 		public static final double rightkD = 0.0;
-		public static final double rightkS = 0.0;
-		public static final double rightkV = 0.0;
-		public static final double rightkA = 0.0;
-	}
-
-	public static final class CollectorConstants {
-		public static final double kPTilt = 0;
-		public static final double kITilt = 0;
-		public static final double kDTilt = 0;
-		public static final double kCosTilt = 0;
-		public static final double kSTilt = 0;
-		public static final double kVTilt = 0;
-		public static final double kATilt = 0;
-
-		public static final double thruBoreOffset = 0.91;
-
-		public static final double thruBoreOut = 0;
-		public static final double thruBoreIn = 0.25;
+		public static final double rightkS = 0.13506;
+		public static final double rightkV = 0.10641 / 60;
+		public static final double rightkA = 0.017354 / 60;
 	}
 }
