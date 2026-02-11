@@ -86,12 +86,12 @@ public class CollectorIOReal implements CollectorIO {
 
 	@Override
 	public void stopCollector() {
-		intakeMotor.set(0);
+		intakeMotor.setVoltage(0);
 	}
 
 	@Override
 	public void setTiltSpeed(double speed) {
-		tiltMotor.set(MathUtil.clamp(speed, -0.3, 0.3));
+		tiltMotor.set(speed);
 	}
 
 	@Override
@@ -101,12 +101,12 @@ public class CollectorIOReal implements CollectorIO {
 
 	@Override
 	public void setTiltVolts(double volts) {
-		tiltMotor.setVoltage(MathUtil.clamp(volts, -12.0, 12.0));
+		tiltMotor.setVoltage(volts);
 	}
 
 	@Override
 	public void stopTilt() {
-		tiltMotor.set(0);
+		tiltMotor.setVoltage(0);
 	}
 
 	@Override
@@ -116,7 +116,7 @@ public class CollectorIOReal implements CollectorIO {
 
 	@Override
 	public void stopConveyor() {
-		conveyorMotor.set(0);
+		conveyorMotor.setVoltage(0);
 	}
 
 	@Override
