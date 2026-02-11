@@ -1,5 +1,6 @@
 package org.team2059.Lintilla.subsystems.shooter;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
