@@ -22,16 +22,16 @@ import static edu.wpi.first.units.Units.*;
 
 public class CollectorIOReal implements CollectorIO {
 
-	public SparkFlex tiltMotor;
-	public SparkFlex intakeMotor;
-	public SparkFlex conveyorMotor;
+	private final SparkFlex tiltMotor;
+	private final SparkFlex intakeMotor;
+	private final SparkFlex conveyorMotor;
 
-	public SparkClosedLoopController tiltController;
+	private final SparkClosedLoopController tiltController;
 
-	public SparkFlexConfig tiltConfig = new SparkFlexConfig();
-	public SparkFlexConfig intakeConfig = new SparkFlexConfig();
-	public SparkFlexConfig conveyorConfig = new SparkFlexConfig();
-	public AbsoluteEncoder thruBoreEnc;
+	private final SparkFlexConfig tiltConfig = new SparkFlexConfig();
+	private final SparkFlexConfig intakeConfig = new SparkFlexConfig();
+	private final SparkFlexConfig conveyorConfig = new SparkFlexConfig();
+	private final AbsoluteEncoder thruBoreEnc;
 
 	public CollectorIOReal(int tiltMotorCanId, int intakeMotorCanId, int conveyorMotorCanId) {
 		intakeMotor = new SparkFlex(intakeMotorCanId, SparkLowLevel.MotorType.kBrushless);
