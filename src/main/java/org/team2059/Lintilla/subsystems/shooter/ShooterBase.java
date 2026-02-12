@@ -5,6 +5,7 @@ import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import org.littletonrobotics.junction.Logger;
@@ -143,6 +144,58 @@ public class ShooterBase extends SubsystemBase {
 		leftShooter.stopIndexer();
 		rightShooter.stopFlywheel();
 		rightShooter.stopIndexer();
+	}
+
+	public Command setShooterRPM1500() {
+		return Commands.startEnd(
+		  () -> {
+			  leftShooter.setFlywheelRpm(1500);
+			  rightShooter.setFlywheelRpm(1500);
+		  },
+		  () -> {
+			  leftShooter.stopFlywheel();
+			  rightShooter.stopFlywheel();
+		  }
+		);
+	}
+
+	public Command setShooterRPM3000() {
+		return Commands.startEnd(
+		  () -> {
+			  leftShooter.setFlywheelRpm(3000);
+			  rightShooter.setFlywheelRpm(3000);
+		  },
+		  () -> {
+			  leftShooter.stopFlywheel();
+			  rightShooter.stopFlywheel();
+		  }
+		);
+	}
+
+	public Command setShooterRPM5000() {
+		return Commands.startEnd(
+		  () -> {
+			  leftShooter.setFlywheelRpm(5000);
+			  rightShooter.setFlywheelRpm(5000);
+		  },
+		  () -> {
+			  leftShooter.stopFlywheel();
+			  rightShooter.stopFlywheel();
+		  }
+		);
+	}
+
+	public Command runIndexer() {
+		return Commands.startEnd(
+		  () -> {
+			  leftShooter.setIndexerRpm(1000);
+			  rightShooter.setIndexerRpm(1000);
+		  },
+		  () -> {
+			  leftShooter.stopIndexer();
+			  rightShooter.stopIndexer();
+		  }
+		);
 	}
 
 	@Override

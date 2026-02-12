@@ -72,6 +72,27 @@ public class Collector extends SubsystemBase {
 		return this.runOnce(() -> io.setTiltPosition(CollectorConstants.thruBoreIn));
 	}
 
+	public Command intake() {
+		return Commands.startEnd(
+		  () -> io.setIntakeSpeed(0.5),
+		  () -> io.stopCollector()
+		);
+	}
+
+	public Command outtake() {
+		return Commands.startEnd(
+		  () -> io.setIntakeSpeed(-0.5),
+		  () -> io.stopCollector()
+		);
+	}
+
+	public Command runConveyor() {
+		return Commands.startEnd(
+		  () -> io.runConveyor(0.5),
+		  () -> io.stopConveyor()
+		);
+	}
+
 	public Command sysIdQuasiForward() {
 		return routine.quasistatic(SysIdRoutine.Direction.kForward);
 	}
