@@ -38,9 +38,9 @@ public class Collector extends SubsystemBase {
 		// Configure SysID routine
 		routine = new SysIdRoutine(
 		  new SysIdRoutine.Config(
-			Volts.of(0.5).per(Second), // Ramp rate in volts per second
+			Volts.of(1).per(Second), // Ramp rate in volts per second
 			Volts.of(2), // Dynamic step voltage
-			Time.ofBaseUnits(4, Second), // Test duration in seconds
+			Time.ofBaseUnits(6, Second), // Test duration in seconds
 			null
 		  ),
 		  new SysIdRoutine.Mechanism(
@@ -62,18 +62,14 @@ public class Collector extends SubsystemBase {
 	 * @return Command which sets the tilt position to the outward position, then stops once tolerance reached.
 	 */
 	public Command collectorOut() {
-		return this.runOnce(() -> io.setTiltPosition(CollectorConstants.thruBoreOut))
-		  .andThen(Commands.waitUntil(() -> inputs.tiltPosition.isNear(Rotations.of(CollectorConstants.thruBoreOut), 0.05)))
-		  .andThen(this.runOnce(() -> io.stopTilt()));
+		return this.runOnce(() -> io.setTiltPosition(CollectorConstants.thruBoreOut));
 	}
 
 	/**
 	 * @return Command which sets the tilt position to the inward position, then stops once tolerance reached.
 	 */
 	public Command collectorIn() {
-		return this.runOnce(() -> io.setTiltPosition(CollectorConstants.thruBoreIn)) // Set reference for PID/FF controller
-		  .andThen(Commands.waitUntil(() -> inputs.tiltPosition.isNear(Rotations.of(CollectorConstants.thruBoreIn), 0.05))) // Keep checking how close we are
-		  .andThen(this.runOnce(() -> io.stopTilt())); // Stop when close enough
+		return this.runOnce(() -> io.setTiltPosition(CollectorConstants.thruBoreIn));
 	}
 
 	public Command sysIdQuasiForward() {

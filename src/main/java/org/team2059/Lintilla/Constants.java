@@ -186,9 +186,9 @@ public final class Constants {
 		public static final int powerDistributionHub = 50;
 
 		public static final int leftShooterIndexerMotor = 54; // Same ID for both shooters for now (will be changed later)
-		public static final int rightShooterIndexerMotor = 54;
+		public static final int rightShooterIndexerMotor = 55;
 		public static final int leftShooterFlywheel = 53;
-		public static final int rightShooterFlywheel = -1;
+		public static final int rightShooterFlywheel = 56;
 
 		public static final int collectorTiltMotor = 57;
 		public static final int collectorIntakeMotor = 58;
@@ -259,12 +259,12 @@ public final class Constants {
 	}
 
 	public static final class CollectorConstants {
-		public static final double kPTilt = 0;
+		public static final double kPTilt = 0.6;
 		public static final double kITilt = 0;
 		public static final double kDTilt = 0;
-		public static final double kCosTilt = 0;
-		public static final double kSTilt = 0;
-		public static final double kVTilt = 0;
+		public static final double kCosTilt = 0.35487;
+		public static final double kSTilt = 0.49117;
+		public static final double kVTilt = 1.234/60;
 		public static final double kATilt = 0;
 
 		public static final double thruBoreOffset = 0.91;

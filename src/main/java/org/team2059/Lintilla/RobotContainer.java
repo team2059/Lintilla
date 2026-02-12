@@ -45,6 +45,7 @@ public class RobotContainer {
 	public static Drivetrain drivetrain;
 	public static ShooterBase shooterBase;
 	public static Collector collector;
+
 	SendableChooser<Command> autoChooser;
 
 	/**
@@ -191,6 +192,14 @@ public class RobotContainer {
 		/* SWITCH FIELD/ROBOT RELATIVITY IN TELEOP */
 		new JoystickButton(logitech, OperatorConstants.JoystickRobotRelative)
 		  .whileTrue(new InstantCommand(() -> drivetrain.setFieldRelativity()));
+
+		new JoystickButton(buttonBox, 5)
+		  .whileTrue(collector.collectorOut())
+		  .onFalse(new InstantCommand(() -> collector.io.stopTilt()));
+
+		new JoystickButton(buttonBox, 6)
+		  .whileTrue(collector.collectorIn())
+		  .onFalse(new InstantCommand(() -> collector.io.stopTilt()));
 	}
 
 	/**

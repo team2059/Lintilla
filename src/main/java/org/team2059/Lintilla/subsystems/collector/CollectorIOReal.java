@@ -13,7 +13,9 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import edu.wpi.first.epilogue.Logged;
 import org.team2059.Lintilla.Constants.CollectorConstants;
+import org.team2059.Lintilla.util.LoggedTunableNumber;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -30,6 +32,8 @@ public class CollectorIOReal implements CollectorIO {
 	private final SparkFlexConfig conveyorConfig = new SparkFlexConfig();
 	private final AbsoluteEncoder thruBoreEnc;
 
+	private final LoggedTunableNumber kPTilt = new LoggedTunableNumber("Tuning/kPTilt", CollectorConstants.kPTilt);
+
 	public CollectorIOReal(int tiltMotorCanId, int intakeMotorCanId, int conveyorMotorCanId) {
 		// Initialize motors
 		intakeMotor = new SparkFlex(intakeMotorCanId, SparkLowLevel.MotorType.kBrushless);
@@ -43,7 +47,7 @@ public class CollectorIOReal implements CollectorIO {
 
 		tiltConfig.closedLoop
 		  .feedbackSensor(FeedbackSensor.kAbsoluteEncoder) // takes thrubore connected thru encoder port
-		  .pid(CollectorConstants.kPTilt, CollectorConstants.kITilt, CollectorConstants.kDTilt)
+		  .pid(kPTilt.get(), CollectorConstants.kITilt, CollectorConstants.kDTilt)
 		  .outputRange(-1, 1); // can be adjusted if we're being too harsh
 
 		// NEEDED because of shooter mass & torque requirements from gravity. ArmFeedforward is WPILib alternative
@@ -124,6 +128,15 @@ public class CollectorIOReal implements CollectorIO {
 
 	@Override
 	public void updateInputs(CollectorIOInputs inputs) {
+
+		LoggedTunableNumber.ifChanged(
+		  hashCode(),
+		  () -> {
+			  tiltConfig.closedLoop.pid(kPTilt.get(), 0, 0);
+			  tiltMotor.configure(tiltConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+		  },
+		  kPTilt
+		);
 
 		inputs.intakeAppliedVolts.mut_replace(intakeMotor.getAppliedOutput() * intakeMotor.getBusVoltage(), Volts);
 		inputs.intakeCurrent.mut_replace(intakeMotor.getOutputCurrent(), Amps);
