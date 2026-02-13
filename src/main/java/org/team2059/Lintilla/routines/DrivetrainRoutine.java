@@ -34,7 +34,6 @@ public class DrivetrainRoutine {
             new SysIdRoutine.Mechanism(
                 // Tell SysID how to plumb the driving voltage to the motors
                 voltage -> {
-                    drivetrain.setModulesToZeroRadPID();
                     drivetrain.getFrontLeft().setDriveVoltage(voltage.in(Volts));
                     drivetrain.getFrontRight().setDriveVoltage(voltage.in(Volts));
                     drivetrain.getBackLeft().setDriveVoltage(voltage.in(Volts));

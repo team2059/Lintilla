@@ -142,12 +142,6 @@ public class Drivetrain extends SubsystemBase {
 
 		return positions;
 	}
-
-	public void setModulesToZeroRadPID() {
-		for (int i = 0; i < 4; i++) {
-			modules[i].setState(new SwerveModuleState(0, new Rotation2d(0)));
-		}
-	}
 	
 	public SwerveModuleIO getFrontLeft() {
 		return modules[0];
