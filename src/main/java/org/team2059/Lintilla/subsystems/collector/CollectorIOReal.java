@@ -13,7 +13,6 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.config.SparkFlexConfig;
-import edu.wpi.first.epilogue.Logged;
 import org.team2059.Lintilla.Constants.CollectorConstants;
 import org.team2059.Lintilla.util.LoggedTunableNumber;
 

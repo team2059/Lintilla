@@ -26,6 +26,7 @@ import org.littletonrobotics.junction.Logger;
 import org.team2059.Lintilla.Constants.AutoConstants;
 import org.team2059.Lintilla.Constants.DrivetrainConstants;
 import org.team2059.Lintilla.Constants.VisionConstants;
+import org.team2059.Lintilla.routines.DrivetrainRoutine;
 
 public class Drivetrain extends SubsystemBase {
 
@@ -42,6 +43,8 @@ public class Drivetrain extends SubsystemBase {
 	private final Field2d field = new Field2d();
 
 	private final SwerveDrivePoseEstimator poseEstimator;
+
+	public final DrivetrainRoutine routine;
 
 	public Drivetrain(
 	  GyroscopeIO gyroIO,
@@ -80,6 +83,8 @@ public class Drivetrain extends SubsystemBase {
 		  getModulePositions(),
 		  new Pose2d()
 		);
+
+		routine = new DrivetrainRoutine(this);
 
 		// Configure AutoBuilder last
 		configureAutoBuilder();
@@ -136,6 +141,32 @@ public class Drivetrain extends SubsystemBase {
 		}
 
 		return positions;
+	}
+
+	public void setModulesToZeroRadPID() {
+		for (int i = 0; i < 4; i++) {
+			modules[i].setState(new SwerveModuleState(0, new Rotation2d(0)));
+		}
+	}
+	
+	public SwerveModuleIO getFrontLeft() {
+		return modules[0];
+	}
+
+	public SwerveModuleIO getFrontRight() {
+		return modules[1];
+	}
+
+	public SwerveModuleIO getBackLeft() {
+		return modules[2];
+	}
+
+	public SwerveModuleIO getBackRight() {
+		return modules[3];
+	}
+	
+	public SwerveModuleIOInputsAutoLogged[] getSwerveInputs() {
+		return swerveModuleInputs;
 	}
 
 	/**
