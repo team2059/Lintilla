@@ -18,9 +18,21 @@ public class DrivetrainRoutine {
     private final SysIdRoutine sysIdRoutine;
 
     // Mutable holders for unit-safe voltage, linear distance, and linear velocity values, persisted to avoid reallocation.
-    private final MutVoltage driveRoutineAppliedVoltage = Volts.mutable(0);
-    private final MutDistance driveRoutineDistance = Meters.mutable(0);
-    private final MutLinearVelocity driveRoutineVelocity = MetersPerSecond.mutable(0);
+    private final MutVoltage flAppliedVolts = Volts.mutable(0);
+    private final MutDistance flDistance = Meters.mutable(0);
+    private final MutLinearVelocity flVelocity = MetersPerSecond.mutable(0);
+
+	private final MutVoltage frAppliedVolts = Volts.mutable(0);
+	private final MutDistance frDistance = Meters.mutable(0);
+	private final MutLinearVelocity frVelocity = MetersPerSecond.mutable(0);
+
+	private final MutVoltage blAppliedVolts = Volts.mutable(0);
+	private final MutDistance blDistance = Meters.mutable(0);
+	private final MutLinearVelocity blVelocity = MetersPerSecond.mutable(0);
+
+	private final MutVoltage brAppliedVolts = Volts.mutable(0);
+	private final MutDistance brDistance = Meters.mutable(0);
+	private final MutLinearVelocity brVelocity = MetersPerSecond.mutable(0);
 
     public DrivetrainRoutine(Drivetrain drivetrain) {
         // SysID characterization configuration
@@ -42,24 +54,24 @@ public class DrivetrainRoutine {
                 // Tell SysID how to record a frame of data for each motor on the mechanism
                 log -> {
                     log.motor("frontleft")
-                        .voltage(driveRoutineAppliedVoltage.mut_replace(drivetrain.getSwerveInputs()[0].driveAppliedVolts))
-                        .linearPosition(driveRoutineDistance.mut_replace(drivetrain.getSwerveInputs()[0].drivePos))
-                        .linearVelocity(driveRoutineVelocity.mut_replace(drivetrain.getSwerveInputs()[0].driveVel));
+                        .voltage(flAppliedVolts.mut_replace(drivetrain.getSwerveInputs()[0].driveAppliedVolts))
+                        .linearPosition(flDistance.mut_replace(drivetrain.getSwerveInputs()[0].drivePos))
+                        .linearVelocity(flVelocity.mut_replace(drivetrain.getSwerveInputs()[0].driveVel));
 
                     log.motor("frontright")
-                        .voltage(driveRoutineAppliedVoltage.mut_replace(drivetrain.getSwerveInputs()[1].driveAppliedVolts))
-                        .linearPosition(driveRoutineDistance.mut_replace(drivetrain.getSwerveInputs()[1].drivePos))
-                        .linearVelocity(driveRoutineVelocity.mut_replace(drivetrain.getSwerveInputs()[1].driveVel));
+                        .voltage(frAppliedVolts.mut_replace(drivetrain.getSwerveInputs()[1].driveAppliedVolts))
+                        .linearPosition(frDistance.mut_replace(drivetrain.getSwerveInputs()[1].drivePos))
+                        .linearVelocity(frVelocity.mut_replace(drivetrain.getSwerveInputs()[1].driveVel));
 
                     log.motor("backleft")
-                        .voltage(driveRoutineAppliedVoltage.mut_replace(drivetrain.getSwerveInputs()[2].driveAppliedVolts))
-                        .linearPosition(driveRoutineDistance.mut_replace(drivetrain.getSwerveInputs()[2].drivePos))
-                        .linearVelocity(driveRoutineVelocity.mut_replace(drivetrain.getSwerveInputs()[2].driveVel));
+                        .voltage(blAppliedVolts.mut_replace(drivetrain.getSwerveInputs()[2].driveAppliedVolts))
+                        .linearPosition(blDistance.mut_replace(drivetrain.getSwerveInputs()[2].drivePos))
+                        .linearVelocity(blVelocity.mut_replace(drivetrain.getSwerveInputs()[2].driveVel));
 
                     log.motor("backright")
-                        .voltage(driveRoutineAppliedVoltage.mut_replace(drivetrain.getSwerveInputs()[3].driveAppliedVolts))
-                        .linearPosition(driveRoutineDistance.mut_replace(drivetrain.getSwerveInputs()[3].drivePos))
-                        .linearVelocity(driveRoutineVelocity.mut_replace(drivetrain.getSwerveInputs()[3].driveVel));
+                        .voltage(brAppliedVolts.mut_replace(drivetrain.getSwerveInputs()[3].driveAppliedVolts))
+                        .linearPosition(brDistance.mut_replace(drivetrain.getSwerveInputs()[3].drivePos))
+                        .linearVelocity(brVelocity.mut_replace(drivetrain.getSwerveInputs()[3].driveVel));
                 }, 
                 // Tell SysId to make generated commands require this subsystem, suffix test state in
                 // WPILog with this subsystem's name
