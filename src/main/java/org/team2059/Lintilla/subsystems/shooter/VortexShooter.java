@@ -165,6 +165,10 @@ public class VortexShooter implements ShooterIO {
 		flywheelMotor.stopMotor();
 	}
 
+	public void setIndexerSpeed(double speed) {
+		indexerMotor.set(speed);
+	}
+
 	@Override
 	public void stopIndexer() {
 		indexerMotor.stopMotor();

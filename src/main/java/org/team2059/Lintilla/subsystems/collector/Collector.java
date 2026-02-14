@@ -86,9 +86,9 @@ public class Collector extends SubsystemBase {
 		);
 	}
 
-	public Command runConveyor() {
+	public Command runConveyor(double speed) {
 		return Commands.startEnd(
-		  () -> io.runConveyor(0.5),
+		  () -> io.runConveyor(speed),
 		  () -> io.stopConveyor()
 		);
 	}

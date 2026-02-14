@@ -18,6 +18,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import org.team2059.Lintilla.Constants;
+import org.team2059.Lintilla.Constants.CANConstants;
 import org.team2059.Lintilla.util.SwerveUtilities;
 
 import static edu.wpi.first.units.Units.*;
@@ -64,7 +65,7 @@ public class MK5nModule implements SwerveModuleIO {
 		driveMotor.clearFaults();
 
 		// Configure cancoder
-		canCoder = new CANcoder(canCoderCanId);
+		canCoder = new CANcoder(canCoderCanId, CANConstants.canivore);
 
 		canCoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
 		canCoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
@@ -73,7 +74,7 @@ public class MK5nModule implements SwerveModuleIO {
 		canCoder.getConfigurator().apply(canCoderConfig);
 
 		// Configure turn motor
-		azimuthMotor = new TalonFX(azimuthMotorCanId); // (, CANConstants.canivore);
+		azimuthMotor = new TalonFX(azimuthMotorCanId, CANConstants.canivore); 
 
 		azimuthMotorConfig.Feedback.FeedbackRemoteSensorID = canCoder.getDeviceID();
 		azimuthMotorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;

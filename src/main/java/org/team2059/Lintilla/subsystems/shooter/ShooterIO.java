@@ -29,6 +29,8 @@ public interface ShooterIO {
 	default public void stopFlywheel() {}
 	default public void stopIndexer() {}
 
+	default public void setIndexerSpeed(double speed) {}
+
 	default public void updateInputs(ShooterIOInputs inputs) {}
 
 

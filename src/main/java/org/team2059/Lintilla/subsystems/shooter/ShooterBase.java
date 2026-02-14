@@ -146,6 +146,19 @@ public class ShooterBase extends SubsystemBase {
 		rightShooter.stopIndexer();
 	}
 
+	public Command runIndexerSpeed() {
+		return Commands.startEnd(
+		  () -> {
+			  leftShooter.setIndexerSpeed(-0.5);
+			  rightShooter.setIndexerSpeed(0.5);
+		  },
+		  () -> {
+			  leftShooter.stopIndexer();
+			  rightShooter.stopIndexer();
+		  }
+		);
+	}
+
 	public Command setShooterRPM1500() {
 		return Commands.startEnd(
 		  () -> {
@@ -172,11 +185,11 @@ public class ShooterBase extends SubsystemBase {
 		);
 	}
 
-	public Command setShooterRPM5000() {
+	public Command setShooterRPM6000() {
 		return Commands.startEnd(
 		  () -> {
-			  leftShooter.setFlywheelRpm(5000);
-			  rightShooter.setFlywheelRpm(5000);
+			  leftShooter.setFlywheelRpm(6000);
+			  rightShooter.setFlywheelRpm(6000);
 		  },
 		  () -> {
 			  leftShooter.stopFlywheel();

@@ -225,7 +225,7 @@ public final class Constants {
 		public static final boolean leftFlywheelInverted = true;
 		public static final boolean leftIndexerInverted = false;
 
-		public static final double leftIndexerkP = 0.0;
+		public static final double leftIndexerkP = 0.1;
 		public static final double leftIndexerkI = 0.0;
 		public static final double leftIndexerkD = 0.0;
 		public static final double leftIndexerkS = 0;
@@ -240,10 +240,10 @@ public final class Constants {
 		public static final double leftFlywheelkA = 0.017298 / 60;
 
 		// RIGHT SHOOTER CONSTANTS
-		public static final boolean rightFlywheelInverted = true;
+		public static final boolean rightFlywheelInverted = false;
 		public static boolean rightIndexerInverted = false;
 
-		public static final double rightIndexerkP = 0.0;
+		public static final double rightIndexerkP = 0.1;
 		public static final double rightIndexerkI = 0.0;
 		public static final double rightIndexerkD = 0.0;
 		public static final double rightIndexerkS = 0;
