@@ -5,6 +5,8 @@
 package org.team2059.Lintilla;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -276,7 +278,9 @@ public class RobotContainer {
 	  .onFalse(new InstantCommand(() -> collector.io.stopTilt()));
 
 	new JoystickButton(buttonBox, 9)
-      .whileTrue(shooterBase.setShooterRPM1500());
+      .whileTrue(new InstantCommand(() -> {
+		  drivetrain.setQuestRobotPose(Pose3d.kZero);
+      }));
 
     new JoystickButton(buttonBox, 10)
       .whileTrue(shooterBase.setShooterRPM6000());

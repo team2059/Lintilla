@@ -206,6 +206,14 @@ public class Drivetrain extends SubsystemBase {
 		poseEstimator.resetPosition(getHeading(), getModulePositions(), pose);
 	}
 
+	public void setQuestRawPose(Pose3d pose) {
+		questNav.setPose(pose);
+	}
+
+	public void setQuestRobotPose(Pose3d pose) {
+		questNav.setPose(pose.transformBy(VisionConstants.ROBOT_TO_QUEST));
+	}
+
 	/**
 	 * Method to drive the robot either field or robot relative
 	 *
@@ -331,6 +339,8 @@ public class Drivetrain extends SubsystemBase {
 	@Override
 	public void periodic() {
 
+		Logger.recordOutput("QuestConnected", questNav.isConnected());
+
 		Logger.recordOutput("Estimated Pose", getEstimatedPose());
 		Logger.recordOutput("Field Relative", isFieldRelativeTeleop);
 
@@ -354,11 +364,16 @@ public class Drivetrain extends SubsystemBase {
 			if (questFrame.isTracking()) {
 				// Get the pose of the Quest
 				Pose3d questPose = questFrame.questPose3d();
+
+				Logger.recordOutput("QuestPoseRaw", questPose);
+
 				// Get timestamp for when data was sent
 				double timestamp = questFrame.dataTimestamp();
 
 				// Transform by the mount pose to get robot pose
 				Pose3d robotPose = questPose.transformBy(VisionConstants.ROBOT_TO_QUEST.inverse());
+
+				Logger.recordOutput("QuestRobotPose", robotPose);
 
 				// TODO: filtering?
 
