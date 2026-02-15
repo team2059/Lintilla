@@ -21,13 +21,13 @@ import org.team2059.Lintilla.Constants.CANConstants;
 import org.team2059.Lintilla.Constants.DrivetrainConstants;
 import org.team2059.Lintilla.Constants.OperatorConstants;
 import org.team2059.Lintilla.Constants.ShooterConstants;
+import org.team2059.Lintilla.commands.SpinupAndShootCmd;
 import org.team2059.Lintilla.commands.TeleopDriveCmd;
 import org.team2059.Lintilla.subsystems.collector.Collector;
 import org.team2059.Lintilla.subsystems.collector.CollectorIOReal;
 import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
 import org.team2059.Lintilla.subsystems.drivetrain.MK5nModule;
 import org.team2059.Lintilla.subsystems.drivetrain.Pigeon2Gyroscope;
-import org.team2059.Lintilla.subsystems.shooter.NullShooter;
 import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
 import org.team2059.Lintilla.subsystems.shooter.VortexShooter;
 
@@ -258,17 +258,12 @@ public class RobotContainer {
 	 */
 	
 	new JoystickButton(buttonBox, 1)
-		.whileTrue(collector.intake());
-	
-	new JoystickButton(buttonBox, 2)
-		.whileTrue(collector.outtake());
+		.whileTrue(new SpinupAndShootCmd(shooterBase, collector, 3000));
 
-	new JoystickButton(buttonBox, 3)
-		.whileTrue(collector.runConveyor(0.5));
-		
-	new JoystickButton(buttonBox, 4)
-		.whileTrue(shooterBase.runIndexer());
-		
+	new JoystickButton(buttonBox, 2)
+	  .whileTrue(new InstantCommand(() -> collector.runIntake(0.5)))
+	  .onFalse(new InstantCommand(() -> collector.stopIntake()));
+
 	new JoystickButton(buttonBox, 5)
 	  .whileTrue(collector.collectorOut())
 	  .onFalse(new InstantCommand(() -> collector.io.stopTilt()));
@@ -281,12 +276,6 @@ public class RobotContainer {
       .whileTrue(new InstantCommand(() -> {
 		  drivetrain.setQuestRobotPose(Pose3d.kZero);
       }));
-
-    new JoystickButton(buttonBox, 10)
-      .whileTrue(shooterBase.setShooterRPM6000());
-	
-	new JoystickButton(buttonBox, 11)
-	  .whileTrue(shooterBase.runIndexerSpeed());
 
 	}
 

@@ -340,6 +340,7 @@ public class Drivetrain extends SubsystemBase {
 	public void periodic() {
 
 		Logger.recordOutput("QuestConnected", questNav.isConnected());
+		Logger.recordOutput("QuestBattery", questNav.getBatteryPercent().isPresent() ? questNav.getBatteryPercent().getAsInt() : -1);
 
 		Logger.recordOutput("Estimated Pose", getEstimatedPose());
 		Logger.recordOutput("Field Relative", isFieldRelativeTeleop);

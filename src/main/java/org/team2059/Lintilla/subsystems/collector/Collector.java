@@ -4,6 +4,7 @@
 
 package org.team2059.Lintilla.subsystems.collector;
 
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonIntegerFormatVisitor;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
@@ -72,25 +73,19 @@ public class Collector extends SubsystemBase {
 		return this.runOnce(() -> io.setTiltPosition(CollectorConstants.thruBoreIn));
 	}
 
-	public Command intake() {
-		return Commands.startEnd(
-		  () -> io.setIntakeSpeed(0.5),
-		  () -> io.stopCollector()
-		);
+	public void runIntake(double intakeSpeed) {
+		io.setIntakeSpeed(intakeSpeed);
 	}
 
-	public Command outtake() {
-		return Commands.startEnd(
-		  () -> io.setIntakeSpeed(-0.5),
-		  () -> io.stopCollector()
-		);
+	public void runConveyor(double speed) {
+		io.runConveyor(speed);
 	}
 
-	public Command runConveyor(double speed) {
-		return Commands.startEnd(
-		  () -> io.runConveyor(speed),
-		  () -> io.stopConveyor()
-		);
+	public void stopConveyor() {
+		io.stopConveyor();
+	}
+	public void stopIntake() {
+		io.stopCollector();
 	}
 
 	public Command sysIdQuasiForward() {

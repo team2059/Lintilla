@@ -228,39 +228,39 @@ public final class Constants {
 
 		// LEFT SHOOTER CONSTANTS
 		public static final boolean leftFlywheelInverted = true;
-		public static final boolean leftIndexerInverted = false;
+		public static final boolean leftIndexerInverted = true;
 
-		public static final double leftIndexerkP = 0.1;
+		public static final double leftIndexerkP = 0.0;
 		public static final double leftIndexerkI = 0.0;
 		public static final double leftIndexerkD = 0.0;
-		public static final double leftIndexerkS = 0;
-		public static final double leftIndexerkV = 0;
-		public static final double leftIndexerkA = 0;
+		public static final double leftIndexerkS = 0.079892;
+		public static final double leftIndexerkV = 0.10559/60;
+		public static final double leftIndexerkA = 0.0073533/60;
 
 		public static final double leftFlywheelkP = 0.0;
 		public static final double leftFlywheelkI = 0.0;
 		public static final double leftFlywheelkD = 0.0;
-		public static final double leftFlywheelkS = 0.071064;
-		public static final double leftFlywheelkV = 0.10564 / 60;
-		public static final double leftFlywheelkA = 0.017298 / 60;
+		public static final double leftFlywheelkS = 0.089332;
+		public static final double leftFlywheelkV = 0.10669/60;
+		public static final double leftFlywheelkA = 0.020699/60;
 
 		// RIGHT SHOOTER CONSTANTS
 		public static final boolean rightFlywheelInverted = false;
 		public static boolean rightIndexerInverted = false;
 
-		public static final double rightIndexerkP = 0.1;
+		public static final double rightIndexerkP = 0.0;
 		public static final double rightIndexerkI = 0.0;
 		public static final double rightIndexerkD = 0.0;
-		public static final double rightIndexerkS = 0;
-		public static final double rightIndexerkV = 0;
-		public static final double rightIndexerkA = 0;
+		public static final double rightIndexerkS = 0.080536;
+		public static final double rightIndexerkV = 0.10572/60;
+		public static final double rightIndexerkA = 0.008408/60;
 
 		public static final double rightFlywheelkP = 0.0;
 		public static final double rightFlywheelkI = 0.0;
 		public static final double rightFlywheelkD = 0.0;
-		public static final double rightFlywheelkS = 0.13506;
-		public static final double rightFlywheelkV = 0.10641 / 60;
-		public static final double rightFlywheelkA = 0.017354 / 60;
+		public static final double rightFlywheelkS = 0.04773;
+		public static final double rightFlywheelkV = 0.10424/60;
+		public static final double rightFlywheelkA = 0.020809/60;
 	}
 
 	public static final class CollectorConstants {

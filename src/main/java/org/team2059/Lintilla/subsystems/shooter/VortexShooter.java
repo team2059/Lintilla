@@ -179,7 +179,7 @@ public class VortexShooter implements ShooterIO {
 		inputs.flywheelPosition.mut_replace(flywheelEncoder.getPosition(), Rotations);
 		inputs.indexerPosition.mut_replace(indexerEncoder.getPosition(), Rotations);
 
-		inputs.flywheelVelocity.mut_replace(indexerEncoder.getVelocity(), RPM);
+		inputs.flywheelVelocity.mut_replace(flywheelEncoder.getVelocity(), RPM);
 		inputs.indexerVelocity.mut_replace(indexerEncoder.getVelocity(), RPM);
 
 		inputs.flywheelAppliedVolts.mut_replace(flywheelMotor.getAppliedOutput() * flywheelMotor.getBusVoltage(), Volts);
