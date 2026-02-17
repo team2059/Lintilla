@@ -258,7 +258,7 @@ public class RobotContainer {
 	 */
 	
 	new JoystickButton(buttonBox, 1)
-		.whileTrue(new SpinupAndShootCmd(shooterBase, collector, 3000));
+		.whileTrue(new SpinupAndShootCmd(shooterBase, collector, 1500));
 
 	new JoystickButton(buttonBox, 2)
 	  .whileTrue(new InstantCommand(() -> collector.runIntake(0.5)))

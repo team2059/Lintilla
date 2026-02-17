@@ -152,6 +152,10 @@ public final class Constants {
 
 	public static final class VisionConstants {
 		public static final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
+
+		public static final Translation2d BLUE_HUB_CENTER = new Translation2d(4.6116, 4.0213);
+		public static final Translation2d RED_HUB_CENTER = new Translation2d(11.9014, 4.0213);
+
 		public static final Transform3d ROBOT_TO_QUEST = new Transform3d(
 		  -0.30449689,
 		  0.16938114,
@@ -162,6 +166,9 @@ public final class Constants {
 		    Math.PI / 2
 		  )
 		);
+
+
+
 		public static Matrix<N3, N1> questNavStdDevs = VecBuilder.fill(
 		  0.02, // Trust down to 2 cm in X direction
 		  0.02, // Trust down to 2 cm in Y direction

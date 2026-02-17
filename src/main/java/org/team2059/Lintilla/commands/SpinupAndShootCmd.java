@@ -46,12 +46,12 @@ public class SpinupAndShootCmd extends Command {
 		if (Math.abs(shooterBase.leftShooterInputs.flywheelVelocity.in(RPM) - desiredRPM) <= spinupToleranceRpm) {
 			// Left shooter is within tolerance. Spin indexer
 			shooterBase.leftShooter.setIndexerSpeed(0.5);
-			collector.runConveyor(0.5);
+			collector.runConveyor(0.25);
 		}
 		if (Math.abs(shooterBase.rightShooterInputs.flywheelVelocity.in(RPM) - desiredRPM) <= spinupToleranceRpm) {
 			// Right shooter is within tolerance. Spin indexer
 			shooterBase.rightShooter.setIndexerSpeed(0.5);
-			collector.runConveyor(0.5);
+			collector.runConveyor(0.25);
 		}
 	}
 
