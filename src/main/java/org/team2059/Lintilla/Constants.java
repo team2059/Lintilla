@@ -151,7 +151,7 @@ public final class Constants {
 	}
 
 	public static final class VisionConstants {
-		public static final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
+		public static final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
 
 		public static final Translation2d BLUE_HUB_CENTER = new Translation2d(4.6116, 4.0213);
 		public static final Translation2d RED_HUB_CENTER = new Translation2d(11.9014, 4.0213);
