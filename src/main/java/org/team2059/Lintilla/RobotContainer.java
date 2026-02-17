@@ -194,88 +194,26 @@ public class RobotContainer {
 		/* SWITCH FIELD/ROBOT RELATIVITY IN TELEOP */
 		new JoystickButton(logitech, OperatorConstants.JoystickRobotRelative)
 		  .whileTrue(new InstantCommand(() -> drivetrain.setFieldRelativity()));
-
-    // new JoystickButton(buttonBox, 1)
-	// 	  .whileTrue(shooterBase.leftShooterQuasiForward());
-
-	// new JoystickButton(buttonBox, 2)
-	// 	.whileTrue(shooterBase.leftShooterQuasiReverse());
-
-	// new JoystickButton(buttonBox, 3)
-	// 	.whileTrue(shooterBase.leftShooterDynamicForward());
-
-	// new JoystickButton(buttonBox, 4)
-	// 	.whileTrue(shooterBase.leftShooterDynamicReverse());
-
-	// new JoystickButton(buttonBox, 5)
-	// 	.whileTrue(shooterBase.rightShooterQuasiForward());
-
-	// new JoystickButton(buttonBox, 6)
-	// 	.whileTrue(shooterBase.rightShooterQuasiReverse());
-
-	// new JoystickButton(buttonBox, 7)
-	// 	.whileTrue(shooterBase.rightShooterDynamicForward());
-
-	// new JoystickButton(buttonBox, 8)
-	// 	.whileTrue(shooterBase.rightShooterDynamicReverse());
-
-	/* Indexer SysID
-    new JoystickButton(buttonBox, 1)
-		  .whileTrue(shooterBase.leftIndexerQuasiForward());
-
-    new JoystickButton(buttonBox, 2)
-		  .whileTrue(shooterBase.leftIndexerQuasiReverse());
-
-    new JoystickButton(buttonBox, 3)
-		  .whileTrue(shooterBase.leftIndexerDynamicForward());
-
-    new JoystickButton(buttonBox, 4)
-		  .whileTrue(shooterBase.leftIndexerDynamicReverse());
-
-    new JoystickButton(buttonBox, 5)
-		  .whileTrue(shooterBase.rightIndexerQuasiForward());
-
-    new JoystickButton(buttonBox, 6)
-		  .whileTrue(shooterBase.rightIndexerQuasiReverse());
-
-    new JoystickButton(buttonBox, 7)
-		  .whileTrue(shooterBase.rightIndexerDynamicForward());
-
-    new JoystickButton(buttonBox, 8)
-		  .whileTrue(shooterBase.rightIndexerDynamicReverse());
- 	*/
-
-	/* Drivetrain translation sysID routine (just drive motors) (wheels must be locked straight for this)
-
-       new JoystickButton(buttonBox, 1)
-        .whileTrue(drivetrain.routine.quasistaticForward());
-       new JoystickButton(buttonBox, 2)
-         .whileTrue(drivetrain.routine.quasistaticReverse());
-       new JoystickButton(buttonBox, 3)
-        .whileTrue(drivetrain.routine.dynamicForward());
-       new JoystickButton(buttonBox, 4)
-        .whileTrue(drivetrain.routine.dynamicReverse());
-	 */
 	
-	new JoystickButton(buttonBox, 1)
-		.whileTrue(new SpinupAndShootCmd(shooterBase, collector, 1500));
+		new JoystickButton(buttonBox, 1)
+			.whileTrue(new SpinupAndShootCmd(shooterBase, collector, 1500));
 
-	new JoystickButton(buttonBox, 2)
-	  .whileTrue(new InstantCommand(() -> collector.runIntake(0.5)))
-	  .onFalse(new InstantCommand(() -> collector.stopIntake()));
+		new JoystickButton(buttonBox, 2)
+		  .whileTrue(new InstantCommand(() -> collector.runIntake(0.5)))
+		  .onFalse(new InstantCommand(() -> collector.stopIntake()));
 
-	new JoystickButton(buttonBox, 5)
-	  .whileTrue(collector.collectorOut())
-	  .onFalse(new InstantCommand(() -> collector.io.stopTilt()));
+		new JoystickButton(buttonBox, 5)
+		  .whileTrue(collector.collectorOut())
+		  .onFalse(new InstantCommand(() -> collector.io.stopTilt()));
 
-	new JoystickButton(buttonBox, 6)
-	  .whileTrue(collector.collectorIn())
-	  .onFalse(new InstantCommand(() -> collector.io.stopTilt()));
+		new JoystickButton(buttonBox, 6)
+		  .whileTrue(collector.collectorIn())
+		  .onFalse(new InstantCommand(() -> collector.io.stopTilt()));
 
-	new JoystickButton(buttonBox, 9)
-      .whileTrue(new InstantCommand(() -> {
-		  drivetrain.setQuestRobotPose(Pose3d.kZero);
-      }));
+		new JoystickButton(buttonBox, 9)
+	      .whileTrue(new InstantCommand(() -> {
+			  drivetrain.setQuestRobotPose(Pose3d.kZero);
+	      }));
 
 	}
 

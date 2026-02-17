@@ -170,8 +170,6 @@ public final class Constants {
 		  )
 		);
 
-
-
 		public static Matrix<N3, N1> questNavStdDevs = VecBuilder.fill(
 		  0.02, // Trust down to 2 cm in X direction
 		  0.02, // Trust down to 2 cm in Y direction

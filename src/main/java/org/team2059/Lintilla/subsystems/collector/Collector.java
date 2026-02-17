@@ -84,6 +84,7 @@ public class Collector extends SubsystemBase {
 	public void stopConveyor() {
 		io.stopConveyor();
 	}
+
 	public void stopIntake() {
 		io.stopCollector();
 	}
