@@ -159,6 +159,9 @@ public final class Constants {
 		public static final Translation2d RED_HUB_CENTER = new Translation2d(11.9014, 4.0213);
 		public static final Translation2d RED_HUB_BACK = new Translation2d(11.3044, 4.0213);
 
+		public static final Translation2d BLUE_TOWER_CENTER = new Translation2d(1.1434, 3.7457);
+		public static final Translation2d RED_TOWER_CENTER = new Translation2d(15.3952, 4.3236);
+
 		public static final Transform3d ROBOT_TO_QUEST = new Transform3d(
 		  -0.30449689,
 		  0.16938114,
