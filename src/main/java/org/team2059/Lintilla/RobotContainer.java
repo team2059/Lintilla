@@ -198,18 +198,15 @@ public class RobotContainer {
 		new JoystickButton(buttonBox, 1)
 			.whileTrue(new SpinupAndShootCmd(shooterBase, collector, 1500));
 
-		new JoystickButton(buttonBox, 2)
-		  .whileTrue(new InstantCommand(() -> collector.runIntake(0.5)))
-		  .onFalse(new InstantCommand(() -> collector.stopIntake()));
-
+		/* COLLECTOR OUT & INTAKE */
 		new JoystickButton(buttonBox, 5)
-		  .whileTrue(collector.collectorOut())
-		  .onFalse(new InstantCommand(() -> collector.io.stopTilt()));
+		  .whileTrue(collector.collectorOut());
 
+		/* COLLECTOR IN */
 		new JoystickButton(buttonBox, 6)
-		  .whileTrue(collector.collectorIn())
-		  .onFalse(new InstantCommand(() -> collector.io.stopTilt()));
+		  .whileTrue(collector.collectorIn());
 
+		/* SET QUEST POSE TO ZERO */
 		new JoystickButton(buttonBox, 9)
 	      .whileTrue(new InstantCommand(() -> {
 			  drivetrain.setQuestRobotPose(Pose3d.kZero);

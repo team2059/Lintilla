@@ -60,33 +60,31 @@ public class Collector extends SubsystemBase {
 	}
 
 	/**
-	 * @return Command which sets the tilt position to the outward position, then stops once tolerance reached.
+	 * Sets tilt to outward position, runs intake, stops when interrupted
+	 *
+	 * @return Command
 	 */
 	public Command collectorOut() {
-		return this.runOnce(() -> io.setTiltPosition(CollectorConstants.thruBoreOut));
+		return this.startEnd(
+		  () -> {
+			  io.setTiltPosition(CollectorConstants.thruBoreOut);
+			  io.setIntakeSpeed(0.5);
+		  },
+		  () -> {
+			  io.stopTilt();
+			  io.stopCollector();
+		  }
+		);
 	}
 
 	/**
-	 * @return Command which sets the tilt position to the inward position, then stops once tolerance reached.
+	 * @return Command that sets tilt to inward position, then stops when interrupted
 	 */
 	public Command collectorIn() {
-		return this.runOnce(() -> io.setTiltPosition(CollectorConstants.thruBoreIn));
-	}
-
-	public void runIntake(double intakeSpeed) {
-		io.setIntakeSpeed(intakeSpeed);
-	}
-
-	public void runConveyor(double speed) {
-		io.runConveyor(speed);
-	}
-
-	public void stopConveyor() {
-		io.stopConveyor();
-	}
-
-	public void stopIntake() {
-		io.stopCollector();
+		return this.startEnd(
+		  () -> io.setTiltPosition(CollectorConstants.thruBoreIn),
+		  () -> io.stopTilt()
+		);
 	}
 
 	public Command sysIdQuasiForward() {
