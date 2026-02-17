@@ -154,7 +154,10 @@ public final class Constants {
 		public static final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
 
 		public static final Translation2d BLUE_HUB_CENTER = new Translation2d(4.6116, 4.0213);
+		public static final Translation2d BLUE_HUB_BACK = new Translation2d(5.2342, 4.0213);
+
 		public static final Translation2d RED_HUB_CENTER = new Translation2d(11.9014, 4.0213);
+		public static final Translation2d RED_HUB_BACK = new Translation2d(11.3044, 4.0213);
 
 		public static final Transform3d ROBOT_TO_QUEST = new Transform3d(
 		  -0.30449689,
