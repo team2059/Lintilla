@@ -21,6 +21,7 @@ import org.team2059.Lintilla.Constants.CANConstants;
 import org.team2059.Lintilla.Constants.DrivetrainConstants;
 import org.team2059.Lintilla.Constants.OperatorConstants;
 import org.team2059.Lintilla.Constants.ShooterConstants;
+import org.team2059.Lintilla.commands.SpinUpAndShootDistCmd;
 import org.team2059.Lintilla.commands.SpinupAndShootCmd;
 import org.team2059.Lintilla.commands.TeleopDriveCmd;
 import org.team2059.Lintilla.subsystems.collector.Collector;
@@ -185,7 +186,7 @@ public class RobotContainer {
 	 * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
 	 * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
 	 * joysticks}.
-	 */
+	*/
 	private void configureBindings() {
 		/* RESET GYRO HEADING */
 		new JoystickButton(logitech, OperatorConstants.JoystickResetHeading)
@@ -194,23 +195,63 @@ public class RobotContainer {
 		/* SWITCH FIELD/ROBOT RELATIVITY IN TELEOP */
 		new JoystickButton(logitech, OperatorConstants.JoystickRobotRelative)
 		  .whileTrue(new InstantCommand(() -> drivetrain.setFieldRelativity()));
-	
+
 		new JoystickButton(buttonBox, 1)
-			.whileTrue(new SpinupAndShootCmd(shooterBase, collector, 1500));
+			.whileTrue(new SpinUpAndShootDistCmd(shooterBase, collector, 7));
+		
+		new JoystickButton(buttonBox, 2)
+			.whileTrue(new SpinUpAndShootDistCmd(shooterBase, collector, 8));
+		
+		new JoystickButton(buttonBox, 3)
+			.whileTrue(new SpinUpAndShootDistCmd(shooterBase, collector, 9));
+
+		new JoystickButton(buttonBox, 4)
+			.whileTrue(new SpinUpAndShootDistCmd(shooterBase, collector, 10));
+
+		new JoystickButton(buttonBox, 5)
+			.whileTrue(new SpinUpAndShootDistCmd(shooterBase, collector, 11));
+		
+		new JoystickButton(buttonBox, 6)
+			.whileTrue(new SpinUpAndShootDistCmd(shooterBase, collector, 12));
+
+
+		// new JoystickButton(buttonBox, 1)
+		// 	.whileTrue(new SpinupAndShootCmd(shooterBase, collector, 2600));
+		
+		// new JoystickButton(buttonBox, 2)
+		// 	.whileTrue(new SpinupAndShootCmd(shooterBase, collector, 2650));
+
+		// new JoystickButton(buttonBox, 3)
+		// 	.whileTrue(new SpinupAndShootCmd(shooterBase, collector, 2700));
+		
+		// new JoystickButton(buttonBox, 4)
+		// 	.whileTrue(new SpinupAndShootCmd(shooterBase, collector, 3000));
+
+		// new JoystickButton(buttonBox, 5)
+		// 	.whileTrue(new SpinupAndShootCmd(shooterBase, collector, 3050));
+
+		// new JoystickButton(buttonBox, 6)
+		// 	.whileTrue(new SpinupAndShootCmd(shooterBase, collector, 3100));
+
+		// new JoystickButton(buttonBox, 7)
+		// 	.whileTrue(new SpinupAndShootCmd(shooterBase, collector, 3250));
+
+		// new JoystickButton(buttonBox, 8)
+		// 	.whileTrue(new SpinupAndShootCmd(shooterBase, collector, 3200));
 
 		/* COLLECTOR OUT & INTAKE */
-		new JoystickButton(buttonBox, 5)
+		new JoystickButton(buttonBox, 9)
 		  .whileTrue(collector.collectorOut());
 
 		/* COLLECTOR IN */
-		new JoystickButton(buttonBox, 6)
+		new JoystickButton(buttonBox, 10)
 		  .whileTrue(collector.collectorIn());
 
-		/* SET QUEST POSE TO ZERO */
-		new JoystickButton(buttonBox, 9)
-	      .whileTrue(new InstantCommand(() -> {
-			  drivetrain.setQuestRobotPose(Pose3d.kZero);
-	      }));
+		// /* SET QUEST POSE TO ZERO */
+		// new JoystickButton(buttonBox, 9)
+	    //   .whileTrue(new InstantCommand(() -> {
+		// 	  drivetrain.setQuestRobotPose(Pose3d.kZero);
+	    //   }));
 
 	}
 

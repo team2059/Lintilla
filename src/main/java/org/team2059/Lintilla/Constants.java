@@ -229,7 +229,7 @@ public final class Constants {
 		public static final double gravitationalAccelerationMpss = 9.80665;
 		public static final double hubHeightMeters = 1.83; // End height of trajectory
 		public static final double shooterHeightMeters = 0.5; // Start height of trajectory
-		public static final double fuelExitAngleRadians = 40 * Math.PI / 180; // RADIANS At what angle does fuel leave the shooter
+		public static final double fuelExitAngleRadians = 0.983936078; // RADIANS At what angle does fuel leave the shooter
 
 		// DO NOT TOUCH the following
 		public static final double tangentShooterAngle = Math.tan(fuelExitAngleRadians);

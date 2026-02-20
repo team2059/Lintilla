@@ -139,6 +139,10 @@ public class ShooterBase extends SubsystemBase {
 		);
 	}
 
+	public double getTargetFuelRpm(double d) {
+		return ((96.36776 * d) + 2151.41884);
+	}
+
 	public void stopAllSubsystemMotors() {
 		leftShooter.stopFlywheel();
 		leftShooter.stopIndexer();

@@ -8,6 +8,8 @@ import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
 import static edu.wpi.first.units.Units.RPM;
 import static org.team2059.Lintilla.Constants.ShooterConstants.spinupToleranceRpm;
 
+import org.littletonrobotics.junction.Logger;
+
 /**
  * Spins up one shooter at a desired RPM, waiting for the spinup before running the indexer.
  *
@@ -19,17 +21,17 @@ import static org.team2059.Lintilla.Constants.ShooterConstants.spinupToleranceRp
  *  * End (when interrupted):
  *  * -> Stop all motors immediately.
  */
-public class SpinupAndShootCmd extends Command {
+public class SpinUpAndShootDistCmd extends Command {
 	private final ShooterBase shooterBase;
 	private final Collector collector;
 
 	// Holds our desired speeds
 	private final double desiredRPM;
 
-	public SpinupAndShootCmd(ShooterBase shooterBase, Collector collector, double desiredRPM) {
+	public SpinUpAndShootDistCmd(ShooterBase shooterBase, Collector collector, double distance) {
 		this.shooterBase = shooterBase;
 		this.collector = collector;
-		this.desiredRPM = desiredRPM;
+		this.desiredRPM = shooterBase.getTargetFuelRpm(distance);
 
 		addRequirements(this.shooterBase);
 	}
@@ -43,6 +45,7 @@ public class SpinupAndShootCmd extends Command {
 
 	@Override
 	public void execute() {
+        Logger.recordOutput("desiredRPMs", desiredRPM);
 		if (Math.abs(shooterBase.leftShooterInputs.flywheelVelocity.in(RPM) - desiredRPM) <= spinupToleranceRpm) {
 			// Left shooter is within tolerance. Spin indexer
 			shooterBase.leftShooter.setIndexerSpeed(0.5);
@@ -69,3 +72,4 @@ public class SpinupAndShootCmd extends Command {
 		collector.io.stopConveyor();
 	}
 }
+
