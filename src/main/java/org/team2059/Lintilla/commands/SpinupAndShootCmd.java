@@ -1,7 +1,6 @@
 package org.team2059.Lintilla.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import org.team2059.Lintilla.RobotContainer;
 import org.team2059.Lintilla.subsystems.collector.Collector;
 import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
 
@@ -10,14 +9,14 @@ import static org.team2059.Lintilla.Constants.ShooterConstants.spinupToleranceRp
 
 /**
  * Spins up one shooter at a desired RPM, waiting for the spinup before running the indexer.
- *
+ * <p>
  * Basic outline.
- *  *
- *  * 1. Shooter spins up.
- *  * 2. When shooter is within a tolerance of target RPM, spin indexer at 50% of target RPM.
- *  *
- *  * End (when interrupted):
- *  * -> Stop all motors immediately.
+ * *
+ * * 1. Shooter spins up.
+ * * 2. When shooter is within a tolerance of target RPM, spin indexer at 50% of target RPM.
+ * *
+ * * End (when interrupted):
+ * * -> Stop all motors immediately.
  */
 public class SpinupAndShootCmd extends Command {
 	private final ShooterBase shooterBase;

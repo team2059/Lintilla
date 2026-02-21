@@ -1,14 +1,12 @@
 package org.team2059.Lintilla.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import org.team2059.Lintilla.RobotContainer;
+import org.littletonrobotics.junction.Logger;
 import org.team2059.Lintilla.subsystems.collector.Collector;
 import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
 
 import static edu.wpi.first.units.Units.RPM;
 import static org.team2059.Lintilla.Constants.ShooterConstants.spinupToleranceRpm;
-
-import org.littletonrobotics.junction.Logger;
 
 public class SpinUpAndShootDistCmd extends Command {
 	private final ShooterBase shooterBase;
@@ -34,7 +32,7 @@ public class SpinUpAndShootDistCmd extends Command {
 
 	@Override
 	public void execute() {
-        Logger.recordOutput("desiredRPMs", desiredRPM);
+		Logger.recordOutput("desiredRPMs", desiredRPM);
 		if (Math.abs(shooterBase.leftShooterInputs.flywheelVelocity.in(RPM) - desiredRPM) <= spinupToleranceRpm) {
 			// Left shooter is within tolerance. Spin indexer
 			shooterBase.leftShooter.setIndexerSpeed(0.5);

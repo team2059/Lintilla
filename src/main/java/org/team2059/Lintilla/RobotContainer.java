@@ -5,8 +5,6 @@
 package org.team2059.Lintilla;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -22,7 +20,6 @@ import org.team2059.Lintilla.Constants.DrivetrainConstants;
 import org.team2059.Lintilla.Constants.OperatorConstants;
 import org.team2059.Lintilla.Constants.ShooterConstants;
 import org.team2059.Lintilla.commands.SpinUpAndShootDistCmd;
-import org.team2059.Lintilla.commands.SpinupAndShootCmd;
 import org.team2059.Lintilla.commands.TeleopDriveCmd;
 import org.team2059.Lintilla.subsystems.collector.Collector;
 import org.team2059.Lintilla.subsystems.collector.CollectorIOReal;
@@ -94,21 +91,21 @@ public class RobotContainer {
 		shooterBase = new ShooterBase(
 		  new VortexShooter( // LEFT SHOOTER
 			CANConstants.leftShooterFlywheel,
-		    CANConstants.leftShooterIndexerMotor,
+			CANConstants.leftShooterIndexerMotor,
 			ShooterConstants.leftFlywheelInverted,
 			ShooterConstants.leftIndexerInverted,
-		    ShooterConstants.leftFlywheelkP,
-		    ShooterConstants.leftFlywheelkI,
-		    ShooterConstants.leftFlywheelkD,
-		    ShooterConstants.leftFlywheelkS,
-		    ShooterConstants.leftFlywheelkV,
-		    ShooterConstants.leftFlywheelkA,
-		    ShooterConstants.leftIndexerkP,
-		    ShooterConstants.leftIndexerkI,
-		    ShooterConstants.leftIndexerkD,
-		    ShooterConstants.leftIndexerkS,
-		    ShooterConstants.leftIndexerkV,
-		    ShooterConstants.leftIndexerkA
+			ShooterConstants.leftFlywheelkP,
+			ShooterConstants.leftFlywheelkI,
+			ShooterConstants.leftFlywheelkD,
+			ShooterConstants.leftFlywheelkS,
+			ShooterConstants.leftFlywheelkV,
+			ShooterConstants.leftFlywheelkA,
+			ShooterConstants.leftIndexerkP,
+			ShooterConstants.leftIndexerkI,
+			ShooterConstants.leftIndexerkD,
+			ShooterConstants.leftIndexerkS,
+			ShooterConstants.leftIndexerkV,
+			ShooterConstants.leftIndexerkA
 		  ),
 		  new VortexShooter( // RIGHT SHOOTER
 			CANConstants.rightShooterFlywheel,
@@ -186,7 +183,7 @@ public class RobotContainer {
 	 * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
 	 * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
 	 * joysticks}.
-	*/
+	 */
 	private void configureBindings() {
 		/* RESET GYRO HEADING */
 		new JoystickButton(logitech, OperatorConstants.JoystickResetHeading)
@@ -197,33 +194,33 @@ public class RobotContainer {
 		  .whileTrue(new InstantCommand(() -> drivetrain.setFieldRelativity()));
 
 		new JoystickButton(buttonBox, 1)
-			.whileTrue(new SpinUpAndShootDistCmd(shooterBase, collector, 7));
-		
+		  .whileTrue(new SpinUpAndShootDistCmd(shooterBase, collector, 7));
+
 		new JoystickButton(buttonBox, 2)
-			.whileTrue(new SpinUpAndShootDistCmd(shooterBase, collector, 8));
-		
+		  .whileTrue(new SpinUpAndShootDistCmd(shooterBase, collector, 8));
+
 		new JoystickButton(buttonBox, 3)
-			.whileTrue(new SpinUpAndShootDistCmd(shooterBase, collector, 9));
+		  .whileTrue(new SpinUpAndShootDistCmd(shooterBase, collector, 9));
 
 		new JoystickButton(buttonBox, 4)
-			.whileTrue(new SpinUpAndShootDistCmd(shooterBase, collector, 10));
+		  .whileTrue(new SpinUpAndShootDistCmd(shooterBase, collector, 10));
 
 		new JoystickButton(buttonBox, 5)
-			.whileTrue(new SpinUpAndShootDistCmd(shooterBase, collector, 11));
-		
+		  .whileTrue(new SpinUpAndShootDistCmd(shooterBase, collector, 11));
+
 		new JoystickButton(buttonBox, 6)
-			.whileTrue(new SpinUpAndShootDistCmd(shooterBase, collector, 12));
+		  .whileTrue(new SpinUpAndShootDistCmd(shooterBase, collector, 12));
 
 
 		// new JoystickButton(buttonBox, 1)
 		// 	.whileTrue(new SpinupAndShootCmd(shooterBase, collector, 2600));
-		
+
 		// new JoystickButton(buttonBox, 2)
 		// 	.whileTrue(new SpinupAndShootCmd(shooterBase, collector, 2650));
 
 		// new JoystickButton(buttonBox, 3)
 		// 	.whileTrue(new SpinupAndShootCmd(shooterBase, collector, 2700));
-		
+
 		// new JoystickButton(buttonBox, 4)
 		// 	.whileTrue(new SpinupAndShootCmd(shooterBase, collector, 3000));
 
@@ -249,9 +246,9 @@ public class RobotContainer {
 
 		// /* SET QUEST POSE TO ZERO */
 		// new JoystickButton(buttonBox, 9)
-	    //   .whileTrue(new InstantCommand(() -> {
+		//   .whileTrue(new InstantCommand(() -> {
 		// 	  drivetrain.setQuestRobotPose(Pose3d.kZero);
-	    //   }));
+		//   }));
 
 	}
 

@@ -74,7 +74,7 @@ public class MK5nModule implements SwerveModuleIO {
 		canCoder.getConfigurator().apply(canCoderConfig);
 
 		// Configure turn motor
-		azimuthMotor = new TalonFX(azimuthMotorCanId, CANConstants.canivore); 
+		azimuthMotor = new TalonFX(azimuthMotorCanId, CANConstants.canivore);
 
 		azimuthMotorConfig.Feedback.FeedbackRemoteSensorID = canCoder.getDeviceID();
 		azimuthMotorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;

@@ -31,20 +31,14 @@ import org.team2059.Lintilla.routines.DrivetrainRoutine;
 public class Drivetrain extends SubsystemBase {
 
 	public static boolean isFieldRelativeTeleop = true;
-
+	public final DrivetrainRoutine routine;
 	private final QuestNav questNav;
-
 	private final GyroscopeIO gyroIO;
 	private final GyroscopeIOInputsAutoLogged gyroInputs = new GyroscopeIOInputsAutoLogged();
-
 	private final SwerveModuleIO[] modules;
 	private final SwerveModuleIOInputsAutoLogged[] swerveModuleInputs = new SwerveModuleIOInputsAutoLogged[4];
-
 	private final Field2d field = new Field2d();
-
 	private final SwerveDrivePoseEstimator poseEstimator;
-
-	public final DrivetrainRoutine routine;
 
 	public Drivetrain(
 	  GyroscopeIO gyroIO,
@@ -142,7 +136,7 @@ public class Drivetrain extends SubsystemBase {
 
 		return positions;
 	}
-	
+
 	public SwerveModuleIO getFrontLeft() {
 		return modules[0];
 	}
@@ -158,7 +152,7 @@ public class Drivetrain extends SubsystemBase {
 	public SwerveModuleIO getBackRight() {
 		return modules[3];
 	}
-	
+
 	public SwerveModuleIOInputsAutoLogged[] getSwerveInputs() {
 		return swerveModuleInputs;
 	}

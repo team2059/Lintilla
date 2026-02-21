@@ -11,7 +11,9 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -168,8 +170,8 @@ public final class Constants {
 		  0,
 		  new Rotation3d(
 			0,
-		    0,
-		    Math.PI / 2
+			0,
+			Math.PI / 2
 		  )
 		);
 
@@ -245,33 +247,31 @@ public final class Constants {
 		public static final double leftIndexerkI = 0.0;
 		public static final double leftIndexerkD = 0.0;
 		public static final double leftIndexerkS = 0.079892;
-		public static final double leftIndexerkV = 0.10559/60;
-		public static final double leftIndexerkA = 0.0073533/60;
+		public static final double leftIndexerkV = 0.10559 / 60;
+		public static final double leftIndexerkA = 0.0073533 / 60;
 
 		public static final double leftFlywheelkP = 0.0;
 		public static final double leftFlywheelkI = 0.0;
 		public static final double leftFlywheelkD = 0.0;
 		public static final double leftFlywheelkS = 0.089332;
-		public static final double leftFlywheelkV = 0.10669/60;
-		public static final double leftFlywheelkA = 0.020699/60;
+		public static final double leftFlywheelkV = 0.10669 / 60;
+		public static final double leftFlywheelkA = 0.020699 / 60;
 
 		// RIGHT SHOOTER CONSTANTS
 		public static final boolean rightFlywheelInverted = false;
-		public static boolean rightIndexerInverted = false;
-
 		public static final double rightIndexerkP = 0.0;
 		public static final double rightIndexerkI = 0.0;
 		public static final double rightIndexerkD = 0.0;
 		public static final double rightIndexerkS = 0.080536;
-		public static final double rightIndexerkV = 0.10572/60;
-		public static final double rightIndexerkA = 0.008408/60;
-
+		public static final double rightIndexerkV = 0.10572 / 60;
+		public static final double rightIndexerkA = 0.008408 / 60;
 		public static final double rightFlywheelkP = 0.0;
 		public static final double rightFlywheelkI = 0.0;
 		public static final double rightFlywheelkD = 0.0;
 		public static final double rightFlywheelkS = 0.04773;
-		public static final double rightFlywheelkV = 0.10424/60;
-		public static final double rightFlywheelkA = 0.020809/60;
+		public static final double rightFlywheelkV = 0.10424 / 60;
+		public static final double rightFlywheelkA = 0.020809 / 60;
+		public static boolean rightIndexerInverted = false;
 	}
 
 	public static final class CollectorConstants {
@@ -280,7 +280,7 @@ public final class Constants {
 		public static final double kDTilt = 0;
 		public static final double kCosTilt = 0.35487;
 		public static final double kSTilt = 0.49117;
-		public static final double kVTilt = 1.234/60;
+		public static final double kVTilt = 1.234 / 60;
 		public static final double kATilt = 0;
 
 		public static final double thruBoreOffset = 0.91;
