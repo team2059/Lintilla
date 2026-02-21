@@ -10,17 +10,6 @@ import static org.team2059.Lintilla.Constants.ShooterConstants.spinupToleranceRp
 
 import org.littletonrobotics.junction.Logger;
 
-/**
- * Spins up one shooter at a desired RPM, waiting for the spinup before running the indexer.
- *
- * Basic outline.
- *  *
- *  * 1. Shooter spins up.
- *  * 2. When shooter is within a tolerance of target RPM, spin indexer at 50% of target RPM.
- *  *
- *  * End (when interrupted):
- *  * -> Stop all motors immediately.
- */
 public class SpinUpAndShootDistCmd extends Command {
 	private final ShooterBase shooterBase;
 	private final Collector collector;
