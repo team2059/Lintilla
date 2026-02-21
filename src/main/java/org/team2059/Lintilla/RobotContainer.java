@@ -5,6 +5,8 @@
 package org.team2059.Lintilla;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -21,6 +23,7 @@ import org.team2059.Lintilla.Constants.OperatorConstants;
 import org.team2059.Lintilla.Constants.ShooterConstants;
 import org.team2059.Lintilla.commands.SpinUpAndShootDistCmd;
 import org.team2059.Lintilla.commands.TeleopDriveCmd;
+import org.team2059.Lintilla.commands.TurnTowardsHubCmd;
 import org.team2059.Lintilla.subsystems.collector.Collector;
 import org.team2059.Lintilla.subsystems.collector.CollectorIOReal;
 import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
@@ -188,6 +191,9 @@ public class RobotContainer {
 		/* RESET GYRO HEADING */
 		new JoystickButton(logitech, OperatorConstants.JoystickResetHeading)
 		  .whileTrue(new InstantCommand(() -> drivetrain.resetGyroHeading()));
+		
+		new JoystickButton(logitech, 4)
+		  .whileTrue(new TurnTowardsHubCmd(drivetrain, true));
 
 		/* SWITCH FIELD/ROBOT RELATIVITY IN TELEOP */
 		new JoystickButton(logitech, OperatorConstants.JoystickRobotRelative)
@@ -244,11 +250,11 @@ public class RobotContainer {
 		new JoystickButton(buttonBox, 10)
 		  .whileTrue(collector.collectorIn());
 
-		// /* SET QUEST POSE TO ZERO */
-		// new JoystickButton(buttonBox, 9)
-		//   .whileTrue(new InstantCommand(() -> {
-		// 	  drivetrain.setQuestRobotPose(Pose3d.kZero);
-		//   }));
+		/* SET QUEST POSE TO ZERO */
+		new JoystickButton(logitech, 6)
+		  .whileTrue(new InstantCommand(() -> {
+			  drivetrain.setQuestRobotPose(Pose3d.kZero);
+		  }));
 
 	}
 

@@ -3,6 +3,8 @@ package org.team2059.Lintilla.commands;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+
+import org.littletonrobotics.junction.Logger;
 import org.team2059.Lintilla.Constants;
 import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
 import org.team2059.Lintilla.util.LoggedTunableNumber;
@@ -47,10 +49,12 @@ public class TurnTowardsHubCmd extends Command {
 
 		Translation2d diff = hub.minus(drivetrain.getEstimatedPose().getTranslation());
 		double currentAngle = Math.atan2(diff.getY(), diff.getX());
+		Logger.recordOutput("Current Angle", currentAngle);
 
 		double nextOutput = controller.calculate(currentAngle);
+		Logger.recordOutput("Next Output", nextOutput);
 
-		drivetrain.drive(0, 0, nextOutput, false);
+		drivetrain.drive(0, 0, -nextOutput, false);
 	}
 
 	@Override
