@@ -6,7 +6,9 @@ package org.team2059.Lintilla;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -21,9 +23,8 @@ import org.team2059.Lintilla.Constants.CANConstants;
 import org.team2059.Lintilla.Constants.DrivetrainConstants;
 import org.team2059.Lintilla.Constants.OperatorConstants;
 import org.team2059.Lintilla.Constants.ShooterConstants;
-import org.team2059.Lintilla.commands.SpinUpAndShootDistCmd;
+import org.team2059.Lintilla.commands.SpinupAndShootCmd;
 import org.team2059.Lintilla.commands.TeleopDriveCmd;
-import org.team2059.Lintilla.commands.TurnTowardsHubCmd;
 import org.team2059.Lintilla.subsystems.collector.Collector;
 import org.team2059.Lintilla.subsystems.collector.CollectorIOReal;
 import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
@@ -154,13 +155,16 @@ public class RobotContainer {
 			() -> -logitech.getRawAxis(OperatorConstants.JoystickRotationAxis), // rotation
 			() -> logitech.getRawAxis(OperatorConstants.JoystickSliderAxis), // slider
 			() -> logitech.getRawButton(OperatorConstants.JoystickStrafeOnly), // Strafe Only Button
-			() -> logitech.getRawButton(OperatorConstants.JoystickInvertedDrive) // Inverted button
+			() -> logitech.getRawButton(OperatorConstants.JoystickInvertedDrive), // Inverted button
+		    () -> logitech.getRawButton(2)
 		  )
 		);
 
 		/* ========== */
 		/* AUTONOMOUS */
 		/* ========== */
+
+		/* NAMED COMMANDS */
 
 		// Build auto chooser - you can also set a default.
 		autoChooser = AutoBuilder.buildAutoChooser();
@@ -191,56 +195,10 @@ public class RobotContainer {
 		/* RESET GYRO HEADING */
 		new JoystickButton(logitech, OperatorConstants.JoystickResetHeading)
 		  .whileTrue(new InstantCommand(() -> drivetrain.resetGyroHeading()));
-		
-		new JoystickButton(logitech, 4)
-		  .whileTrue(new TurnTowardsHubCmd(drivetrain, true));
 
 		/* SWITCH FIELD/ROBOT RELATIVITY IN TELEOP */
 		new JoystickButton(logitech, OperatorConstants.JoystickRobotRelative)
 		  .whileTrue(new InstantCommand(() -> drivetrain.setFieldRelativity()));
-
-		new JoystickButton(buttonBox, 1)
-		  .whileTrue(new SpinUpAndShootDistCmd(shooterBase, collector, 7));
-
-		new JoystickButton(buttonBox, 2)
-		  .whileTrue(new SpinUpAndShootDistCmd(shooterBase, collector, 8));
-
-		new JoystickButton(buttonBox, 3)
-		  .whileTrue(new SpinUpAndShootDistCmd(shooterBase, collector, 9));
-
-		new JoystickButton(buttonBox, 4)
-		  .whileTrue(new SpinUpAndShootDistCmd(shooterBase, collector, 10));
-
-		new JoystickButton(buttonBox, 5)
-		  .whileTrue(new SpinUpAndShootDistCmd(shooterBase, collector, 11));
-
-		new JoystickButton(buttonBox, 6)
-		  .whileTrue(new SpinUpAndShootDistCmd(shooterBase, collector, 12));
-
-
-		// new JoystickButton(buttonBox, 1)
-		// 	.whileTrue(new SpinupAndShootCmd(shooterBase, collector, 2600));
-
-		// new JoystickButton(buttonBox, 2)
-		// 	.whileTrue(new SpinupAndShootCmd(shooterBase, collector, 2650));
-
-		// new JoystickButton(buttonBox, 3)
-		// 	.whileTrue(new SpinupAndShootCmd(shooterBase, collector, 2700));
-
-		// new JoystickButton(buttonBox, 4)
-		// 	.whileTrue(new SpinupAndShootCmd(shooterBase, collector, 3000));
-
-		// new JoystickButton(buttonBox, 5)
-		// 	.whileTrue(new SpinupAndShootCmd(shooterBase, collector, 3050));
-
-		// new JoystickButton(buttonBox, 6)
-		// 	.whileTrue(new SpinupAndShootCmd(shooterBase, collector, 3100));
-
-		// new JoystickButton(buttonBox, 7)
-		// 	.whileTrue(new SpinupAndShootCmd(shooterBase, collector, 3250));
-
-		// new JoystickButton(buttonBox, 8)
-		// 	.whileTrue(new SpinupAndShootCmd(shooterBase, collector, 3200));
 
 		/* COLLECTOR OUT & INTAKE */
 		new JoystickButton(buttonBox, 9)
@@ -250,11 +208,26 @@ public class RobotContainer {
 		new JoystickButton(buttonBox, 10)
 		  .whileTrue(collector.collectorIn());
 
-		/* SET QUEST POSE TO ZERO */
-		new JoystickButton(logitech, 6)
+		/* COLLECTOR UNJAM */
+		new JoystickButton(buttonBox, 11)
+		  .whileTrue(new InstantCommand(() -> collector.io.setIntakeSpeed(-1)))
+		  .onFalse(new InstantCommand(() -> collector.io.stopCollector()));
+
+		/* SET QUEST POSE */
+		new JoystickButton(buttonBox, 1)
 		  .whileTrue(new InstantCommand(() -> {
-			  drivetrain.setQuestRobotPose(Pose3d.kZero);
+			  drivetrain.setQuestRobotPose(new Pose3d(Constants.VisionConstants.BLUE_8FTMARK));
 		  }));
+
+		/* SPINUP & SHOOT FROM CURRENT HUB DISTANCE */
+		new JoystickButton(buttonBox, 3)
+		  .whileTrue(
+			new SpinupAndShootCmd(
+			  shooterBase,
+			  collector,
+			  shooterBase.getTargetRpm(Units.metersToFeet(drivetrain.calculateDistanceShooterToHubMeters()))
+			)
+		  );
 
 	}
 

@@ -134,25 +134,12 @@ public class ShooterBase extends SubsystemBase {
 	public Command rightIndexerDynamicReverse() {return rightIndexerRoutine.dynamic(SysIdRoutine.Direction.kReverse);}
 
 	/**
-	 * Calculate the needed velocity (in meters per second) of the fuel as it exits
-	 *
-	 * @param d horizontal magnitude (along floor only, in meters)
-	 * @return velocity in meters/sec
+	 * Fetch the needed RPM of the flywheel to shoot fuel a given distance
+	 * @param distanceFeet horizontal distance to target, in feet
+	 * @return RPM to set the shooter at
 	 */
-	public double getTargetFuelVelocityMps(double d) {
-		// Ensure minimum shot, won't cause NaN
-		if (d <= ShooterConstants.minimumShotDistanceMeters) {
-			return 0.0;
-		}
-
-		return Math.sqrt(
-		  (ShooterConstants.gravitationalAccelerationMpss * d * d)
-			/ (2 * ShooterConstants.cosineShooterAngleSquared * ((d * ShooterConstants.tangentShooterAngle) - ShooterConstants.dY))
-		);
-	}
-
-	public double getTargetFuelRpm(double d) {
-		return ((96.36776 * d) + 2151.41884);
+	public double getTargetRpm(double distanceFeet) {
+		return ShooterConstants.shooterMap.get(distanceFeet);
 	}
 
 	public void stopAllSubsystemMotors() {

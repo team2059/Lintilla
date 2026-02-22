@@ -8,15 +8,17 @@ package org.team2059.Lintilla;
 import com.ctre.phoenix6.CANBus;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 
 import static edu.wpi.first.units.Units.Inches;
@@ -107,7 +109,7 @@ public final class Constants {
 		 * Wheel Diameter: 4 inches, 0.1016 meters
 		 */
 
-		public static final Distance wheelBase = Inches.of(25.7); // Distance from center of wheels on side
+		public static final Distance wheelBase = Inches.of(26); // Distance from center of wheels on side
 		public static final Distance trackWidth = Inches.of(19); // Distance between front wheels (like train track)
 
 		// Kinematics give each module relative to center. X is forward/backward and Y is left/right.
@@ -153,6 +155,9 @@ public final class Constants {
 	}
 
 	public static final class VisionConstants {
+
+		public static final Transform2d SHOOTER_OFFSET = new Transform2d(-Units.inchesToMeters(10), 0, Rotation2d.kZero);
+
 		public static final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
 
 		public static final Translation2d BLUE_HUB_CENTER = new Translation2d(4.6116, 4.0213);
@@ -163,6 +168,15 @@ public final class Constants {
 
 		public static final Translation2d BLUE_TOWER_CENTER = new Translation2d(1.1434, 3.7457);
 		public static final Translation2d RED_TOWER_CENTER = new Translation2d(15.3952, 4.3236);
+
+		// Testing poses
+		public static final Pose2d BLUE_2FTMARK = new Pose2d(4.6116 - Units.inchesToMeters(21.75 + 24), 4.0213, Rotation2d.kZero);
+		public static final Pose2d BLUE_4FTMARK = new Pose2d(4.6116 - Units.inchesToMeters(21.75 + 4*12), 4.0213, Rotation2d.kZero);
+		public static final Pose2d BLUE_6FTMARK = new Pose2d(4.6116 - Units.inchesToMeters(21.75 + 6*12), 4.0213, Rotation2d.kZero);
+		public static final Pose2d BLUE_8FTMARK = new Pose2d(4.6116 - Units.inchesToMeters(21.75 + 8*12), 4.0213, Rotation2d.kZero);
+		public static final Pose2d BLUE_10FTMARK = new Pose2d(4.6116 - Units.inchesToMeters(21.75 + 10*12), 4.0213, Rotation2d.kZero);
+		public static final Pose2d BLUE_12FTMARK = new Pose2d(4.6116 - Units.inchesToMeters(21.75 + 12*12), 4.0213, Rotation2d.kZero);
+		public static final Pose2d BLUE_14FTMARK = new Pose2d(4.6116 - Units.inchesToMeters(21.75 + 14*12), 4.0213, Rotation2d.kZero);
 
 		public static final Transform3d ROBOT_TO_QUEST = new Transform3d(
 		  -0.30449689,
@@ -214,6 +228,16 @@ public final class Constants {
 	}
 
 	public static final class ShooterConstants {
+
+		public static final InterpolatingDoubleTreeMap shooterMap = new InterpolatingDoubleTreeMap();
+		static {
+			shooterMap.put(7.0, 2800.0);
+			shooterMap.put(8.0, 3000.0);
+			shooterMap.put(9.5, 3050.0);
+			shooterMap.put(6.5, 2750.0);
+			shooterMap.put(10.0, 3100.0);
+			shooterMap.put(11.0, 3200.0);
+		}
 
 		// Error to tolerate when spinning up to shoot (in RPMs)
 		public static final double spinupToleranceRpm = 100;

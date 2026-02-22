@@ -10,6 +10,7 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -27,6 +28,8 @@ import org.team2059.Lintilla.Constants.AutoConstants;
 import org.team2059.Lintilla.Constants.DrivetrainConstants;
 import org.team2059.Lintilla.Constants.VisionConstants;
 import org.team2059.Lintilla.routines.DrivetrainRoutine;
+
+import java.util.Optional;
 
 public class Drivetrain extends SubsystemBase {
 
@@ -164,6 +167,13 @@ public class Drivetrain extends SubsystemBase {
 		return DrivetrainConstants.kinematics.toChassisSpeeds(getStates());
 	}
 
+	/**
+	 * @return current Pose2d of the shooter. The offset has been applied. Where is the shooter relative to the field?
+	 */
+	public Pose2d getShooterPose() {
+		return getEstimatedPose().transformBy(VisionConstants.SHOOTER_OFFSET);
+	}
+
 	public void resetGyroHeading() {
 		gyroIO.reset();
 	}
@@ -200,20 +210,36 @@ public class Drivetrain extends SubsystemBase {
 		poseEstimator.resetPosition(getHeading(), getModulePositions(), pose);
 	}
 
+	/**
+	 * Set the raw Quest pose, with NO robot offsets included.
+	 * @param pose the Pose3d to set to
+	 */
 	public void setQuestRawPose(Pose3d pose) {
 		questNav.setPose(pose);
 	}
 
+	/**
+	 * Set the Quest-reported ROBOT pose. Offset applied automatically. Where do you want the robot to think it is?
+	 * @param pose the Pose3d to set to
+	 */
 	public void setQuestRobotPose(Pose3d pose) {
 		questNav.setPose(pose.transformBy(VisionConstants.ROBOT_TO_QUEST));
 	}
 
 	/**
+	 * Pose2d version of this method. All other values set to zero. Check whether you need 3d positioning data.
+	 * @param pose the Pose2d to set to
+	 */
+	public void setQuestRobotPose(Pose2d pose) {
+		questNav.setPose(new Pose3d(pose).transformBy(VisionConstants.ROBOT_TO_QUEST));
+	}
+
+	/**
 	 * Method to drive the robot either field or robot relative
 	 *
-	 * @param forward         forward/backward linear velocity component
-	 * @param strafe          strafe linear velocity component
-	 * @param rotation        rotational component
+	 * @param forward         forward/backward linear velocity component (meters/sec)
+	 * @param strafe          strafe linear velocity component (meters/sec)
+	 * @param rotation        rotational component (radians/sec)
 	 * @param isFieldRelative should drive field relative or not
 	 */
 	public void drive(double forward, double strafe, double rotation, boolean isFieldRelative) {
@@ -305,7 +331,7 @@ public class Drivetrain extends SubsystemBase {
 			// Configure AutoBuilder
 			AutoBuilder.configure(
 			  this::getEstimatedPose, // Robot pose supplier
-			  this::setPosition, // Method to reset pose
+			  this::setQuestRobotPose, // Method to reset pose. We use the Quest method here.
 			  this::getRobotRelativeSpeeds, // ChassisSpeeds supplier, MUST be robot relative
 			  (speeds) -> driveRobotRelative(speeds), // Method that will drive the robot given robot-relative chassis speeds
 			  new PPHolonomicDriveController(
@@ -330,13 +356,40 @@ public class Drivetrain extends SubsystemBase {
 		}
 	}
 
+	/**
+	 * Calculate the direct horizontal distance from the shooter to the Alliance Hub.
+	 * @return distance, in METERS
+	 */
+	public double calculateDistanceShooterToHubMeters() {
+		// If we can't do anything, return a negative distance (that's not valid)
+		double output = -1;
+
+		// Checks for alliance and selects appropriate hub pose
+		Optional<DriverStation.Alliance> ally = DriverStation.getAlliance();
+		if (ally.isPresent()) {
+			if (ally.get() == DriverStation.Alliance.Red) {
+				System.out.println("Calculating RED distance");
+				output = VisionConstants.RED_HUB_CENTER.getDistance(getShooterPose().getTranslation());
+			}
+			if (ally.get() == DriverStation.Alliance.Blue) {
+				System.out.println("Calculating BLUE distance");
+				output = VisionConstants.BLUE_HUB_CENTER.getDistance(getShooterPose().getTranslation());
+			}
+		}
+
+		Logger.recordOutput("distanceMeters", output);
+		return output;
+	}
+
 	@Override
 	public void periodic() {
 
+		// Quest logging stuff
 		Logger.recordOutput("QuestConnected", questNav.isConnected());
 		Logger.recordOutput("QuestBattery", questNav.getBatteryPercent().isPresent() ? questNav.getBatteryPercent().getAsInt() : -1);
 
 		Logger.recordOutput("Estimated Pose", getEstimatedPose());
+		Logger.recordOutput("Shooter Pose", getShooterPose());
 		Logger.recordOutput("Field Relative", isFieldRelativeTeleop);
 
 		gyroIO.updateInputs(gyroInputs);

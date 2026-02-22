@@ -66,7 +66,7 @@ public class Collector extends SubsystemBase {
 		return this.startEnd(
 		  () -> {
 			  io.setTiltPosition(CollectorConstants.thruBoreOut);
-			  io.setIntakeSpeed(0.5);
+			  io.setIntakeSpeed(1);
 		  },
 		  () -> {
 			  io.stopTilt();
@@ -80,8 +80,12 @@ public class Collector extends SubsystemBase {
 	 */
 	public Command collectorIn() {
 		return this.startEnd(
-		  () -> io.setTiltPosition(CollectorConstants.thruBoreIn),
-		  () -> io.stopTilt()
+		  () -> {
+			  io.setTiltPosition(CollectorConstants.thruBoreIn);
+		  },
+		  () -> {
+			  io.stopTilt();
+		  }
 		);
 	}
 
