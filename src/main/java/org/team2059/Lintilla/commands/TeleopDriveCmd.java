@@ -6,7 +6,6 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import org.team2059.Lintilla.Constants;
 import org.team2059.Lintilla.Constants.DrivetrainConstants;
@@ -26,9 +25,9 @@ public class TeleopDriveCmd extends Command {
 	// Values for autorotation to hub
 	private final Translation2d hub;
 	private final PIDController controller;
-	private final LoggedTunableNumber kP = new LoggedTunableNumber("HubTurnKp", 5.0);
+	private final LoggedTunableNumber kP = new LoggedTunableNumber("HubTurnKp", 8.0);
 	private final LoggedTunableNumber kI = new LoggedTunableNumber("HubTurnKi", 0);
-	private final LoggedTunableNumber kD = new LoggedTunableNumber("HubTurnKd", 0.1);
+	private final LoggedTunableNumber kD = new LoggedTunableNumber("HubTurnKd", 0);
 
 	/**
 	 * Creates a new TeleopDriveCmd.
@@ -82,6 +81,7 @@ public class TeleopDriveCmd extends Command {
 	// Called when the command is initially scheduled.
 	@Override
 	public void initialize() {
+		// Set tolerance to 1 degree for rotational PID (applies if button is selected)
 		controller.setTolerance(Math.toRadians(1));
 	}
 
@@ -138,6 +138,10 @@ public class TeleopDriveCmd extends Command {
 
 			double angularSpeedRps = controller.calculate(currentAngleRad, targetAngleRad);
 
+			// Clamp angular speed so we don't brown out
+			// TODO: does this need rotLimiter and kTeleDriveMaxAngularSpeed calls?
+			angularSpeedRps = MathUtil.clamp(angularSpeedRps, -4.73, 4.73);
+
 			drivetrain.drive(xSpeed, ySpeed, angularSpeedRps, drivetrain.isFieldRelativeTeleop);
 		} else if (inverted.getAsBoolean()) { // Invert all axes if requested
 			drivetrain.drive(
@@ -166,7 +170,7 @@ public class TeleopDriveCmd extends Command {
 	// Called once the command ends or is interrupted.
 	@Override
 	public void end(boolean interrupted) {
-		drivetrain.drive(0,0,0,true);
+		drivetrain.drive(0, 0, 0, true);
 	}
 
 	// Returns true when the command should end.

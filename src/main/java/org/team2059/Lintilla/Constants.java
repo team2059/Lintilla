@@ -13,8 +13,8 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.*;
-import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
+import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -140,18 +140,18 @@ public final class Constants {
 		 * Open Phoenix Tuner X and locate your CANcoder. Run self-test.
 		 * Read value from "Absolute Position - No Offset". Add a negative. Paste the value here.
 		 */
-		public static final double frontRightEncoderOffset = -0.347656;
-		public static final double frontLeftEncoderOffset = -0.983887;
-		public static final double backRightEncoderOffset = -0.605713;
-		public static final double backLeftEncoderOffset = -0.650391;
+		public static final double frontRightEncoderOffset = -0.847900;
+		public static final double frontLeftEncoderOffset = -0.981934;
+		public static final double backRightEncoderOffset = -0.605225;
+		public static final double backLeftEncoderOffset = -0.150635;
 
 		// Drive motor inversions
-		public static final boolean frontRightInverted = true;
+		public static final boolean frontRightInverted = false;
 		public static final boolean frontLeftInverted = false;
 		public static final boolean backRightInverted = true;
-		public static final boolean backLeftInverted = false;
+		public static final boolean backLeftInverted = true;
 		public static final SimpleMotorFeedforward driveFF = new SimpleMotorFeedforward(0.17821, 1.9047, 0.14686);
-		public static double kPRotation = 0.25;
+		public static double kPRotation = 0.5;
 	}
 
 	public static final class VisionConstants {
@@ -171,12 +171,12 @@ public final class Constants {
 
 		// Testing poses
 		public static final Pose2d BLUE_2FTMARK = new Pose2d(4.6116 - Units.inchesToMeters(21.75 + 24), 4.0213, Rotation2d.kZero);
-		public static final Pose2d BLUE_4FTMARK = new Pose2d(4.6116 - Units.inchesToMeters(21.75 + 4*12), 4.0213, Rotation2d.kZero);
-		public static final Pose2d BLUE_6FTMARK = new Pose2d(4.6116 - Units.inchesToMeters(21.75 + 6*12), 4.0213, Rotation2d.kZero);
-		public static final Pose2d BLUE_8FTMARK = new Pose2d(4.6116 - Units.inchesToMeters(21.75 + 8*12), 4.0213, Rotation2d.kZero);
-		public static final Pose2d BLUE_10FTMARK = new Pose2d(4.6116 - Units.inchesToMeters(21.75 + 10*12), 4.0213, Rotation2d.kZero);
-		public static final Pose2d BLUE_12FTMARK = new Pose2d(4.6116 - Units.inchesToMeters(21.75 + 12*12), 4.0213, Rotation2d.kZero);
-		public static final Pose2d BLUE_14FTMARK = new Pose2d(4.6116 - Units.inchesToMeters(21.75 + 14*12), 4.0213, Rotation2d.kZero);
+		public static final Pose2d BLUE_4FTMARK = new Pose2d(4.6116 - Units.inchesToMeters(21.75 + 4 * 12), 4.0213, Rotation2d.kZero);
+		public static final Pose2d BLUE_6FTMARK = new Pose2d(4.6116 - Units.inchesToMeters(21.75 + 6 * 12), 4.0213, Rotation2d.kZero);
+		public static final Pose2d BLUE_8FTMARK = new Pose2d(4.6116 - Units.inchesToMeters(21.75 + 8 * 12), 4.0213, Rotation2d.kZero);
+		public static final Pose2d BLUE_10FTMARK = new Pose2d(4.6116 - Units.inchesToMeters(21.75 + 10 * 12), 4.0213, Rotation2d.kZero);
+		public static final Pose2d BLUE_12FTMARK = new Pose2d(4.6116 - Units.inchesToMeters(21.75 + 12 * 12), 4.0213, Rotation2d.kZero);
+		public static final Pose2d BLUE_14FTMARK = new Pose2d(4.6116 - Units.inchesToMeters(21.75 + 14 * 12), 4.0213, Rotation2d.kZero);
 
 		public static final Transform3d ROBOT_TO_QUEST = new Transform3d(
 		  -0.30449689,
@@ -229,18 +229,23 @@ public final class Constants {
 
 	public static final class ShooterConstants {
 
-		public static final InterpolatingDoubleTreeMap shooterMap = new InterpolatingDoubleTreeMap();
-		static {
-			shooterMap.put(7.0, 2800.0);
-			shooterMap.put(8.0, 3000.0);
-			shooterMap.put(9.5, 3050.0);
-			shooterMap.put(6.5, 2750.0);
-			shooterMap.put(10.0, 3100.0);
-			shooterMap.put(11.0, 3200.0);
-		}
+		public static final InterpolatingTreeMap<Double, ShooterParams> SHOOTER_MAP = new InterpolatingTreeMap<>(
+		  InverseInterpolator.forDouble(),
 
+		  // Value interpolator: blends RPMs and flight times based on distance ratio, t
+		  (start, end, t) -> new ShooterParams(
+			MathUtil.interpolate(start.rpm(), end.rpm(), t),
+			MathUtil.interpolate(start.timeOfFlight(), end.timeOfFlight(), t)
+		  )
+		);
 		// Error to tolerate when spinning up to shoot (in RPMs)
-		public static final double spinupToleranceRpm = 100;
+		public static final double spinupToleranceRpm = 200;
+		// Speed [-1,1] to run the indexer at while shooting
+		public static final double indexerShootingSpeed = 0.5;
+		// Speed [-1,1] to run the conveyor at while shooting
+		public static final double conveyorShootingSpeed = 0.5;
+		public static final double gravitationalAccelerationMpss = 9.80665;
+		public static final double hubHeightMeters = 1.83; // End height of trajectory
 
 		/*
 		 * Units of Flywheel Constants (Thanks Rev for good docs this year)
@@ -251,36 +256,28 @@ public final class Constants {
 		 * - kV: Volts per RPM
 		 * - kA: Volts per RPM/sec
 		 */
-
-		public static final double gravitationalAccelerationMpss = 9.80665;
-		public static final double hubHeightMeters = 1.83; // End height of trajectory
 		public static final double shooterHeightMeters = 0.5; // Start height of trajectory
 		public static final double fuelExitAngleRadians = 0.983936078; // RADIANS At what angle does fuel leave the shooter
-
 		// DO NOT TOUCH the following
 		public static final double tangentShooterAngle = Math.tan(fuelExitAngleRadians);
 		public static final double cosineShooterAngleSquared = Math.pow(Math.cos(fuelExitAngleRadians), 2);
 		public static final double dY = hubHeightMeters - shooterHeightMeters;
 		public static final double minimumShotDistanceMeters = dY / tangentShooterAngle;
-
 		// LEFT SHOOTER CONSTANTS
 		public static final boolean leftFlywheelInverted = true;
 		public static final boolean leftIndexerInverted = true;
-
 		public static final double leftIndexerkP = 0.0;
 		public static final double leftIndexerkI = 0.0;
 		public static final double leftIndexerkD = 0.0;
 		public static final double leftIndexerkS = 0.079892;
 		public static final double leftIndexerkV = 0.10559 / 60;
 		public static final double leftIndexerkA = 0.0073533 / 60;
-
 		public static final double leftFlywheelkP = 0.0;
 		public static final double leftFlywheelkI = 0.0;
 		public static final double leftFlywheelkD = 0.0;
 		public static final double leftFlywheelkS = 0.089332;
 		public static final double leftFlywheelkV = 0.10669 / 60;
 		public static final double leftFlywheelkA = 0.020699 / 60;
-
 		// RIGHT SHOOTER CONSTANTS
 		public static final boolean rightFlywheelInverted = false;
 		public static final double rightIndexerkP = 0.0;
@@ -296,6 +293,17 @@ public final class Constants {
 		public static final double rightFlywheelkV = 0.10424 / 60;
 		public static final double rightFlywheelkA = 0.020809 / 60;
 		public static boolean rightIndexerInverted = false;
+
+		static {
+			SHOOTER_MAP.put(2.15, new ShooterParams(2900, 0.7));
+			SHOOTER_MAP.put(3.18, new ShooterParams(3050, 0.8));
+			SHOOTER_MAP.put(4.02, new ShooterParams(3250, 1.05));
+			SHOOTER_MAP.put(4.8, new ShooterParams(4000, 1.25));
+			SHOOTER_MAP.put(5.81, new ShooterParams(4800, 1.48));
+			SHOOTER_MAP.put(6.53, new ShooterParams(4950, 1.56));
+		}
+
+		public record ShooterParams(double rpm, double timeOfFlight) {}
 	}
 
 	public static final class CollectorConstants {

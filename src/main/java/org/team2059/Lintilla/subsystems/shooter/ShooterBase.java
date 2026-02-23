@@ -135,11 +135,15 @@ public class ShooterBase extends SubsystemBase {
 
 	/**
 	 * Fetch the needed RPM of the flywheel to shoot fuel a given distance
-	 * @param distanceFeet horizontal distance to target, in feet
+	 *
+	 * @param distanceMeters horizontal distance to target, in meters
 	 * @return RPM to set the shooter at
 	 */
-	public double getTargetRpm(double distanceFeet) {
-		return ShooterConstants.shooterMap.get(distanceFeet);
+	public double getTargetRpm(double distanceMeters) {
+		Logger.recordOutput("distanceMeters", distanceMeters);
+		double rpm = ShooterConstants.SHOOTER_MAP.get(distanceMeters).rpm();
+		Logger.recordOutput("desiredRPM", rpm);
+		return rpm;
 	}
 
 	public void stopAllSubsystemMotors() {

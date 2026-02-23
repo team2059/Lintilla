@@ -10,7 +10,6 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -34,13 +33,19 @@ import java.util.Optional;
 public class Drivetrain extends SubsystemBase {
 
 	public static boolean isFieldRelativeTeleop = true;
+
 	public final DrivetrainRoutine routine;
+
 	private final QuestNav questNav;
+
 	private final GyroscopeIO gyroIO;
 	private final GyroscopeIOInputsAutoLogged gyroInputs = new GyroscopeIOInputsAutoLogged();
+
 	private final SwerveModuleIO[] modules;
 	private final SwerveModuleIOInputsAutoLogged[] swerveModuleInputs = new SwerveModuleIOInputsAutoLogged[4];
+
 	private final Field2d field = new Field2d();
+
 	private final SwerveDrivePoseEstimator poseEstimator;
 
 	public Drivetrain(
@@ -212,6 +217,7 @@ public class Drivetrain extends SubsystemBase {
 
 	/**
 	 * Set the raw Quest pose, with NO robot offsets included.
+	 *
 	 * @param pose the Pose3d to set to
 	 */
 	public void setQuestRawPose(Pose3d pose) {
@@ -220,6 +226,7 @@ public class Drivetrain extends SubsystemBase {
 
 	/**
 	 * Set the Quest-reported ROBOT pose. Offset applied automatically. Where do you want the robot to think it is?
+	 *
 	 * @param pose the Pose3d to set to
 	 */
 	public void setQuestRobotPose(Pose3d pose) {
@@ -228,6 +235,7 @@ public class Drivetrain extends SubsystemBase {
 
 	/**
 	 * Pose2d version of this method. All other values set to zero. Check whether you need 3d positioning data.
+	 *
 	 * @param pose the Pose2d to set to
 	 */
 	public void setQuestRobotPose(Pose2d pose) {
@@ -258,6 +266,8 @@ public class Drivetrain extends SubsystemBase {
 		  : new ChassisSpeeds(forward, strafe, rotation);
 
 		speeds = ChassisSpeeds.discretize(speeds, 0.02);
+
+		Logger.recordOutput("RotationRate", speeds.omegaRadiansPerSecond);
 
 		// use kinematics (wheel placements) to convert overall robot state to array of
 		// individual module states
@@ -358,6 +368,7 @@ public class Drivetrain extends SubsystemBase {
 
 	/**
 	 * Calculate the direct horizontal distance from the shooter to the Alliance Hub.
+	 *
 	 * @return distance, in METERS
 	 */
 	public double calculateDistanceShooterToHubMeters() {
@@ -368,16 +379,15 @@ public class Drivetrain extends SubsystemBase {
 		Optional<DriverStation.Alliance> ally = DriverStation.getAlliance();
 		if (ally.isPresent()) {
 			if (ally.get() == DriverStation.Alliance.Red) {
-				System.out.println("Calculating RED distance");
 				output = VisionConstants.RED_HUB_CENTER.getDistance(getShooterPose().getTranslation());
 			}
 			if (ally.get() == DriverStation.Alliance.Blue) {
-				System.out.println("Calculating BLUE distance");
 				output = VisionConstants.BLUE_HUB_CENTER.getDistance(getShooterPose().getTranslation());
 			}
+		} else {
+			System.out.println("ALLY NOT AVAILABLE");
 		}
 
-		Logger.recordOutput("distanceMeters", output);
 		return output;
 	}
 
@@ -386,6 +396,7 @@ public class Drivetrain extends SubsystemBase {
 
 		// Quest logging stuff
 		Logger.recordOutput("QuestConnected", questNav.isConnected());
+		Logger.recordOutput("QuestLostTrackingCount", questNav.getTrackingLostCounter().getAsInt());
 		Logger.recordOutput("QuestBattery", questNav.getBatteryPercent().isPresent() ? questNav.getBatteryPercent().getAsInt() : -1);
 
 		Logger.recordOutput("Estimated Pose", getEstimatedPose());
@@ -436,6 +447,5 @@ public class Drivetrain extends SubsystemBase {
 
 		// Update pose estimator based on wheel positions
 		poseEstimator.update(getHeading(), getModulePositions());
-
 	}
 }

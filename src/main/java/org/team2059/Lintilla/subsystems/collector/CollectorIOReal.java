@@ -31,7 +31,7 @@ public class CollectorIOReal implements CollectorIO {
 	private final SparkFlexConfig conveyorConfig = new SparkFlexConfig();
 	private final AbsoluteEncoder thruBoreEnc;
 
-	private final LoggedTunableNumber kPTilt = new LoggedTunableNumber("Tuning/kPTilt", CollectorConstants.kPTilt);
+	private final LoggedTunableNumber kPTilt = new LoggedTunableNumber("kPTilt", CollectorConstants.kPTilt);
 
 	public CollectorIOReal(int tiltMotorCanId, int intakeMotorCanId, int conveyorMotorCanId) {
 		// Initialize motors
