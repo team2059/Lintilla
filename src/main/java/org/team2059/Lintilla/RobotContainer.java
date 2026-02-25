@@ -32,6 +32,7 @@ import org.team2059.Lintilla.subsystems.drivetrain.MK5nModule;
 import org.team2059.Lintilla.subsystems.drivetrain.Pigeon2Gyroscope;
 import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
 import org.team2059.Lintilla.subsystems.shooter.VortexShooter;
+import org.team2059.Lintilla.subsystems.vision.Oculus;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -46,7 +47,9 @@ public class RobotContainer {
 
 	public static Joystick logitech;
 	public static GenericHID buttonBox;
+
 	public static Drivetrain drivetrain;
+	public static Oculus oculus;
 	public static ShooterBase shooterBase;
 	public static Collector collector;
 
@@ -91,6 +94,8 @@ public class RobotContainer {
 			DrivetrainConstants.backRightInverted
 		  )
 		);
+
+		oculus = new Oculus();
 
 		shooterBase = new ShooterBase(
 		  new VortexShooter( // LEFT SHOOTER
@@ -217,7 +222,7 @@ public class RobotContainer {
 		/* SET QUEST POSE */
 		new JoystickButton(buttonBox, 1)
 		  .whileTrue(new InstantCommand(() -> {
-			  drivetrain.setQuestRobotPose(new Pose3d(Constants.VisionConstants.BLUE_8FTMARK));
+			  oculus.setRobotPose(new Pose3d(Constants.VisionConstants.BLUE_8FTMARK));
 		  }));
 
 		/* SPINUP & SHOOT FROM CURRENT HUB DISTANCE */

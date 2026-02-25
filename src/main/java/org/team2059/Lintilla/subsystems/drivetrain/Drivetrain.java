@@ -36,8 +36,6 @@ public class Drivetrain extends SubsystemBase {
 
 	public final DrivetrainRoutine routine;
 
-	private final QuestNav questNav;
-
 	private final GyroscopeIO gyroIO;
 	private final GyroscopeIOInputsAutoLogged gyroInputs = new GyroscopeIOInputsAutoLogged();
 
@@ -55,8 +53,6 @@ public class Drivetrain extends SubsystemBase {
 	  SwerveModuleIO backLeftModuleIO,
 	  SwerveModuleIO backRightModuleIO
 	) {
-
-		questNav = new QuestNav();
 
 		this.gyroIO = gyroIO;
 
@@ -216,33 +212,6 @@ public class Drivetrain extends SubsystemBase {
 	}
 
 	/**
-	 * Set the raw Quest pose, with NO robot offsets included.
-	 *
-	 * @param pose the Pose3d to set to
-	 */
-	public void setQuestRawPose(Pose3d pose) {
-		questNav.setPose(pose);
-	}
-
-	/**
-	 * Set the Quest-reported ROBOT pose. Offset applied automatically. Where do you want the robot to think it is?
-	 *
-	 * @param pose the Pose3d to set to
-	 */
-	public void setQuestRobotPose(Pose3d pose) {
-		questNav.setPose(pose.transformBy(VisionConstants.ROBOT_TO_QUEST));
-	}
-
-	/**
-	 * Pose2d version of this method. All other values set to zero. Check whether you need 3d positioning data.
-	 *
-	 * @param pose the Pose2d to set to
-	 */
-	public void setQuestRobotPose(Pose2d pose) {
-		questNav.setPose(new Pose3d(pose).transformBy(VisionConstants.ROBOT_TO_QUEST));
-	}
-
-	/**
 	 * Method to drive the robot either field or robot relative
 	 *
 	 * @param forward         forward/backward linear velocity component (meters/sec)
@@ -341,7 +310,7 @@ public class Drivetrain extends SubsystemBase {
 			// Configure AutoBuilder
 			AutoBuilder.configure(
 			  this::getEstimatedPose, // Robot pose supplier
-			  this::setQuestRobotPose, // Method to reset pose. We use the Quest method here.
+			  this::setPosition, // Method to reset pose. We use the Quest method here.
 			  this::getRobotRelativeSpeeds, // ChassisSpeeds supplier, MUST be robot relative
 			  (speeds) -> driveRobotRelative(speeds), // Method that will drive the robot given robot-relative chassis speeds
 			  new PPHolonomicDriveController(
@@ -394,11 +363,6 @@ public class Drivetrain extends SubsystemBase {
 	@Override
 	public void periodic() {
 
-		// Quest logging stuff
-		Logger.recordOutput("QuestConnected", questNav.isConnected());
-		Logger.recordOutput("QuestLostTrackingCount", questNav.getTrackingLostCounter().getAsInt());
-		Logger.recordOutput("QuestBattery", questNav.getBatteryPercent().isPresent() ? questNav.getBatteryPercent().getAsInt() : -1);
-
 		Logger.recordOutput("Estimated Pose", getEstimatedPose());
 		Logger.recordOutput("Shooter Pose", getShooterPose());
 		Logger.recordOutput("Field Relative", isFieldRelativeTeleop);
@@ -409,40 +373,6 @@ public class Drivetrain extends SubsystemBase {
 		for (int i = 0; i < 4; i++) {
 			modules[i].updateInputs(swerveModuleInputs[i]);
 			Logger.processInputs(("Drive/Module" + Integer.toString(i)), swerveModuleInputs[i]);
-		}
-
-		// Must be run to update Quest measurements
-		questNav.commandPeriodic();
-
-		// Get the latest pose data frames from the Quest
-		PoseFrame[] questFrames = questNav.getAllUnreadPoseFrames();
-
-		// Loop over pose data frames, send to pose estimator
-		for (PoseFrame questFrame : questFrames) {
-			// Make sure Quest was tracking for this frame
-			if (questFrame.isTracking()) {
-				// Get the pose of the Quest
-				Pose3d questPose = questFrame.questPose3d();
-
-				Logger.recordOutput("QuestPoseRaw", questPose);
-
-				// Get timestamp for when data was sent
-				double timestamp = questFrame.dataTimestamp();
-
-				// Transform by the mount pose to get robot pose
-				Pose3d robotPose = questPose.transformBy(VisionConstants.ROBOT_TO_QUEST.inverse());
-
-				Logger.recordOutput("QuestRobotPose", robotPose);
-
-				// TODO: filtering?
-
-				// Add measurement to pose estimator
-				addVisionMeasurement(
-				  robotPose.toPose2d(),
-				  timestamp,
-				  VisionConstants.questNavStdDevs
-				);
-			}
 		}
 
 		// Update pose estimator based on wheel positions
