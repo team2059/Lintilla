@@ -5,12 +5,16 @@
 package org.team2059.Lintilla;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+
 import com.pathplanner.lib.auto.NamedCommands;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -140,11 +144,8 @@ public class RobotContainer {
 		/* =========== */
 
 		logitech = new Joystick(OperatorConstants.logitechPort);
-		buttonBox = new GenericHID(OperatorConstants.buttonBoxPort);
 
-		/* ================ */
-		/* DEFAULT COMMANDS */
-		/* ================ */
+		buttonBox = new GenericHID(OperatorConstants.buttonBoxPort);
 
 		drivetrain.setDefaultCommand(
 		  new TeleopDriveCmd(
@@ -155,7 +156,7 @@ public class RobotContainer {
 			() -> logitech.getRawAxis(OperatorConstants.JoystickSliderAxis), // slider
 			() -> logitech.getRawButton(OperatorConstants.JoystickStrafeOnly), // Strafe Only Button
 			() -> logitech.getRawButton(OperatorConstants.JoystickInvertedDrive), // Inverted button
-			() -> logitech.getRawButton(2)
+		    () -> logitech.getRawButton(2)
 		  )
 		);
 
@@ -164,14 +165,6 @@ public class RobotContainer {
 		/* ========== */
 
 		/* NAMED COMMANDS */
-		NamedCommands.registerCommand(
-		  "Shoot5Sec",
-		  new SpinupAndShootCmd(
-			drivetrain,
-			shooterBase,
-			collector
-		  ).withTimeout(5)
-		);
 
 		// Build auto chooser - you can also set a default.
 		autoChooser = AutoBuilder.buildAutoChooser();
@@ -179,8 +172,13 @@ public class RobotContainer {
 		// Publish auto chooser
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 
+		/* ======= */
+		/* LOGGING */
+		/* ======= */
 
-		// Configure button bindings
+		// Allow viewing of command scheduler queue in dashboards
+		SmartDashboard.putData(CommandScheduler.getInstance());
+
 		configureBindings();
 	}
 
@@ -204,7 +202,8 @@ public class RobotContainer {
 
 		/* COLLECTOR OUT & INTAKE */
 		new JoystickButton(buttonBox, 9)
-		  .whileTrue(collector.collectorOut());
+		  .whileTrue(collector.collectorOut().alongWith(new InstantCommand(() -> collector.io.runConveyor(0.5))))
+		  .onFalse(new InstantCommand( () -> collector.io.runConveyor(0)));
 
 		/* COLLECTOR IN */
 		new JoystickButton(buttonBox, 10)
@@ -218,7 +217,7 @@ public class RobotContainer {
 		/* SET QUEST POSE */
 		new JoystickButton(buttonBox, 1)
 		  .whileTrue(new InstantCommand(() -> {
-			  drivetrain.setQuestRobotPose(Constants.VisionConstants.BLUE_8FTMARK);
+			  drivetrain.setQuestRobotPose(new Pose3d(Constants.VisionConstants.BLUE_8FTMARK));
 		  }));
 
 		/* SPINUP & SHOOT FROM CURRENT HUB DISTANCE */
@@ -228,9 +227,9 @@ public class RobotContainer {
 			  drivetrain,
 			  shooterBase,
 			  collector
-			)
-		  );
+			));
 	}
+
 
 	/**
 	 * Use this to pass the autonomous command to the main {@link Robot} class.

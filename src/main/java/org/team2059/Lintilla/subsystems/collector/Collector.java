@@ -66,10 +66,21 @@ public class Collector extends SubsystemBase {
 		return this.startEnd(
 		  () -> {
 			  io.setTiltPosition(CollectorConstants.thruBoreOut);
-			  io.setIntakeSpeed(1);
+			  io.setIntakeSpeed(0.75);
 		  },
 		  () -> {
 			  io.stopTilt();
+			  io.stopCollector();
+		  }
+		);
+	}
+	
+	public Command intakeCommand() {
+		return this.startEnd(
+		  () -> {
+			  io.setIntakeSpeed(0.75);
+		  },
+		  () -> {
 			  io.stopCollector();
 		  }
 		);
