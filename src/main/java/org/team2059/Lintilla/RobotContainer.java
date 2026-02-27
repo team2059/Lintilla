@@ -33,6 +33,7 @@ import org.team2059.Lintilla.subsystems.drivetrain.Pigeon2Gyroscope;
 import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
 import org.team2059.Lintilla.subsystems.shooter.VortexShooter;
 import org.team2059.Lintilla.subsystems.vision.Oculus;
+import org.team2059.Lintilla.subsystems.vision.PhotonVision;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -50,6 +51,7 @@ public class RobotContainer {
 
 	public static Drivetrain drivetrain;
 	public static Oculus oculus;
+	public static PhotonVision photonVision;
 	public static ShooterBase shooterBase;
 	public static Collector collector;
 
@@ -96,6 +98,8 @@ public class RobotContainer {
 		);
 
 		oculus = new Oculus();
+
+		photonVision = new PhotonVision();
 
 		shooterBase = new ShooterBase(
 		  new VortexShooter( // LEFT SHOOTER
@@ -233,8 +237,16 @@ public class RobotContainer {
 			  shooterBase,
 			  collector
 			));
-	}
 
+		new JoystickButton(buttonBox, 4)
+		  .whileTrue(
+			new SpinupAndShootCmd(
+			  drivetrain,
+			  shooterBase,
+			  collector,
+			  2000
+			));
+	}
 
 	/**
 	 * Use this to pass the autonomous command to the main {@link Robot} class.

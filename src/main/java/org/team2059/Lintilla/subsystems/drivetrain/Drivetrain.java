@@ -377,5 +377,7 @@ public class Drivetrain extends SubsystemBase {
 
 		// Update pose estimator based on wheel positions
 		poseEstimator.update(getHeading(), getModulePositions());
+
+		field.setRobotPose(getEstimatedPose());
 	}
 }

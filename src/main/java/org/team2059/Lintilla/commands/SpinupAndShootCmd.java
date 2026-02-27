@@ -19,6 +19,7 @@ public class SpinupAndShootCmd extends Command {
 
 	// Holds our desired speeds
 	private double desiredRPM;
+	private boolean desiredRPMHardcoded;
 
 	public SpinupAndShootCmd(Drivetrain drivetrain, ShooterBase shooterBase, Collector collector) {
 		this.shooterBase = shooterBase;
@@ -26,6 +27,18 @@ public class SpinupAndShootCmd extends Command {
 		this.collector = collector;
 
 		this.desiredRPM = shooterBase.getTargetRpm(drivetrain.calculateDistanceShooterToHubMeters());
+		this.desiredRPMHardcoded = false;
+
+		addRequirements(this.shooterBase);
+	}
+
+	public SpinupAndShootCmd(Drivetrain drivetrain, ShooterBase shooterBase, Collector collector, double desiredRPM) {
+		this.shooterBase = shooterBase;
+		this.drivetrain = drivetrain;
+		this.collector = collector;
+
+		this.desiredRPM = desiredRPM;
+		this.desiredRPMHardcoded = true;
 
 		addRequirements(this.shooterBase);
 	}
@@ -33,8 +46,10 @@ public class SpinupAndShootCmd extends Command {
 	@Override
 	public void initialize() {
 
-		// Calculate desired RPM based on distance from alliance Hub
-		desiredRPM = shooterBase.getTargetRpm(drivetrain.calculateDistanceShooterToHubMeters());
+		if (!desiredRPMHardcoded) {
+			// Calculate desired RPM based on distance from alliance Hub
+			desiredRPM = shooterBase.getTargetRpm(drivetrain.calculateDistanceShooterToHubMeters());
+		}
 
 		// Spin up shooters	
 		shooterBase.leftShooter.setFlywheelRpm(desiredRPM);
