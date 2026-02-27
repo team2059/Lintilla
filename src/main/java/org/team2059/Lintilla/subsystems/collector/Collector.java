@@ -74,7 +74,7 @@ public class Collector extends SubsystemBase {
 		  }
 		);
 	}
-	
+
 	public Command intakeCommand() {
 		return this.startEnd(
 		  () -> {

@@ -23,7 +23,8 @@ public class Oculus extends SubsystemBase {
 	public Oculus() {
 		questNav = new QuestNav();
 
-		useMeasurements = true;
+		useMeasurements = RobotContainer.buttonBox.getRawButton(Constants.OperatorConstants.ButtonBoxQuestMeasurement);
+		;
 
 		robotPose = null;
 		rawPose = null;
@@ -34,36 +35,6 @@ public class Oculus extends SubsystemBase {
 	 */
 	public Pose3d getRobotPose() {
 		return robotPose;
-	}
-
-	/**
-	 * @return the current estimated Pose3d WITHOUT robot transform applied
-	 */
-	public Pose3d getRawPose() {
-		return rawPose;
-	}
-
-	/**
-	 * @return whether measurements from the Quest are currently being used
-	 */
-	public boolean isUsingMeasurements() {
-		return isUsingMeasurements();
-	}
-
-	/**
-	 * Set whether measurements are being used for pose estimation
-	 */
-	public void toggleUseMeasurements() {
-		useMeasurements = !isUsingMeasurements();
-	}
-
-	/**
-	 * Set the raw Quest pose, with NO robot offsets included.
-	 *
-	 * @param pose the Pose3d to set to
-	 */
-	public void setRawPose(Pose3d pose) {
-		questNav.setPose(pose);
 	}
 
 	/**
@@ -82,6 +53,36 @@ public class Oculus extends SubsystemBase {
 	 */
 	public void setRobotPose(Pose2d pose) {
 		questNav.setPose(new Pose3d(pose).transformBy(Constants.VisionConstants.ROBOT_TO_QUEST));
+	}
+
+	/**
+	 * @return the current estimated Pose3d WITHOUT robot transform applied
+	 */
+	public Pose3d getRawPose() {
+		return rawPose;
+	}
+
+	/**
+	 * Set the raw Quest pose, with NO robot offsets included.
+	 *
+	 * @param pose the Pose3d to set to
+	 */
+	public void setRawPose(Pose3d pose) {
+		questNav.setPose(pose);
+	}
+
+	/**
+	 * @return whether measurements from the Quest are currently being used
+	 */
+	public boolean isUsingMeasurements() {
+		return isUsingMeasurements();
+	}
+
+	/**
+	 * Set whether measurements are being used for pose estimation
+	 */
+	public void setUseMeasurements(boolean b) {
+		useMeasurements = b;
 	}
 
 	@Override

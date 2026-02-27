@@ -21,16 +21,12 @@ import java.util.Optional;
 public class PhotonVision extends SubsystemBase {
 	// Cental camera object
 	private final PhotonCamera camera;
-
-	// Store all data that PhotonVision returns
-	private List<PhotonPipelineResult> cameraResults;
-
-	// Store latest data that PhotonVision returns
-	private PhotonPipelineResult cameraResult;
-
 	// PhotonPoseEstimators, one for each pipeline
 	private final PhotonPoseEstimator poseEstimator;
-
+	// Store all data that PhotonVision returns
+	private List<PhotonPipelineResult> cameraResults;
+	// Store latest data that PhotonVision returns
+	private PhotonPipelineResult cameraResult;
 	private Matrix<N3, N1> currentStdDevs;
 
 	private Pose3d estimatedPose;
@@ -47,7 +43,7 @@ public class PhotonVision extends SubsystemBase {
 
 		estimatedPose = null;
 
-		useMeasurements = false;
+		useMeasurements = RobotContainer.buttonBox.getRawButton(Constants.OperatorConstants.ButtonBoxPhotonVisionMeasurement);
 	}
 
 	/**
@@ -60,12 +56,13 @@ public class PhotonVision extends SubsystemBase {
 	/**
 	 * Set whether measurements are being used for pose estimation
 	 */
-	public void toggleUseMeasurements() {
-		useMeasurements = !isUsingMeasurements();
+	public void setUseMeasurements(boolean b) {
+		useMeasurements = b;
 	}
 
 	/**
 	 * Internal method which dynamically updates standard deviations based on number of tags
+	 *
 	 * @param estimatedPose
 	 * @param targets
 	 */
@@ -116,6 +113,7 @@ public class PhotonVision extends SubsystemBase {
 
 	/**
 	 * RETURNS NULL IF NO TAGS PRESENT!!!
+	 *
 	 * @return the current estimated Pose3d
 	 */
 	public Pose3d getEstimatedPose() {

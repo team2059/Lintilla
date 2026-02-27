@@ -5,17 +5,13 @@
 package org.team2059.Lintilla;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-
-import com.pathplanner.lib.auto.NamedCommands;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -165,7 +161,7 @@ public class RobotContainer {
 			() -> logitech.getRawAxis(OperatorConstants.JoystickSliderAxis), // slider
 			() -> logitech.getRawButton(OperatorConstants.JoystickStrafeOnly), // Strafe Only Button
 			() -> logitech.getRawButton(OperatorConstants.JoystickInvertedDrive), // Inverted button
-		    () -> logitech.getRawButton(2)
+			() -> logitech.getRawButton(2)
 		  )
 		);
 
@@ -201,51 +197,107 @@ public class RobotContainer {
 	 * joysticks}.
 	 */
 	private void configureBindings() {
+
+		/* =================== */
+		/* DRIVER'S CONTROLLER */
+		/* =================== */
+
 		/* RESET GYRO HEADING */
 		new JoystickButton(logitech, OperatorConstants.JoystickResetHeading)
-		  .whileTrue(new InstantCommand(() -> drivetrain.resetGyroHeading()));
+		  .whileTrue(
+			Commands.runOnce(() -> drivetrain.resetGyroHeading())
+			  .ignoringDisable(true)
+		  );
 
-		/* SWITCH FIELD/ROBOT RELATIVITY IN TELEOP */
+		/* SWITCH FIELD/ROBOT RELATIVITY */
 		new JoystickButton(logitech, OperatorConstants.JoystickRobotRelative)
-		  .whileTrue(new InstantCommand(() -> drivetrain.setFieldRelativity()));
+		  .whileTrue(
+			Commands.runOnce(() -> drivetrain.setFieldRelativity())
+			  .ignoringDisable(true)
+		  );
 
-		/* COLLECTOR OUT & INTAKE */
-		new JoystickButton(buttonBox, 9)
-		  .whileTrue(collector.collectorOut().alongWith(new InstantCommand(() -> collector.io.runConveyor(0.5))))
-		  .onFalse(new InstantCommand( () -> collector.io.runConveyor(0)));
-
-		/* COLLECTOR IN */
-		new JoystickButton(buttonBox, 10)
-		  .whileTrue(collector.collectorIn());
-
-		/* COLLECTOR UNJAM */
-		new JoystickButton(buttonBox, 11)
-		  .whileTrue(new InstantCommand(() -> collector.io.setIntakeSpeed(-1)))
-		  .onFalse(new InstantCommand(() -> collector.io.stopCollector()));
-
-		/* SET QUEST POSE */
-		new JoystickButton(buttonBox, 1)
-		  .whileTrue(new InstantCommand(() -> {
-			  oculus.setRobotPose(new Pose3d(Constants.VisionConstants.BLUE_8FTMARK));
-		  }));
+		/* ===================== */
+		/* OPERATOR'S CONTROLLER */
+		/* ===================== */
 
 		/* SPINUP & SHOOT FROM CURRENT HUB DISTANCE */
-		new JoystickButton(buttonBox, 3)
+		new JoystickButton(buttonBox, OperatorConstants.ButtonBoxSpinupShootDistance)
 		  .whileTrue(
 			new SpinupAndShootCmd(
 			  drivetrain,
 			  shooterBase,
 			  collector
-			));
+			)
+		  );
 
-		new JoystickButton(buttonBox, 4)
+		/* SPINUP & SHOOT WITH FIXED RPM */
+		new JoystickButton(buttonBox, OperatorConstants.ButtonBoxSpinupShootFixed)
 		  .whileTrue(
 			new SpinupAndShootCmd(
 			  drivetrain,
 			  shooterBase,
 			  collector,
 			  2000
-			));
+			)
+		  );
+
+		/* COLLECTOR OUT & INTAKE */
+		new JoystickButton(buttonBox, OperatorConstants.ButtonBoxCollectorOutIntake)
+		  .whileTrue(
+			collector.collectorOut()
+			  .alongWith(
+				Commands.runOnce(() -> collector.io.runConveyor(0.5))
+			  )
+		  )
+		  .onFalse(
+			Commands.runOnce(() -> collector.io.runConveyor(0))
+		  );
+
+		/* COLLECTOR IN */
+		new JoystickButton(buttonBox, OperatorConstants.ButtonBoxCollectorIn)
+		  .whileTrue(
+			collector.collectorIn()
+		  );
+
+		/* COLLECTOR ROLLERS OUT/UNJAM */
+		new JoystickButton(buttonBox, OperatorConstants.ButtonBoxCollectorUnjam)
+		  .whileTrue(
+			Commands.runOnce(() -> collector.io.setIntakeSpeed(-1))
+		  )
+		  .onFalse(
+			Commands.runOnce(() -> collector.io.stopCollector())
+		  );
+
+		/* COLLECTOR ROLLERS IN/INTAKE */
+		new JoystickButton(buttonBox, OperatorConstants.ButtonBoxCollectorIntake)
+		  .whileTrue(
+			Commands.runOnce(() -> collector.io.setIntakeSpeed(1))
+		  )
+		  .onFalse(
+			Commands.runOnce(() -> collector.io.stopCollector())
+		  );
+
+		/* QUEST MEASUREMENTS SWITCH */
+		new JoystickButton(buttonBox, OperatorConstants.ButtonBoxQuestMeasurement)
+		  .onTrue(
+			Commands.runOnce(() -> oculus.setUseMeasurements(true))
+			  .ignoringDisable(true)
+		  )
+		  .onFalse(
+			Commands.runOnce(() -> oculus.setUseMeasurements(false))
+			  .ignoringDisable(true)
+		  );
+
+		/* PHOTONVISION MEASUREMENTS SWITCH */
+		new JoystickButton(buttonBox, OperatorConstants.ButtonBoxPhotonVisionMeasurement)
+		  .onTrue(
+			Commands.runOnce(() -> photonVision.setUseMeasurements(true))
+			  .ignoringDisable(true)
+		  )
+		  .onFalse(
+			Commands.runOnce(() -> photonVision.setUseMeasurements(false))
+			  .ignoringDisable(true)
+		  );
 	}
 
 	/**
