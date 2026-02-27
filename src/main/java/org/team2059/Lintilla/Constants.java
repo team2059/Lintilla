@@ -21,6 +21,8 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 
+import javax.xml.crypto.dsig.Transform;
+
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 
@@ -194,6 +196,14 @@ public final class Constants {
 		  0.02, // Trust down to 2 cm in Y direction
 		  0.035 // Trust down to 2 degrees rotational
 		);
+
+		public static final String pvCamName = "Bcam9782";
+
+		public static final Transform3d ROBOT_TO_PV = new Transform3d();
+
+		// The standard deviations of our vision estimated poses, which affect correction rate
+		public static final Matrix<N3, N1> singleTagStdDevsPV = VecBuilder.fill(2, 2, 8);
+		public static final Matrix<N3, N1> multiTagStdDevsPV = VecBuilder.fill(0.5, 0.5, 1);
 	}
 
 	public static final class CANConstants {
