@@ -29,10 +29,16 @@ public class Oculus extends SubsystemBase {
 		rawPose = null;
 	}
 
+	/**
+	 * @return the current estimated Pose3d WITH robot transform applied
+	 */
 	public Pose3d getRobotPose() {
 		return robotPose;
 	}
 
+	/**
+	 * @return the current estimated Pose3d WITHOUT robot transform applied
+	 */
 	public Pose3d getRawPose() {
 		return rawPose;
 	}

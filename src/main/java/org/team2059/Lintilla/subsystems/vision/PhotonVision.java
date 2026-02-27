@@ -13,6 +13,7 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.team2059.Lintilla.Constants;
+import org.team2059.Lintilla.RobotContainer;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,7 +33,9 @@ public class PhotonVision extends SubsystemBase {
 
 	private Matrix<N3, N1> currentStdDevs;
 
-	private Optional<Pose3d> estimatedPose;
+	private Pose3d estimatedPose;
+
+	private boolean useMeasurements;
 
 	public PhotonVision() {
 		camera = new PhotonCamera(Constants.VisionConstants.pvCamName);
@@ -42,9 +45,30 @@ public class PhotonVision extends SubsystemBase {
 		  Constants.VisionConstants.ROBOT_TO_PV
 		);
 
-		estimatedPose = Optional.empty();
+		estimatedPose = null;
+
+		useMeasurements = false;
 	}
 
+	/**
+	 * @return whether measurements from PhotonVision are currently being used
+	 */
+	public boolean isUsingMeasurements() {
+		return isUsingMeasurements();
+	}
+
+	/**
+	 * Set whether measurements are being used for pose estimation
+	 */
+	public void toggleUseMeasurements() {
+		useMeasurements = !isUsingMeasurements();
+	}
+
+	/**
+	 * Internal method which dynamically updates standard deviations based on number of tags
+	 * @param estimatedPose
+	 * @param targets
+	 */
 	private void updateEstimationStdDevs(
 	  Optional<EstimatedRobotPose> estimatedPose,
 	  List<PhotonTrackedTarget> targets
@@ -90,21 +114,30 @@ public class PhotonVision extends SubsystemBase {
 		}
 	}
 
-	public Optional<Pose3d> getEstimatedPose() {
+	/**
+	 * RETURNS NULL IF NO TAGS PRESENT!!!
+	 * @return the current estimated Pose3d
+	 */
+	public Pose3d getEstimatedPose() {
 		return estimatedPose;
 	}
 
-	public Matrix<N3, N1> getCurrentStdDevs() {
+	/**
+	 * @return the standard deviation matrix currently being used
+	 */
+	private Matrix<N3, N1> getCurrentStdDevs() {
 		return currentStdDevs;
 	}
 
 	@Override
 	public void periodic() {
-		// Log values
+		// Log connection status
 		Logger.recordOutput("PhotonVision/Connected", camera.isConnected());
 
+		// Grab all unread results from cameras
 		cameraResults = camera.getAllUnreadResults();
 
+		// Process logging and variables if unread results found
 		if (!cameraResults.isEmpty()) {
 			cameraResult = cameraResults.get(cameraResults.size() - 1);
 
@@ -132,11 +165,21 @@ public class PhotonVision extends SubsystemBase {
 		}
 
 		if (visionEst.isPresent()) {
-			estimatedPose = Optional.of(visionEst.get().estimatedPose);
+			estimatedPose = visionEst.get().estimatedPose;
+
+			if (useMeasurements) {
+				RobotContainer.drivetrain.addVisionMeasurement(
+				  estimatedPose.toPose2d(),
+				  visionEst.get().timestampSeconds,
+				  currentStdDevs
+				);
+			}
 		} else {
-			estimatedPose = Optional.empty();
+			estimatedPose = null;
 		}
 
-		Logger.recordOutput("PhotonVision/EstimatedPose", estimatedPose.isPresent() ? estimatedPose.get() : null);
+		if (estimatedPose != null) {
+			Logger.recordOutput("PhotonVision/EstimatedPose", estimatedPose);
+		}
 	}
 }
