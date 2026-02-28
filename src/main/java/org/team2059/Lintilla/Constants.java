@@ -197,7 +197,16 @@ public final class Constants {
 		  )
 		);
 		public static final String pvCamName = "Bcam9782";
-		public static final Transform3d ROBOT_TO_PV = new Transform3d();
+		public static final Transform3d ROBOT_TO_PV = new Transform3d(
+		  -Units.inchesToMeters(5),
+		  -Units.inchesToMeters(1.375),
+		  Units.inchesToMeters(19),
+		  new Rotation3d(
+			0,
+			Units.degreesToRadians(-56),
+		    0
+		  )
+		);
 		// The standard deviations of our vision estimated poses, which affect correction rate
 		public static final Matrix<N3, N1> singleTagStdDevsPV = VecBuilder.fill(2, 2, 8);
 		public static final Matrix<N3, N1> multiTagStdDevsPV = VecBuilder.fill(0.5, 0.5, 1);
