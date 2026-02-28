@@ -58,6 +58,13 @@ public class RobotContainer {
 	 */
 	public RobotContainer() {
 
+		/* =========== */
+		/* CONTROLLERS */
+		/* =========== */
+
+		logitech = new Joystick(OperatorConstants.logitechPort);
+		buttonBox = new GenericHID(OperatorConstants.buttonBoxPort);
+
 		/* ========== */
 		/* SUBSYSTEMS */
 		/* ========== */
@@ -90,6 +97,19 @@ public class RobotContainer {
 			CANConstants.backRightCancoder,
 			DrivetrainConstants.backRightEncoderOffset,
 			DrivetrainConstants.backRightInverted
+		  )
+		);
+
+		drivetrain.setDefaultCommand(
+		  new TeleopDriveCmd(
+			drivetrain,
+			() -> -logitech.getRawAxis(OperatorConstants.JoystickTranslationAxis), // forwardX
+			() -> -logitech.getRawAxis(OperatorConstants.JoystickStrafeAxis), // forwardY
+			() -> -logitech.getRawAxis(OperatorConstants.JoystickRotationAxis), // rotation
+			() -> logitech.getRawAxis(OperatorConstants.JoystickSliderAxis), // slider
+			() -> logitech.getRawButton(OperatorConstants.JoystickStrafeOnly), // Strafe Only Button
+			() -> logitech.getRawButton(OperatorConstants.JoystickInvertedDrive), // Inverted button
+			() -> logitech.getRawButton(2)
 		  )
 		);
 
@@ -141,27 +161,6 @@ public class RobotContainer {
 			CANConstants.collectorTiltMotor,
 			CANConstants.collectorIntakeMotor,
 			CANConstants.conveyorMotor
-		  )
-		);
-
-		/* =========== */
-		/* CONTROLLERS */
-		/* =========== */
-
-		logitech = new Joystick(OperatorConstants.logitechPort);
-
-		buttonBox = new GenericHID(OperatorConstants.buttonBoxPort);
-
-		drivetrain.setDefaultCommand(
-		  new TeleopDriveCmd(
-			drivetrain,
-			() -> -logitech.getRawAxis(OperatorConstants.JoystickTranslationAxis), // forwardX
-			() -> -logitech.getRawAxis(OperatorConstants.JoystickStrafeAxis), // forwardY
-			() -> -logitech.getRawAxis(OperatorConstants.JoystickRotationAxis), // rotation
-			() -> logitech.getRawAxis(OperatorConstants.JoystickSliderAxis), // slider
-			() -> logitech.getRawButton(OperatorConstants.JoystickStrafeOnly), // Strafe Only Button
-			() -> logitech.getRawButton(OperatorConstants.JoystickInvertedDrive), // Inverted button
-			() -> logitech.getRawButton(2)
 		  )
 		);
 
@@ -279,22 +278,22 @@ public class RobotContainer {
 
 		/* QUEST MEASUREMENTS SWITCH */
 		new JoystickButton(buttonBox, OperatorConstants.ButtonBoxQuestMeasurement)
-		  .onTrue(
+		  .onFalse(
 			Commands.runOnce(() -> oculus.setUseMeasurements(true))
 			  .ignoringDisable(true)
 		  )
-		  .onFalse(
+		  .onTrue(
 			Commands.runOnce(() -> oculus.setUseMeasurements(false))
 			  .ignoringDisable(true)
 		  );
 
 		/* PHOTONVISION MEASUREMENTS SWITCH */
 		new JoystickButton(buttonBox, OperatorConstants.ButtonBoxPhotonVisionMeasurement)
-		  .onTrue(
+		  .onFalse(
 			Commands.runOnce(() -> photonVision.setUseMeasurements(true))
 			  .ignoringDisable(true)
 		  )
-		  .onFalse(
+		  .onTrue(
 			Commands.runOnce(() -> photonVision.setUseMeasurements(false))
 			  .ignoringDisable(true)
 		  );

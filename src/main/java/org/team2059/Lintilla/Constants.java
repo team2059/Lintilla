@@ -69,8 +69,8 @@ public final class Constants {
 		public static final int ButtonBoxCollectorIn = 6;
 		public static final int ButtonBoxCollectorUnjam = 7;
 		public static final int ButtonBoxCollectorIntake = 8;
-		public static final int ButtonBoxQuestMeasurement = 17;
-		public static final int ButtonBoxPhotonVisionMeasurement = 18;
+		public static final int ButtonBoxQuestMeasurement = 13;
+		public static final int ButtonBoxPhotonVisionMeasurement = 14;
 	}
 
 	public static class AutoConstants {

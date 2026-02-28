@@ -23,7 +23,7 @@ public class Oculus extends SubsystemBase {
 	public Oculus() {
 		questNav = new QuestNav();
 
-		useMeasurements = RobotContainer.buttonBox.getRawButton(Constants.OperatorConstants.ButtonBoxQuestMeasurement);
+		useMeasurements = !RobotContainer.buttonBox.getRawButton(Constants.OperatorConstants.ButtonBoxQuestMeasurement);
 		;
 
 		robotPose = null;
@@ -96,6 +96,7 @@ public class Oculus extends SubsystemBase {
 		Logger.recordOutput("Oculus/LostTrackingCount", questNav.getTrackingLostCounter().isPresent() ? questNav.getTrackingLostCounter().getAsInt() : -1);
 		Logger.recordOutput("Oculus/BatteryPercent", questNav.getBatteryPercent().isPresent() ? questNav.getBatteryPercent().getAsInt() : -1);
 		Logger.recordOutput("Oculus/Latency", questNav.getLatency());
+		Logger.recordOutput("Oculus/UsingOculusMeasurements", useMeasurements);
 
 		// Get the latest pose data frames from the Quest
 		PoseFrame[] questFrames = questNav.getAllUnreadPoseFrames();

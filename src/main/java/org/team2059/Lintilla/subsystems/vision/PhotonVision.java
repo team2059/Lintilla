@@ -43,7 +43,7 @@ public class PhotonVision extends SubsystemBase {
 
 		estimatedPose = null;
 
-		useMeasurements = RobotContainer.buttonBox.getRawButton(Constants.OperatorConstants.ButtonBoxPhotonVisionMeasurement);
+		useMeasurements = !RobotContainer.buttonBox.getRawButton(Constants.OperatorConstants.ButtonBoxPhotonVisionMeasurement);
 	}
 
 	/**
@@ -131,6 +131,7 @@ public class PhotonVision extends SubsystemBase {
 	public void periodic() {
 		// Log connection status
 		Logger.recordOutput("PhotonVision/Connected", camera.isConnected());
+		Logger.recordOutput("PhotonVision/UsingPVMeasurements", useMeasurements);
 
 		// Grab all unread results from cameras
 		cameraResults = camera.getAllUnreadResults();
