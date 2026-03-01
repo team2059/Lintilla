@@ -34,6 +34,7 @@ public class ShooterDataCollectionCmd extends Command {
 
 	@Override
 	public void execute() {
+
 		if (Math.abs(shooterBase.leftShooterInputs.flywheelVelocity.in(RPM) - speedRPM.get()) <= spinupToleranceRpm) {
 			// Left shooter is within tolerance. Spin indexer
 			shooterBase.leftShooter.setIndexerSpeed(0.5);

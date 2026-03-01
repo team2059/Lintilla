@@ -5,6 +5,7 @@
 package org.team2059.Lintilla;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -15,10 +16,12 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import org.littletonrobotics.junction.Logger;
 import org.team2059.Lintilla.Constants.CANConstants;
 import org.team2059.Lintilla.Constants.DrivetrainConstants;
 import org.team2059.Lintilla.Constants.OperatorConstants;
 import org.team2059.Lintilla.Constants.ShooterConstants;
+import org.team2059.Lintilla.commands.ShooterDataCollectionCmd;
 import org.team2059.Lintilla.commands.SpinupAndShootCmd;
 import org.team2059.Lintilla.commands.TeleopDriveCmd;
 import org.team2059.Lintilla.subsystems.collector.Collector;
@@ -296,6 +299,21 @@ public class RobotContainer {
 		  .onTrue(
 			Commands.runOnce(() -> photonVision.setUseMeasurements(false))
 			  .ignoringDisable(true)
+		  );
+
+		new JoystickButton(buttonBox, 12)
+		  .whileTrue(Commands.runOnce(() -> {
+			  Pose3d p = photonVision.getEstimatedPose();
+
+			  if (p != null) oculus.setRobotPose(p);
+		  })
+		    .ignoringDisable(true)
+		  );
+
+		new JoystickButton(buttonBox, 11)
+		  .whileTrue(
+			Commands.runOnce(() -> Logger.recordOutput("DataCollectDistance", drivetrain.calculateDistanceShooterToHubMeters()))
+			  .andThen(new ShooterDataCollectionCmd(shooterBase, collector))
 		  );
 	}
 
