@@ -21,9 +21,9 @@ import org.team2059.Lintilla.Constants.CANConstants;
 import org.team2059.Lintilla.Constants.DrivetrainConstants;
 import org.team2059.Lintilla.Constants.OperatorConstants;
 import org.team2059.Lintilla.Constants.ShooterConstants;
-import org.team2059.Lintilla.commands.ShooterDataCollectionCmd;
-import org.team2059.Lintilla.commands.SpinupAndShootCmd;
-import org.team2059.Lintilla.commands.TeleopDriveCmd;
+import org.team2059.Lintilla.commands.ShooterDataCollectionCommand;
+import org.team2059.Lintilla.commands.SpinupAndShootCommand;
+import org.team2059.Lintilla.commands.TeleopDriveCommand;
 import org.team2059.Lintilla.subsystems.collector.Collector;
 import org.team2059.Lintilla.subsystems.collector.CollectorIOReal;
 import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
@@ -104,7 +104,7 @@ public class RobotContainer {
 		);
 
 		drivetrain.setDefaultCommand(
-		  new TeleopDriveCmd(
+		  new TeleopDriveCommand(
 			drivetrain,
 			() -> -logitech.getRawAxis(OperatorConstants.JoystickTranslationAxis), // forwardX
 			() -> -logitech.getRawAxis(OperatorConstants.JoystickStrafeAxis), // forwardY
@@ -225,7 +225,7 @@ public class RobotContainer {
 		/* SPINUP & SHOOT FROM CURRENT HUB DISTANCE */
 		new JoystickButton(buttonBox, OperatorConstants.ButtonBoxSpinupShootDistance)
 		  .whileTrue(
-			new SpinupAndShootCmd(
+			new SpinupAndShootCommand(
 			  drivetrain,
 			  shooterBase,
 			  collector
@@ -235,7 +235,7 @@ public class RobotContainer {
 		/* SPINUP & SHOOT WITH FIXED RPM */
 		new JoystickButton(buttonBox, OperatorConstants.ButtonBoxSpinupShootFixed)
 		  .whileTrue(
-			new SpinupAndShootCmd(
+			new SpinupAndShootCommand(
 			  drivetrain,
 			  shooterBase,
 			  collector,
@@ -313,7 +313,7 @@ public class RobotContainer {
 		new JoystickButton(buttonBox, 11)
 		  .whileTrue(
 			Commands.runOnce(() -> Logger.recordOutput("DataCollectDistance", drivetrain.calculateDistanceShooterToHubMeters()))
-			  .andThen(new ShooterDataCollectionCmd(shooterBase, collector))
+			  .andThen(new ShooterDataCollectionCommand(shooterBase, collector))
 		  );
 	}
 

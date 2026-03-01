@@ -20,6 +20,9 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.DriverStation;
+
+import java.util.Optional;
 
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
@@ -173,6 +176,21 @@ public final class Constants {
 
 		public static final Translation2d RED_HUB_CENTER = new Translation2d(11.9014, 4.0213);
 		public static final Translation2d RED_HUB_BACK = new Translation2d(11.3044, 4.0213);
+
+		/**
+		 * Gets the Translation2d of the current Alliance Hub
+		 *
+		 * @return alliance Hub coordinates
+		 */
+		public static Translation2d getHubTranslation() {
+			Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
+
+			if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red) {
+				return RED_HUB_CENTER;
+			} else {
+				return BLUE_HUB_CENTER;
+			}
+		}
 
 		public static final Translation2d BLUE_TOWER_CENTER = new Translation2d(1.1434, 3.7457);
 		public static final Translation2d RED_TOWER_CENTER = new Translation2d(15.3952, 4.3236);

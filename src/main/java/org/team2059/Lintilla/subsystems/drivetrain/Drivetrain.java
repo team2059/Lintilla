@@ -338,23 +338,7 @@ public class Drivetrain extends SubsystemBase {
 	 * @return distance, in METERS
 	 */
 	public double calculateDistanceShooterToHubMeters() {
-		// If we can't do anything, return a negative distance (that's not valid)
-		double output = -1;
-
-		// Checks for alliance and selects appropriate hub pose
-		Optional<DriverStation.Alliance> ally = DriverStation.getAlliance();
-		if (ally.isPresent()) {
-			if (ally.get() == DriverStation.Alliance.Red) {
-				output = VisionConstants.RED_HUB_CENTER.getDistance(getShooterPose().getTranslation());
-			}
-			if (ally.get() == DriverStation.Alliance.Blue) {
-				output = VisionConstants.BLUE_HUB_CENTER.getDistance(getShooterPose().getTranslation());
-			}
-		} else {
-			System.out.println("ALLY NOT AVAILABLE");
-		}
-
-		return output;
+		return VisionConstants.getHubTranslation().getDistance(getShooterPose().getTranslation());
 	}
 
 	@Override

@@ -10,9 +10,11 @@ import static edu.wpi.first.units.Units.RPM;
 import static org.team2059.Lintilla.Constants.ShooterConstants.spinupToleranceRpm;
 
 /**
- * Spin up & shoot command, calculates distance to alliance Hub and looks up RPM.
+ * Command to spin the shooters up at a specific velocity (or calculate velocity based on distance to hub) and shoot
+ * when a certain tolerance is reached.
  */
-public class SpinupAndShootCmd extends Command {
+public class SpinupAndShootCommand extends Command {
+	// We depend on these subsystems for certain methods & calculations
 	private final ShooterBase shooterBase;
 	private final Collector collector;
 	private final Drivetrain drivetrain;
@@ -21,18 +23,34 @@ public class SpinupAndShootCmd extends Command {
 	private double desiredRPM;
 	private boolean desiredRPMHardcoded;
 
-	public SpinupAndShootCmd(Drivetrain drivetrain, ShooterBase shooterBase, Collector collector) {
+	/**
+	 * Constructor for distance-based shots
+	 *
+	 * @param drivetrain the Drivetrain subsystem
+	 * @param shooterBase the ShooterBase subsystem
+	 * @param collector the Collector subsystem (so we can run the conveyor)
+	 */
+	public SpinupAndShootCommand(Drivetrain drivetrain, ShooterBase shooterBase, Collector collector) {
 		this.shooterBase = shooterBase;
 		this.drivetrain = drivetrain;
 		this.collector = collector;
 
+		// Begin by precalculating the distance to from the shooter to the hub
 		this.desiredRPM = shooterBase.getTargetRpm(drivetrain.calculateDistanceShooterToHubMeters());
 		this.desiredRPMHardcoded = false;
 
 		addRequirements(this.shooterBase);
 	}
 
-	public SpinupAndShootCmd(Drivetrain drivetrain, ShooterBase shooterBase, Collector collector, double desiredRPM) {
+	/**
+	 * Constructor for shots at specific RPMs
+	 *
+	 * @param drivetrain the Drivetrain subsystem
+	 * @param shooterBase the ShooterBase subsystem
+	 * @param collector the Collector subsystem (so we can run the conveyor)
+	 * @param desiredRPM the desired speeds in RPM
+	 */
+	public SpinupAndShootCommand(Drivetrain drivetrain, ShooterBase shooterBase, Collector collector, double desiredRPM) {
 		this.shooterBase = shooterBase;
 		this.drivetrain = drivetrain;
 		this.collector = collector;
@@ -47,8 +65,11 @@ public class SpinupAndShootCmd extends Command {
 	public void initialize() {
 
 		if (!desiredRPMHardcoded) {
-			// Calculate desired RPM based on distance from alliance Hub
-			desiredRPM = shooterBase.getTargetRpm(drivetrain.calculateDistanceShooterToHubMeters());
+			// Calculate distance from shooter to hub
+			double distanceMeters = drivetrain.calculateDistanceShooterToHubMeters();
+
+			// Find speeds via lookup table
+			desiredRPM = shooterBase.getTargetRpm(distanceMeters);
 		}
 
 		// Spin up shooters	
@@ -77,6 +98,7 @@ public class SpinupAndShootCmd extends Command {
 
 	@Override
 	public void end(boolean interrupted) {
+		// Stop everything that we used
 		shooterBase.leftShooter.stopIndexer();
 		shooterBase.leftShooter.stopFlywheel();
 		shooterBase.rightShooter.stopIndexer();

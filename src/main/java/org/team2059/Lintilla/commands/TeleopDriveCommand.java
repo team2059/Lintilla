@@ -16,23 +16,33 @@ import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
-public class TeleopDriveCmd extends Command {
+public class TeleopDriveCommand extends Command {
 	private final Drivetrain drivetrain;
+
 	private final DoubleSupplier forwardX, forwardY, rotation, slider;
-	private final BooleanSupplier strafeOnly, inverted, autoAlignHub;
+	private final BooleanSupplier strafeOnly, inverted, hubTracking;
 	private final SlewRateLimiter xLimiter, yLimiter, rotLimiter;
 
 	// Values for autorotation to hub
-	private final Translation2d hub;
 	private final PIDController controller;
 	private final LoggedTunableNumber kP = new LoggedTunableNumber("HubTurnKp", 8.0);
 	private final LoggedTunableNumber kI = new LoggedTunableNumber("HubTurnKi", 0);
 	private final LoggedTunableNumber kD = new LoggedTunableNumber("HubTurnKd", 0);
 
 	/**
-	 * Creates a new TeleopDriveCmd.
+	 * Command to drive the robot using a flight stick controller.
+	 * Contains various methods of navigation including hub-tracking.
+	 *
+	 * @param drivetrain the Drivetrain subsystem to interface with
+	 * @param forwardX X-axis input supplier
+	 * @param forwardY Y-axis input supplier
+	 * @param rotation Omega-axis input supplier
+	 * @param slider Slider input supplier (it's also an axis)
+	 * @param strafeOnly Button to indicate strafing only
+	 * @param inverted Button to indicate inversion
+	 * @param hubTracking Button to indicate tracking Hub
 	 */
-	public TeleopDriveCmd(
+	public TeleopDriveCommand(
 	  Drivetrain drivetrain,
 	  DoubleSupplier forwardX,
 	  DoubleSupplier forwardY,
@@ -40,7 +50,7 @@ public class TeleopDriveCmd extends Command {
 	  DoubleSupplier slider,
 	  BooleanSupplier strafeOnly,
 	  BooleanSupplier inverted,
-	  BooleanSupplier autoAlignHub
+	  BooleanSupplier hubTracking
 	) {
 
 		this.drivetrain = drivetrain;
@@ -50,26 +60,11 @@ public class TeleopDriveCmd extends Command {
 		this.slider = slider;
 		this.strafeOnly = strafeOnly;
 		this.inverted = inverted;
-		this.autoAlignHub = autoAlignHub;
+		this.hubTracking = hubTracking;
 
 		this.xLimiter = new SlewRateLimiter(DrivetrainConstants.maxAcceleration);
 		this.yLimiter = new SlewRateLimiter(DrivetrainConstants.maxAcceleration);
 		this.rotLimiter = new SlewRateLimiter(DrivetrainConstants.maxAngularAcceleration);
-
-		// Set the appropriate hub constant. There should be a color received by the time this command is run.
-		// However, blue is the default if there is no color yet.
-		Optional<DriverStation.Alliance> ally = DriverStation.getAlliance();
-		if (ally.isPresent()) {
-			if (ally.get() == DriverStation.Alliance.Red) {
-				hub = Constants.VisionConstants.RED_HUB_CENTER;
-			} else if (ally.get() == DriverStation.Alliance.Blue) {
-				hub = Constants.VisionConstants.BLUE_HUB_CENTER;
-			} else {
-				hub = Constants.VisionConstants.BLUE_HUB_CENTER;
-			}
-		} else {
-			hub = Constants.VisionConstants.BLUE_HUB_CENTER;
-		}
 
 		// Configure controller to handle angles
 		controller = new PIDController(kP.get(), kI.get(), kD.get());
@@ -130,12 +125,15 @@ public class TeleopDriveCmd extends Command {
 		ySpeed = -MathUtil.applyDeadband(ySpeed, 0.1, 1);
 		rot = -MathUtil.applyDeadband(rot, 0.3, 0.75);
 
-		if (autoAlignHub.getAsBoolean()) { // Hub autoalignment flag
+		if (hubTracking.getAsBoolean()) { // Hub autoalignment flag
+			// Grab current pose
 			Pose2d currentPose = drivetrain.getEstimatedPose();
 
-			double targetAngleRad = Math.atan2(hub.getY() - currentPose.getY(), hub.getX() - currentPose.getX());
+			// Calculate target, grab current angle
+			double targetAngleRad = Math.atan2(Constants.VisionConstants.getHubTranslation().getY() - currentPose.getY(), Constants.VisionConstants.getHubTranslation().getX() - currentPose.getX());
 			double currentAngleRad = currentPose.getRotation().getRadians();
 
+			// Calculate the next angular speed required
 			double angularSpeedRps = controller.calculate(currentAngleRad, targetAngleRad);
 
 			// Clamp angular speed so we don't brown out
