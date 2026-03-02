@@ -5,11 +5,14 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import org.littletonrobotics.junction.Logger;
 import org.team2059.Lintilla.Constants;
 import org.team2059.Lintilla.Constants.DrivetrainConstants;
 import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
+import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
 import org.team2059.Lintilla.util.LoggedTunableNumber;
 
 import java.util.Optional;
@@ -18,6 +21,7 @@ import java.util.function.DoubleSupplier;
 
 public class TeleopDriveCommand extends Command {
 	private final Drivetrain drivetrain;
+	private final ShooterBase shooterBase;
 
 	private final DoubleSupplier forwardX, forwardY, rotation, slider;
 	private final BooleanSupplier strafeOnly, inverted, hubTracking;
@@ -44,6 +48,7 @@ public class TeleopDriveCommand extends Command {
 	 */
 	public TeleopDriveCommand(
 	  Drivetrain drivetrain,
+	  ShooterBase shooterBase,
 	  DoubleSupplier forwardX,
 	  DoubleSupplier forwardY,
 	  DoubleSupplier rotation,
@@ -54,6 +59,8 @@ public class TeleopDriveCommand extends Command {
 	) {
 
 		this.drivetrain = drivetrain;
+		this.shooterBase = shooterBase;
+
 		this.forwardX = forwardX;
 		this.forwardY = forwardY;
 		this.rotation = rotation;
@@ -77,7 +84,7 @@ public class TeleopDriveCommand extends Command {
 	@Override
 	public void initialize() {
 		// Set tolerance to 1 degree for rotational PID (applies if button is selected)
-		controller.setTolerance(Math.toRadians(1));
+		controller.setTolerance(Math.toRadians(2));
 	}
 
 	// Called every time the scheduler runs while the command is scheduled.
@@ -126,21 +133,55 @@ public class TeleopDriveCommand extends Command {
 		rot = -MathUtil.applyDeadband(rot, 0.3, 0.75);
 
 		if (hubTracking.getAsBoolean()) { // Hub autoalignment flag
-			// Grab current pose
 			Pose2d currentPose = drivetrain.getEstimatedPose();
+			Translation2d shooterTranslation = drivetrain.getShooterPose().getTranslation();
+			Translation2d robotTranslation = currentPose.getTranslation();
 
-			// Calculate target, grab current angle
-			double targetAngleRad = Math.atan2(Constants.VisionConstants.getHubTranslation().getY() - currentPose.getY(), Constants.VisionConstants.getHubTranslation().getX() - currentPose.getX());
+			// Get field relative velocity vector
+			ChassisSpeeds currentSpeeds = drivetrain.getFieldRelativeSpeeds();
+			Translation2d vRobot = new Translation2d(currentSpeeds.vxMetersPerSecond, currentSpeeds.vyMetersPerSecond);
+
+			Translation2d shooterOffset = Constants.VisionConstants.SHOOTER_OFFSET.getTranslation();
+			Translation2d vTan = new Translation2d(
+			  -currentSpeeds.omegaRadiansPerSecond * shooterOffset.getY(),
+			  currentSpeeds.omegaRadiansPerSecond * shooterOffset.getX()
+			);
+
+			Translation2d effectiveShooterVelocity = vRobot.plus(vTan);
+
+			// Circular dependency loop: convergence on the perfect ToF and distance
+			Translation2d virtualTarget = Constants.VisionConstants.getHubTranslation();
+			Translation2d predictedOffset = new Translation2d();
+			for (int i = 0; i < 4; i++) {
+				// Measure distance to current virtual target guess
+				double predictedDistance = shooterTranslation.getDistance(virtualTarget);
+
+				// Total time of flight taking into account mechanical/system latency
+				double timeOfFlight = shooterBase.getToF(predictedDistance) + Constants.ShooterConstants.SYSTEM_LATENCY_SECONDS;
+
+				// Calculate how far the ball will drift across the field
+				predictedOffset = effectiveShooterVelocity.times(timeOfFlight);
+
+				// Shift the aim point in the opposite direction of the drift
+				virtualTarget = Constants.VisionConstants.getHubTranslation().minus(predictedOffset);
+
+				shooterBase.currentDistanceToTarget = predictedDistance;
+			}
+
+			// Calculate the angle needed to face the new target
+			double targetAngleRad = Math.atan2(
+			  virtualTarget.getY() - robotTranslation.getY(),
+			  virtualTarget.getX() - robotTranslation.getX()
+			);
+
 			double currentAngleRad = currentPose.getRotation().getRadians();
 
-			// Calculate the next angular speed required
+			// Apply PID to rotation
 			double angularSpeedRps = controller.calculate(currentAngleRad, targetAngleRad);
+			shooterBase.isAimed = controller.atSetpoint();
 
-			// Clamp angular speed so we don't brown out
-			// TODO: does this need rotLimiter and kTeleDriveMaxAngularSpeed calls?
-			angularSpeedRps = MathUtil.clamp(angularSpeedRps, -4.73, 4.73);
+			drivetrain.drive(xSpeed, ySpeed, angularSpeedRps, Drivetrain.isFieldRelativeTeleop);
 
-			drivetrain.drive(xSpeed, ySpeed, angularSpeedRps, drivetrain.isFieldRelativeTeleop);
 		} else if (inverted.getAsBoolean()) { // Invert all axes if requested
 			drivetrain.drive(
 			  -xSpeed,

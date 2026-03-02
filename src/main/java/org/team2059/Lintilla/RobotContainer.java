@@ -5,6 +5,7 @@
 package org.team2059.Lintilla;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
@@ -21,6 +22,7 @@ import org.team2059.Lintilla.Constants.CANConstants;
 import org.team2059.Lintilla.Constants.DrivetrainConstants;
 import org.team2059.Lintilla.Constants.OperatorConstants;
 import org.team2059.Lintilla.Constants.ShooterConstants;
+import org.team2059.Lintilla.commands.SOTFCommand;
 import org.team2059.Lintilla.commands.ShooterDataCollectionCommand;
 import org.team2059.Lintilla.commands.SpinupAndShootCommand;
 import org.team2059.Lintilla.commands.TeleopDriveCommand;
@@ -103,23 +105,6 @@ public class RobotContainer {
 		  )
 		);
 
-		drivetrain.setDefaultCommand(
-		  new TeleopDriveCommand(
-			drivetrain,
-			() -> -logitech.getRawAxis(OperatorConstants.JoystickTranslationAxis), // forwardX
-			() -> -logitech.getRawAxis(OperatorConstants.JoystickStrafeAxis), // forwardY
-			() -> -logitech.getRawAxis(OperatorConstants.JoystickRotationAxis), // rotation
-			() -> logitech.getRawAxis(OperatorConstants.JoystickSliderAxis), // slider
-			() -> logitech.getRawButton(OperatorConstants.JoystickStrafeOnly), // Strafe Only Button
-			() -> logitech.getRawButton(OperatorConstants.JoystickInvertedDrive), // Inverted button
-			() -> logitech.getRawButton(2)
-		  )
-		);
-
-		oculus = new Oculus();
-
-		photonVision = new PhotonVision();
-
 		shooterBase = new ShooterBase(
 		  new VortexShooter( // LEFT SHOOTER
 			CANConstants.leftShooterFlywheel,
@@ -159,6 +144,24 @@ public class RobotContainer {
 		  )
 		);
 
+		drivetrain.setDefaultCommand(
+		  new TeleopDriveCommand(
+			drivetrain,
+			shooterBase,
+			() -> -logitech.getRawAxis(OperatorConstants.JoystickTranslationAxis), // forwardX
+			() -> -logitech.getRawAxis(OperatorConstants.JoystickStrafeAxis), // forwardY
+			() -> -logitech.getRawAxis(OperatorConstants.JoystickRotationAxis), // rotation
+			() -> logitech.getRawAxis(OperatorConstants.JoystickSliderAxis), // slider
+			() -> logitech.getRawButton(OperatorConstants.JoystickStrafeOnly), // Strafe Only Button
+			() -> logitech.getRawButton(OperatorConstants.JoystickInvertedDrive), // Inverted button
+			() -> logitech.getRawButton(2)
+		  )
+		);
+
+		oculus = new Oculus();
+
+		photonVision = new PhotonVision();
+
 		collector = new Collector(
 		  new CollectorIOReal(
 			CANConstants.collectorTiltMotor,
@@ -172,6 +175,25 @@ public class RobotContainer {
 		/* ========== */
 
 		/* NAMED COMMANDS */
+		NamedCommands.registerCommand(
+		  "Shoot5SecDistance",
+		  new SpinupAndShootCommand(drivetrain, shooterBase, collector)
+		    .withTimeout(5)
+		);
+
+		NamedCommands.registerCommand(
+		  "CollectorOut",
+		  collector.collectorOut().withTimeout(0.5)
+		);
+
+		NamedCommands.registerCommand(
+		  "CollectorOutAndIntake5Sec",
+		  collector.collectorOut()
+			.alongWith(
+			  Commands.startEnd(() -> collector.io.runConveyor(0.5), () -> collector.io.stopConveyor())
+			)
+		    .withTimeout(5)
+		);
 
 		// Build auto chooser - you can also set a default.
 		autoChooser = AutoBuilder.buildAutoChooser();
@@ -312,8 +334,7 @@ public class RobotContainer {
 
 		new JoystickButton(buttonBox, 11)
 		  .whileTrue(
-			Commands.runOnce(() -> Logger.recordOutput("DataCollectDistance", drivetrain.calculateDistanceShooterToHubMeters()))
-			  .andThen(new ShooterDataCollectionCommand(shooterBase, collector))
+			new SOTFCommand(drivetrain, shooterBase, collector)
 		  );
 	}
 

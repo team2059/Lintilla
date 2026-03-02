@@ -99,7 +99,7 @@ public final class Constants {
 
 	public static final class DrivetrainConstants {
 		// Global maximums
-		public static final double maxVelocity = 5; // meters/sec
+		public static final double maxVelocity = 3; // meters/sec
 		public static final double maxAcceleration = 3; // meters/sec^2
 		public static final double maxAngularVelocity = 2 * Math.PI; // rad/sec
 		public static final double maxAngularAcceleration = 4 * Math.PI; // rad/sec^2
@@ -280,10 +280,9 @@ public final class Constants {
 		// Error to tolerate when spinning up to shoot (in RPMs)
 		public static final double spinupToleranceRpm = 50;
 		// Speed [-1,1] to run the indexer at while shooting
-		public static final double indexerShootingSpeed = 0.5;
+		public static final double indexerShootingSpeed = 0.65;
 		// Speed [-1,1] to run the conveyor at while shooting
 		public static final double conveyorShootingSpeed = 0.5;
-		public static final double gravitationalAccelerationMpss = 9.80665;
 		public static final double hubHeightMeters = 1.83; // End height of trajectory
 
 		/*
@@ -297,11 +296,7 @@ public final class Constants {
 		 */
 		public static final double shooterHeightMeters = 0.5; // Start height of trajectory
 		public static final double fuelExitAngleRadians = 0.983936078; // RADIANS At what angle does fuel leave the shooter
-		// DO NOT TOUCH the following
-		public static final double tangentShooterAngle = Math.tan(fuelExitAngleRadians);
-		public static final double cosineShooterAngleSquared = Math.pow(Math.cos(fuelExitAngleRadians), 2);
-		public static final double dY = hubHeightMeters - shooterHeightMeters;
-		public static final double minimumShotDistanceMeters = dY / tangentShooterAngle;
+
 		// LEFT SHOOTER CONSTANTS
 		public static final boolean leftFlywheelInverted = true;
 		public static final boolean leftIndexerInverted = true;
@@ -343,6 +338,9 @@ public final class Constants {
 		}
 
 		public record ShooterParams(double rpm, double timeOfFlight) {}
+
+		// For SOTF
+		public static final double SYSTEM_LATENCY_SECONDS = 0.3;
 	}
 
 	public static final class CollectorConstants {
