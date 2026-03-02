@@ -37,7 +37,7 @@ public class PhotonVision extends SubsystemBase {
 	private boolean useMeasurements;
 
 	public PhotonVision() {
-		camera = new PhotonCamera(Constants.VisionConstants.pvCamName);
+		camera = new PhotonCamera(Constants.VisionConstants.PV_CAM_NAME);
 
 		poseEstimator = new PhotonPoseEstimator(
 		  Constants.VisionConstants.APRIL_TAG_FIELD_LAYOUT,

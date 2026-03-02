@@ -66,7 +66,7 @@ public class LocalizationSystem extends SubsystemBase {
 		qnavUseMeasurements = !RobotContainer.buttonBox.getRawButton(ButtonBoxQuestMeasurement);
 
 		// Set up PhotonVision camera and estimator
-		pvCam = new PhotonCamera(pvCamName);
+		pvCam = new PhotonCamera(PV_CAM_NAME);
 		pvEstimator = new PhotonPoseEstimator(
 		  APRIL_TAG_FIELD_LAYOUT,
 		  ROBOT_TO_PV

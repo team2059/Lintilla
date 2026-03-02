@@ -27,15 +27,10 @@ import java.util.Optional;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 
-/**
- * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
- * constants. This class should not be used for any other purpose. All constants should be declared
- * globally (i.e. public static). Do not put anything functional in this class.
- *
- * <p>It is advised to statically import this class (or one of its inner classes) wherever the
- * constants are needed, to reduce verbosity.
- */
 public final class Constants {
+	/**
+	 * Constants class for operator buttons and joystick axes
+	 */
 	public static final class OperatorConstants {
 
 		// Sets whether tunable numbers can be changed. If false, only defaults will be used.
@@ -76,15 +71,18 @@ public final class Constants {
 		public static final int ButtonBoxPhotonVisionMeasurement = 14;
 	}
 
+	/**
+	 * Class that holds gains and configuration for autonomous configuration (i.e. via PathPlanner).
+	 */
 	public static class AutoConstants {
 
 		// Feedback constants for x & y translation in auto.
-		public static final double kAutoTranslationP = 5.0;
-		public static final double kAutoTranslationD = 0;
+		public static final double AUTO_TRANSLATION_P = 5.0;
+		public static final double AUTO_TRANSLATION_D = 0;
 
 		// Feedback constants for theta (rotation) in auto.
-		public static final double kAutoRotationP = 5.0;
-		public static final double kAutoRotationD = 0.0;
+		public static final double AUTO_ROTATION_P = 5.0;
+		public static final double AUTO_ROTATION_D = 0.0;
 
 		/* FOR ROBOTCONFIG AUTO STUFF... */
 		/* Not used right now. */
@@ -97,6 +95,9 @@ public final class Constants {
 		// public static final int turnCurrentLimit = 20;
 	}
 
+	/**
+	 * Constants class for the Drivetrain class and respective SwerveModules. Contains all object related to kinematics.
+	 */
 	public static final class DrivetrainConstants {
 		// Global maximums
 		public static final double maxVelocity = 3; // meters/sec
@@ -104,8 +105,8 @@ public final class Constants {
 		public static final double maxAngularVelocity = 2 * Math.PI; // rad/sec
 		public static final double maxAngularAcceleration = 4 * Math.PI; // rad/sec^2
 		// Teleop max speeds
-		public static final double kTeleDriveMaxSpeed = 4;
-		public static final double kTeleDriveMaxAngularSpeed = Math.PI;
+		public static final double TELE_DRIVE_MAX_SPEED = 4;
+		public static final double TELE_DRIVE_MAX_ANGULAR_SPEED = Math.PI;
 
 		/*
 		 * MK5n Gear Ratios
@@ -136,14 +137,6 @@ public final class Constants {
 
 		public static final double rotationGearRatio = 26.09090909091;
 
-		// TODO: Torque-current control with x44's (azimuth)
-		public static final double azimuthkP = 0.0; // An error of 1 rotation results in this much output in amps
-		public static final double azimuthkI = 0.0;
-		public static final double azimuthkD = 0.0; // A velocity of 1 rotation/sec results in this much output
-
-		// Peak output of any x44 on the swerve modules
-		public static final double peakTorqueCurrentAmps = 60;
-
 		/*
 		 * CANcoder offsets, in rotations
 		 * Instructions for finding these offsets:
@@ -165,6 +158,10 @@ public final class Constants {
 		public static double kPRotation = 0.5;
 	}
 
+	/**
+	 * Constants for anything vision-related, including standard deviations, pose offsets,
+	 * and poses of field elements for tracking
+	 */
 	public static final class VisionConstants {
 
 		public static final Transform2d SHOOTER_OFFSET = new Transform2d(-Units.inchesToMeters(10), 0, Rotation2d.kZero);
@@ -176,16 +173,10 @@ public final class Constants {
 
 		public static final Translation2d RED_HUB_CENTER = new Translation2d(11.9014, 4.0213);
 		public static final Translation2d RED_HUB_BACK = new Translation2d(11.3044, 4.0213);
+
 		public static final Translation2d BLUE_TOWER_CENTER = new Translation2d(1.1434, 3.7457);
 		public static final Translation2d RED_TOWER_CENTER = new Translation2d(15.3952, 4.3236);
-		// Testing poses
-		public static final Pose2d BLUE_2FTMARK = new Pose2d(4.6116 - Units.inchesToMeters(21.75 + 24), 4.0213, Rotation2d.kZero);
-		public static final Pose2d BLUE_4FTMARK = new Pose2d(4.6116 - Units.inchesToMeters(21.75 + 4 * 12), 4.0213, Rotation2d.kZero);
-		public static final Pose2d BLUE_6FTMARK = new Pose2d(4.6116 - Units.inchesToMeters(21.75 + 6 * 12), 4.0213, Rotation2d.kZero);
-		public static final Pose2d BLUE_8FTMARK = new Pose2d(4.6116 - Units.inchesToMeters(21.75 + 8 * 12), 4.0213, Rotation2d.kZero);
-		public static final Pose2d BLUE_10FTMARK = new Pose2d(4.6116 - Units.inchesToMeters(21.75 + 10 * 12), 4.0213, Rotation2d.kZero);
-		public static final Pose2d BLUE_12FTMARK = new Pose2d(4.6116 - Units.inchesToMeters(21.75 + 12 * 12), 4.0213, Rotation2d.kZero);
-		public static final Pose2d BLUE_14FTMARK = new Pose2d(4.6116 - Units.inchesToMeters(21.75 + 14 * 12), 4.0213, Rotation2d.kZero);
+
 		public static final Transform3d ROBOT_TO_QUEST = new Transform3d(
 		  -0.30449689,
 		  0.16938114,
@@ -196,7 +187,8 @@ public final class Constants {
 			Math.PI / 2
 		  )
 		);
-		public static final String pvCamName = "Bcam9782";
+
+		public static final String PV_CAM_NAME = "Bcam9782";
 		public static final Transform3d ROBOT_TO_PV = new Transform3d(
 		  -Units.inchesToMeters(5),
 		  -Units.inchesToMeters(1.375),
@@ -240,6 +232,9 @@ public final class Constants {
 		public static final Distance QUESTNAV_APRILTAG_ERROR_THRESHOLD = Meters.of(0.5);
 	}
 
+	/**
+	 * Constants class for anything that interfaces via CAN. All IDs can be found here.
+	 */
 	public static final class CANConstants {
 
 		public static final CANBus canivore = new CANBus("Deep Control");
@@ -271,6 +266,9 @@ public final class Constants {
 		public static final int conveyorMotor = 59;
 	}
 
+	/**
+	 * Constants class for the ShooterBase subsystem and subcomponents. Contains lookup table for RPM/ToF/distance
+	 */
 	public static final class ShooterConstants {
 
 		public static final InterpolatingTreeMap<Double, ShooterParams> SHOOTER_MAP = new InterpolatingTreeMap<>(
@@ -347,6 +345,9 @@ public final class Constants {
 		public record ShooterParams(double rpm, double timeOfFlight) {}
 	}
 
+	/**
+	 * Constants class for the Collector subsystem.
+	 */
 	public static final class CollectorConstants {
 		public static final double kPTilt = 0.6;
 		public static final double kITilt = 0;
