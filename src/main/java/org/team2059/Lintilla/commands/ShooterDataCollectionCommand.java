@@ -1,6 +1,7 @@
 package org.team2059.Lintilla.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import org.team2059.Lintilla.Constants;
 import org.team2059.Lintilla.subsystems.collector.Collector;
 import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
 import org.team2059.Lintilla.util.LoggedTunableNumber;
@@ -38,13 +39,13 @@ public class ShooterDataCollectionCommand extends Command {
 
 		if (Math.abs(shooterBase.leftShooterInputs.flywheelVelocity.in(RPM) - speedRPM.get()) <= spinupToleranceRpm) {
 			// Left shooter is within tolerance. Spin indexer
-			shooterBase.leftShooter.setIndexerSpeed(0.5);
-			collector.io.runConveyor(0.5);
+			shooterBase.leftShooter.setIndexerSpeed(Constants.ShooterConstants.indexerShootingSpeed);
+			collector.io.runConveyor(Constants.ShooterConstants.conveyorShootingSpeed);
 		}
 		if (Math.abs(shooterBase.rightShooterInputs.flywheelVelocity.in(RPM) - speedRPM.get()) <= spinupToleranceRpm) {
 			// Right shooter is within tolerance. Spin indexer
-			shooterBase.rightShooter.setIndexerSpeed(0.5);
-			collector.io.runConveyor(0.5);
+			shooterBase.rightShooter.setIndexerSpeed(Constants.ShooterConstants.indexerShootingSpeed);
+			collector.io.runConveyor(Constants.ShooterConstants.conveyorShootingSpeed);
 		}
 	}
 

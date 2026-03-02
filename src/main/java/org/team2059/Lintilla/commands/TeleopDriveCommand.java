@@ -16,6 +16,10 @@ import org.team2059.Lintilla.util.LoggedTunableNumber;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
+/**
+ * Command to drive the robot using a flight stick controller.
+ * Contains various methods of navigation including hub-tracking.
+ */
 public class TeleopDriveCommand extends Command {
 	private final Drivetrain drivetrain;
 	private final ShooterBase shooterBase;
@@ -29,11 +33,9 @@ public class TeleopDriveCommand extends Command {
 	private final LoggedTunableNumber kP = new LoggedTunableNumber("HubTurnKp", 8.0);
 	private final LoggedTunableNumber kI = new LoggedTunableNumber("HubTurnKi", 0);
 	private final LoggedTunableNumber kD = new LoggedTunableNumber("HubTurnKd", 0);
+	private final Translation2d shooterOffset = Constants.VisionConstants.SHOOTER_OFFSET.getTranslation();
 
 	/**
-	 * Command to drive the robot using a flight stick controller.
-	 * Contains various methods of navigation including hub-tracking.
-	 *
 	 * @param drivetrain  the Drivetrain subsystem to interface with
 	 * @param forwardX    X-axis input supplier
 	 * @param forwardY    Y-axis input supplier
@@ -88,7 +90,7 @@ public class TeleopDriveCommand extends Command {
 	@Override
 	public void execute() {
 
-		// Check for updated TunableNumbers for autorotation controller and take action if needed
+		// Check for updated TunableNumbers for rotation controller and take action if needed
 		LoggedTunableNumber.ifChanged(
 		  hashCode(),
 		  () -> {
@@ -96,12 +98,6 @@ public class TeleopDriveCommand extends Command {
 		  },
 		  kP, kI, kD
 		);
-
-		/**
-		 * Units are given in meters/sec and radians/sec
-		 * Since joysticks give output from -1 to 1, we multiply outputs by the max speed
-		 * Otherwise, the max speed would be 1 m/s and 1 rad/s
-		 */
 
 		// Get joystick input as x, y, and rotation
 		double xSpeed = -forwardX.getAsDouble();
@@ -129,26 +125,33 @@ public class TeleopDriveCommand extends Command {
 		ySpeed = -MathUtil.applyDeadband(ySpeed, 0.1, 1);
 		rot = -MathUtil.applyDeadband(rot, 0.3, 0.75);
 
-		if (hubTracking.getAsBoolean()) { // Hub autoalignment flag
-			Pose2d currentPose = drivetrain.getEstimatedPose();
-			Translation2d shooterTranslation = drivetrain.getShooterPose().getTranslation();
-			Translation2d robotTranslation = currentPose.getTranslation();
+		if (hubTracking.getAsBoolean()) {
+			// HUB TRACKING WITH VELOCITY COMPENSATION, PREPARES FOR SOTF
+			// This is inspired by Team 7028's ShootAtTargetCommand, and iteratively
+			// solves for the aim point that compensates for time-of-flight.
 
-			// Get field relative velocity vector
-			ChassisSpeeds currentSpeeds = drivetrain.getFieldRelativeSpeeds();
-			Translation2d vRobot = new Translation2d(currentSpeeds.vxMetersPerSecond, currentSpeeds.vyMetersPerSecond);
+			Pose2d currentPose = drivetrain.getEstimatedPose(); // Drivetrain positions
+			ChassisSpeeds currentSpeeds = drivetrain.getFieldRelativeSpeeds(); // Drivetrain speeds
 
-			Translation2d shooterOffset = Constants.VisionConstants.SHOOTER_OFFSET.getTranslation();
-			Translation2d vTan = new Translation2d(
+			Translation2d shooterTranslation = drivetrain.getShooterPose().getTranslation(); // Shooter position vector
+			Translation2d robotTranslation = currentPose.getTranslation(); // Robot position vector
+
+			Translation2d vRobot = // Robot velocity vector
+			  new Translation2d(
+				currentSpeeds.vxMetersPerSecond,
+			    currentSpeeds.vyMetersPerSecond
+			  );
+
+			Translation2d vTan = new Translation2d( // Robot tangential velocity vector
 			  -currentSpeeds.omegaRadiansPerSecond * shooterOffset.getY(),
 			  currentSpeeds.omegaRadiansPerSecond * shooterOffset.getX()
 			);
 
-			Translation2d effectiveShooterVelocity = vRobot.plus(vTan);
+			Translation2d effectiveShooterVelocity = vRobot.plus(vTan); // Add the two vectors
 
 			// Circular dependency loop: convergence on the perfect ToF and distance
 			Translation2d virtualTarget = Constants.VisionConstants.getHubTranslation();
-			Translation2d predictedOffset = new Translation2d();
+			Translation2d predictedOffset;
 			for (int i = 0; i < 4; i++) {
 				// Measure distance to current virtual target guess
 				double predictedDistance = shooterTranslation.getDistance(virtualTarget);
@@ -162,6 +165,7 @@ public class TeleopDriveCommand extends Command {
 				// Shift the aim point in the opposite direction of the drift
 				virtualTarget = Constants.VisionConstants.getHubTranslation().minus(predictedOffset);
 
+				// Set the current distance for use in other commands
 				shooterBase.currentDistanceToTarget = predictedDistance;
 			}
 
@@ -175,8 +179,9 @@ public class TeleopDriveCommand extends Command {
 
 			// Apply PID to rotation
 			double angularSpeedRps = controller.calculate(currentAngleRad, targetAngleRad);
-			shooterBase.isAimed = controller.atSetpoint();
+			shooterBase.isAimed = controller.atSetpoint(); // set for use in other commands
 
+			// Apply drive command
 			drivetrain.drive(xSpeed, ySpeed, angularSpeedRps, Drivetrain.isFieldRelativeTeleop);
 
 		} else if (inverted.getAsBoolean()) { // Invert all axes if requested

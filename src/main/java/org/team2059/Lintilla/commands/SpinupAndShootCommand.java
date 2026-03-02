@@ -21,10 +21,11 @@ public class SpinupAndShootCommand extends Command {
 
 	// Holds our desired speeds
 	private double desiredRPM;
+
 	private boolean desiredRPMHardcoded;
 
 	/**
-	 * Constructor for distance-based shots
+	 * Constructor for distance-based shots (shoots on the fly)
 	 *
 	 * @param drivetrain  the Drivetrain subsystem
 	 * @param shooterBase the ShooterBase subsystem
@@ -36,7 +37,7 @@ public class SpinupAndShootCommand extends Command {
 		this.collector = collector;
 
 		// Begin by precalculating the distance to from the shooter to the hub
-		this.desiredRPM = shooterBase.getTargetRpm(drivetrain.calculateDistanceShooterToHubMeters());
+		this.desiredRPM = shooterBase.getTargetRpm(shooterBase.currentDistanceToTarget);
 		this.desiredRPMHardcoded = false;
 
 		addRequirements(this.shooterBase);
@@ -62,32 +63,44 @@ public class SpinupAndShootCommand extends Command {
 	}
 
 	@Override
-	public void initialize() {
+	public void execute() {
 
+		// If the desired RPM is not hardcoded, we use our lookup table with the
+		// latest distance that was published to shooterBase.
 		if (!desiredRPMHardcoded) {
-			// Calculate distance from shooter to hub
-			double distanceMeters = drivetrain.calculateDistanceShooterToHubMeters();
-
-			// Find speeds via lookup table
+			double distanceMeters = shooterBase.currentDistanceToTarget;
 			desiredRPM = shooterBase.getTargetRpm(distanceMeters);
 		}
 
-		// Spin up shooters	
+		// Set the two flywheels to the desired RPM, whether it's hardcoded or
+		// not, it doesn't matter at this point in execution.
 		shooterBase.leftShooter.setFlywheelRpm(desiredRPM);
 		shooterBase.rightShooter.setFlywheelRpm(desiredRPM);
-	}
 
-	@Override
-	public void execute() {
-		if (Math.abs(shooterBase.leftShooterInputs.flywheelVelocity.in(RPM) - desiredRPM) <= spinupToleranceRpm) {
-			// Left shooter is within tolerance. Spin indexer
-			shooterBase.leftShooter.setIndexerSpeed(Constants.ShooterConstants.indexerShootingSpeed);
-			collector.io.runConveyor(Constants.ShooterConstants.conveyorShootingSpeed);
-		}
-		if (Math.abs(shooterBase.rightShooterInputs.flywheelVelocity.in(RPM) - desiredRPM) <= spinupToleranceRpm) {
-			// Right shooter is within tolerance. Spin indexer
-			shooterBase.rightShooter.setIndexerSpeed(Constants.ShooterConstants.indexerShootingSpeed);
-			collector.io.runConveyor(Constants.ShooterConstants.conveyorShootingSpeed);
+		// If we're using hardcoded RPM, we don't need to check whether or not we're aimed.
+		// Otherwise, we must check our aiming so we don't deliberately miss shots.
+		if (desiredRPMHardcoded) {
+			if (Math.abs(shooterBase.leftShooterInputs.flywheelVelocity.in(RPM) - desiredRPM) <= spinupToleranceRpm) {
+				// Left shooter is within tolerance. Spin indexer
+				shooterBase.leftShooter.setIndexerSpeed(Constants.ShooterConstants.indexerShootingSpeed);
+				collector.io.runConveyor(Constants.ShooterConstants.conveyorShootingSpeed);
+			}
+			if (Math.abs(shooterBase.rightShooterInputs.flywheelVelocity.in(RPM) - desiredRPM) <= spinupToleranceRpm) {
+				// Right shooter is within tolerance. Spin indexer
+				shooterBase.rightShooter.setIndexerSpeed(Constants.ShooterConstants.indexerShootingSpeed);
+				collector.io.runConveyor(Constants.ShooterConstants.conveyorShootingSpeed);
+			}
+		} else {
+			if (shooterBase.isAimed && Math.abs(shooterBase.leftShooterInputs.flywheelVelocity.in(RPM) - desiredRPM) <= spinupToleranceRpm) {
+				// Left shooter is within tolerance. Spin indexer
+				shooterBase.leftShooter.setIndexerSpeed(Constants.ShooterConstants.indexerShootingSpeed);
+				collector.io.runConveyor(Constants.ShooterConstants.conveyorShootingSpeed);
+			}
+			if (shooterBase.isAimed && Math.abs(shooterBase.rightShooterInputs.flywheelVelocity.in(RPM) - desiredRPM) <= spinupToleranceRpm) {
+				// Right shooter is within tolerance. Spin indexer
+				shooterBase.rightShooter.setIndexerSpeed(Constants.ShooterConstants.indexerShootingSpeed);
+				collector.io.runConveyor(Constants.ShooterConstants.conveyorShootingSpeed);
+			}
 		}
 	}
 
