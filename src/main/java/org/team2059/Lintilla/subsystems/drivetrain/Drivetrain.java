@@ -26,8 +26,6 @@ import org.team2059.Lintilla.Constants.DrivetrainConstants;
 import org.team2059.Lintilla.Constants.VisionConstants;
 import org.team2059.Lintilla.routines.DrivetrainRoutine;
 
-import java.util.Optional;
-
 public class Drivetrain extends SubsystemBase {
 
 	public static boolean isFieldRelativeTeleop = true;

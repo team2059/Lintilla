@@ -17,13 +17,11 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import org.littletonrobotics.junction.Logger;
 import org.team2059.Lintilla.Constants.CANConstants;
 import org.team2059.Lintilla.Constants.DrivetrainConstants;
 import org.team2059.Lintilla.Constants.OperatorConstants;
 import org.team2059.Lintilla.Constants.ShooterConstants;
 import org.team2059.Lintilla.commands.SOTFCommand;
-import org.team2059.Lintilla.commands.ShooterDataCollectionCommand;
 import org.team2059.Lintilla.commands.SpinupAndShootCommand;
 import org.team2059.Lintilla.commands.TeleopDriveCommand;
 import org.team2059.Lintilla.subsystems.collector.Collector;
@@ -178,7 +176,7 @@ public class RobotContainer {
 		NamedCommands.registerCommand(
 		  "Shoot5SecDistance",
 		  new SpinupAndShootCommand(drivetrain, shooterBase, collector)
-		    .withTimeout(5)
+			.withTimeout(5)
 		);
 
 		NamedCommands.registerCommand(
@@ -192,7 +190,7 @@ public class RobotContainer {
 			.alongWith(
 			  Commands.startEnd(() -> collector.io.runConveyor(0.5), () -> collector.io.stopConveyor())
 			)
-		    .withTimeout(5)
+			.withTimeout(5)
 		);
 
 		// Build auto chooser - you can also set a default.
@@ -325,11 +323,11 @@ public class RobotContainer {
 
 		new JoystickButton(buttonBox, 12)
 		  .whileTrue(Commands.runOnce(() -> {
-			  Pose3d p = photonVision.getEstimatedPose();
+				  Pose3d p = photonVision.getEstimatedPose();
 
-			  if (p != null) oculus.setRobotPose(p);
-		  })
-		    .ignoringDisable(true)
+				  if (p != null) oculus.setRobotPose(p);
+			  })
+			  .ignoringDisable(true)
 		  );
 
 		new JoystickButton(buttonBox, 11)

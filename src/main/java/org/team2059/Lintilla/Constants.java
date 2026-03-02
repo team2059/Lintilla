@@ -176,25 +176,8 @@ public final class Constants {
 
 		public static final Translation2d RED_HUB_CENTER = new Translation2d(11.9014, 4.0213);
 		public static final Translation2d RED_HUB_BACK = new Translation2d(11.3044, 4.0213);
-
-		/**
-		 * Gets the Translation2d of the current Alliance Hub
-		 *
-		 * @return alliance Hub coordinates
-		 */
-		public static Translation2d getHubTranslation() {
-			Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
-
-			if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red) {
-				return RED_HUB_CENTER;
-			} else {
-				return BLUE_HUB_CENTER;
-			}
-		}
-
 		public static final Translation2d BLUE_TOWER_CENTER = new Translation2d(1.1434, 3.7457);
 		public static final Translation2d RED_TOWER_CENTER = new Translation2d(15.3952, 4.3236);
-
 		// Testing poses
 		public static final Pose2d BLUE_2FTMARK = new Pose2d(4.6116 - Units.inchesToMeters(21.75 + 24), 4.0213, Rotation2d.kZero);
 		public static final Pose2d BLUE_4FTMARK = new Pose2d(4.6116 - Units.inchesToMeters(21.75 + 4 * 12), 4.0213, Rotation2d.kZero);
@@ -203,7 +186,6 @@ public final class Constants {
 		public static final Pose2d BLUE_10FTMARK = new Pose2d(4.6116 - Units.inchesToMeters(21.75 + 10 * 12), 4.0213, Rotation2d.kZero);
 		public static final Pose2d BLUE_12FTMARK = new Pose2d(4.6116 - Units.inchesToMeters(21.75 + 12 * 12), 4.0213, Rotation2d.kZero);
 		public static final Pose2d BLUE_14FTMARK = new Pose2d(4.6116 - Units.inchesToMeters(21.75 + 14 * 12), 4.0213, Rotation2d.kZero);
-
 		public static final Transform3d ROBOT_TO_QUEST = new Transform3d(
 		  -0.30449689,
 		  0.16938114,
@@ -222,7 +204,7 @@ public final class Constants {
 		  new Rotation3d(
 			0,
 			Units.degreesToRadians(-56),
-		    0
+			0
 		  )
 		);
 		// The standard deviations of our vision estimated poses, which affect correction rate
@@ -233,6 +215,21 @@ public final class Constants {
 		  0.02, // Trust down to 2 cm in Y direction
 		  0.035 // Trust down to 2 degrees rotational
 		);
+
+		/**
+		 * Gets the Translation2d of the current Alliance Hub
+		 *
+		 * @return alliance Hub coordinates
+		 */
+		public static Translation2d getHubTranslation() {
+			Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
+
+			if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red) {
+				return RED_HUB_CENTER;
+			} else {
+				return BLUE_HUB_CENTER;
+			}
+		}
 	}
 
 	public static final class CANConstants {
@@ -326,6 +323,8 @@ public final class Constants {
 		public static final double rightFlywheelkS = 0.04773;
 		public static final double rightFlywheelkV = 0.10424 / 60;
 		public static final double rightFlywheelkA = 0.020809 / 60;
+		// For SOTF
+		public static final double SYSTEM_LATENCY_SECONDS = 0.3;
 		public static boolean rightIndexerInverted = false;
 
 		static {
@@ -338,9 +337,6 @@ public final class Constants {
 		}
 
 		public record ShooterParams(double rpm, double timeOfFlight) {}
-
-		// For SOTF
-		public static final double SYSTEM_LATENCY_SECONDS = 0.3;
 	}
 
 	public static final class CollectorConstants {

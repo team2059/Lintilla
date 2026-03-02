@@ -6,16 +6,13 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
-import org.littletonrobotics.junction.Logger;
 import org.team2059.Lintilla.Constants;
 import org.team2059.Lintilla.Constants.DrivetrainConstants;
 import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
 import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
 import org.team2059.Lintilla.util.LoggedTunableNumber;
 
-import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
@@ -37,13 +34,13 @@ public class TeleopDriveCommand extends Command {
 	 * Command to drive the robot using a flight stick controller.
 	 * Contains various methods of navigation including hub-tracking.
 	 *
-	 * @param drivetrain the Drivetrain subsystem to interface with
-	 * @param forwardX X-axis input supplier
-	 * @param forwardY Y-axis input supplier
-	 * @param rotation Omega-axis input supplier
-	 * @param slider Slider input supplier (it's also an axis)
-	 * @param strafeOnly Button to indicate strafing only
-	 * @param inverted Button to indicate inversion
+	 * @param drivetrain  the Drivetrain subsystem to interface with
+	 * @param forwardX    X-axis input supplier
+	 * @param forwardY    Y-axis input supplier
+	 * @param rotation    Omega-axis input supplier
+	 * @param slider      Slider input supplier (it's also an axis)
+	 * @param strafeOnly  Button to indicate strafing only
+	 * @param inverted    Button to indicate inversion
 	 * @param hubTracking Button to indicate tracking Hub
 	 */
 	public TeleopDriveCommand(

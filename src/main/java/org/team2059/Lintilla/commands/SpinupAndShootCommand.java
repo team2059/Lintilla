@@ -26,9 +26,9 @@ public class SpinupAndShootCommand extends Command {
 	/**
 	 * Constructor for distance-based shots
 	 *
-	 * @param drivetrain the Drivetrain subsystem
+	 * @param drivetrain  the Drivetrain subsystem
 	 * @param shooterBase the ShooterBase subsystem
-	 * @param collector the Collector subsystem (so we can run the conveyor)
+	 * @param collector   the Collector subsystem (so we can run the conveyor)
 	 */
 	public SpinupAndShootCommand(Drivetrain drivetrain, ShooterBase shooterBase, Collector collector) {
 		this.shooterBase = shooterBase;
@@ -45,10 +45,10 @@ public class SpinupAndShootCommand extends Command {
 	/**
 	 * Constructor for shots at specific RPMs
 	 *
-	 * @param drivetrain the Drivetrain subsystem
+	 * @param drivetrain  the Drivetrain subsystem
 	 * @param shooterBase the ShooterBase subsystem
-	 * @param collector the Collector subsystem (so we can run the conveyor)
-	 * @param desiredRPM the desired speeds in RPM
+	 * @param collector   the Collector subsystem (so we can run the conveyor)
+	 * @param desiredRPM  the desired speeds in RPM
 	 */
 	public SpinupAndShootCommand(Drivetrain drivetrain, ShooterBase shooterBase, Collector collector, double desiredRPM) {
 		this.shooterBase = shooterBase;
