@@ -21,10 +21,13 @@ import java.util.Optional;
 public class PhotonVision extends SubsystemBase {
 	// Cental camera object
 	private final PhotonCamera camera;
+
 	// PhotonPoseEstimators, one for each pipeline
 	private final PhotonPoseEstimator poseEstimator;
+
 	// Store all data that PhotonVision returns
 	private List<PhotonPipelineResult> cameraResults;
+
 	// Store latest data that PhotonVision returns
 	private PhotonPipelineResult cameraResult;
 	private Matrix<N3, N1> currentStdDevs;

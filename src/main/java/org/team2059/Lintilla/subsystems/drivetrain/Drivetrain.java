@@ -9,6 +9,7 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -163,6 +164,30 @@ public class Drivetrain extends SubsystemBase {
 	 */
 	public ChassisSpeeds getRobotRelativeSpeeds() {
 		return DrivetrainConstants.kinematics.toChassisSpeeds(getStates());
+	}
+
+	/**
+	 * @return ChassisSpeeds of current field-relative robot speeds
+	 */
+	public ChassisSpeeds getFieldRelativeSpeeds() {
+		// Get robot relative speeds
+		ChassisSpeeds robotRelativeSpeeds = getRobotRelativeSpeeds();
+
+		// Get the current field heading
+		Rotation2d currentHeading = getEstimatedPose().getRotation();
+
+		// Rotate velocity vector by the robot's heading
+		Translation2d robotVelocity = new Translation2d(
+		  robotRelativeSpeeds.vxMetersPerSecond,
+		  robotRelativeSpeeds.vyMetersPerSecond
+		);
+		Translation2d fieldVelocity = robotVelocity.rotateBy(currentHeading);
+
+		return new ChassisSpeeds(
+		  fieldVelocity.getX(),
+		  fieldVelocity.getY(),
+		  robotRelativeSpeeds.omegaRadiansPerSecond
+		);
 	}
 
 	/**
@@ -338,23 +363,7 @@ public class Drivetrain extends SubsystemBase {
 	 * @return distance, in METERS
 	 */
 	public double calculateDistanceShooterToHubMeters() {
-		// If we can't do anything, return a negative distance (that's not valid)
-		double output = -1;
-
-		// Checks for alliance and selects appropriate hub pose
-		Optional<DriverStation.Alliance> ally = DriverStation.getAlliance();
-		if (ally.isPresent()) {
-			if (ally.get() == DriverStation.Alliance.Red) {
-				output = VisionConstants.RED_HUB_CENTER.getDistance(getShooterPose().getTranslation());
-			}
-			if (ally.get() == DriverStation.Alliance.Blue) {
-				output = VisionConstants.BLUE_HUB_CENTER.getDistance(getShooterPose().getTranslation());
-			}
-		} else {
-			System.out.println("ALLY NOT AVAILABLE");
-		}
-
-		return output;
+		return VisionConstants.getHubTranslation().getDistance(getShooterPose().getTranslation());
 	}
 
 	@Override

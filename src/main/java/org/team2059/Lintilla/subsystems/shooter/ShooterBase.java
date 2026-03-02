@@ -30,6 +30,9 @@ public class ShooterBase extends SubsystemBase {
 	private final MutAngle angleRoutine = Rotations.mutable(0);
 	private final MutAngularVelocity angularVelocityRoutine = RPM.mutable(0);
 
+	public boolean isAimed = false;
+	public double currentDistanceToTarget = 0.0;
+
 	public ShooterBase(
 	  ShooterIO leftShooter,
 	  ShooterIO rightShooter
@@ -146,6 +149,16 @@ public class ShooterBase extends SubsystemBase {
 		return rpm;
 	}
 
+	/**
+	 * Fetch the estimated Time of Flight for shooting from a certain distance
+	 *
+	 * @param distanceMeters
+	 * @return time in seconds
+	 */
+	public double getToF(double distanceMeters) {
+		return ShooterConstants.SHOOTER_MAP.get(distanceMeters).timeOfFlight();
+	}
+
 	public void stopAllSubsystemMotors() {
 		leftShooter.stopFlywheel();
 		leftShooter.stopIndexer();
@@ -225,5 +238,7 @@ public class ShooterBase extends SubsystemBase {
 
 		Logger.processInputs("ShooterBase/Left", leftShooterInputs);
 		Logger.processInputs("ShooterBase/Right", rightShooterInputs);
+
+		Logger.recordOutput("IsAimed", isAimed);
 	}
 }

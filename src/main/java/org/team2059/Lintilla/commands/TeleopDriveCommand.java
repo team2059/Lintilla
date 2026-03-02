@@ -5,71 +5,73 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import org.littletonrobotics.junction.Logger;
 import org.team2059.Lintilla.Constants;
 import org.team2059.Lintilla.Constants.DrivetrainConstants;
 import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
+import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
 import org.team2059.Lintilla.util.LoggedTunableNumber;
 
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
-public class TeleopDriveCmd extends Command {
+public class TeleopDriveCommand extends Command {
 	private final Drivetrain drivetrain;
+	private final ShooterBase shooterBase;
+
 	private final DoubleSupplier forwardX, forwardY, rotation, slider;
-	private final BooleanSupplier strafeOnly, inverted, autoAlignHub;
+	private final BooleanSupplier strafeOnly, inverted, hubTracking;
 	private final SlewRateLimiter xLimiter, yLimiter, rotLimiter;
 
 	// Values for autorotation to hub
-	private final Translation2d hub;
 	private final PIDController controller;
 	private final LoggedTunableNumber kP = new LoggedTunableNumber("HubTurnKp", 8.0);
 	private final LoggedTunableNumber kI = new LoggedTunableNumber("HubTurnKi", 0);
 	private final LoggedTunableNumber kD = new LoggedTunableNumber("HubTurnKd", 0);
 
 	/**
-	 * Creates a new TeleopDriveCmd.
+	 * Command to drive the robot using a flight stick controller.
+	 * Contains various methods of navigation including hub-tracking.
+	 *
+	 * @param drivetrain the Drivetrain subsystem to interface with
+	 * @param forwardX X-axis input supplier
+	 * @param forwardY Y-axis input supplier
+	 * @param rotation Omega-axis input supplier
+	 * @param slider Slider input supplier (it's also an axis)
+	 * @param strafeOnly Button to indicate strafing only
+	 * @param inverted Button to indicate inversion
+	 * @param hubTracking Button to indicate tracking Hub
 	 */
-	public TeleopDriveCmd(
+	public TeleopDriveCommand(
 	  Drivetrain drivetrain,
+	  ShooterBase shooterBase,
 	  DoubleSupplier forwardX,
 	  DoubleSupplier forwardY,
 	  DoubleSupplier rotation,
 	  DoubleSupplier slider,
 	  BooleanSupplier strafeOnly,
 	  BooleanSupplier inverted,
-	  BooleanSupplier autoAlignHub
+	  BooleanSupplier hubTracking
 	) {
 
 		this.drivetrain = drivetrain;
+		this.shooterBase = shooterBase;
+
 		this.forwardX = forwardX;
 		this.forwardY = forwardY;
 		this.rotation = rotation;
 		this.slider = slider;
 		this.strafeOnly = strafeOnly;
 		this.inverted = inverted;
-		this.autoAlignHub = autoAlignHub;
+		this.hubTracking = hubTracking;
 
 		this.xLimiter = new SlewRateLimiter(DrivetrainConstants.maxAcceleration);
 		this.yLimiter = new SlewRateLimiter(DrivetrainConstants.maxAcceleration);
 		this.rotLimiter = new SlewRateLimiter(DrivetrainConstants.maxAngularAcceleration);
-
-		// Set the appropriate hub constant. There should be a color received by the time this command is run.
-		// However, blue is the default if there is no color yet.
-		Optional<DriverStation.Alliance> ally = DriverStation.getAlliance();
-		if (ally.isPresent()) {
-			if (ally.get() == DriverStation.Alliance.Red) {
-				hub = Constants.VisionConstants.RED_HUB_CENTER;
-			} else if (ally.get() == DriverStation.Alliance.Blue) {
-				hub = Constants.VisionConstants.BLUE_HUB_CENTER;
-			} else {
-				hub = Constants.VisionConstants.BLUE_HUB_CENTER;
-			}
-		} else {
-			hub = Constants.VisionConstants.BLUE_HUB_CENTER;
-		}
 
 		// Configure controller to handle angles
 		controller = new PIDController(kP.get(), kI.get(), kD.get());
@@ -82,7 +84,7 @@ public class TeleopDriveCmd extends Command {
 	@Override
 	public void initialize() {
 		// Set tolerance to 1 degree for rotational PID (applies if button is selected)
-		controller.setTolerance(Math.toRadians(1));
+		controller.setTolerance(Math.toRadians(2));
 	}
 
 	// Called every time the scheduler runs while the command is scheduled.
@@ -130,19 +132,56 @@ public class TeleopDriveCmd extends Command {
 		ySpeed = -MathUtil.applyDeadband(ySpeed, 0.1, 1);
 		rot = -MathUtil.applyDeadband(rot, 0.3, 0.75);
 
-		if (autoAlignHub.getAsBoolean()) { // Hub autoalignment flag
+		if (hubTracking.getAsBoolean()) { // Hub autoalignment flag
 			Pose2d currentPose = drivetrain.getEstimatedPose();
+			Translation2d shooterTranslation = drivetrain.getShooterPose().getTranslation();
+			Translation2d robotTranslation = currentPose.getTranslation();
 
-			double targetAngleRad = Math.atan2(hub.getY() - currentPose.getY(), hub.getX() - currentPose.getX());
+			// Get field relative velocity vector
+			ChassisSpeeds currentSpeeds = drivetrain.getFieldRelativeSpeeds();
+			Translation2d vRobot = new Translation2d(currentSpeeds.vxMetersPerSecond, currentSpeeds.vyMetersPerSecond);
+
+			Translation2d shooterOffset = Constants.VisionConstants.SHOOTER_OFFSET.getTranslation();
+			Translation2d vTan = new Translation2d(
+			  -currentSpeeds.omegaRadiansPerSecond * shooterOffset.getY(),
+			  currentSpeeds.omegaRadiansPerSecond * shooterOffset.getX()
+			);
+
+			Translation2d effectiveShooterVelocity = vRobot.plus(vTan);
+
+			// Circular dependency loop: convergence on the perfect ToF and distance
+			Translation2d virtualTarget = Constants.VisionConstants.getHubTranslation();
+			Translation2d predictedOffset = new Translation2d();
+			for (int i = 0; i < 4; i++) {
+				// Measure distance to current virtual target guess
+				double predictedDistance = shooterTranslation.getDistance(virtualTarget);
+
+				// Total time of flight taking into account mechanical/system latency
+				double timeOfFlight = shooterBase.getToF(predictedDistance) + Constants.ShooterConstants.SYSTEM_LATENCY_SECONDS;
+
+				// Calculate how far the ball will drift across the field
+				predictedOffset = effectiveShooterVelocity.times(timeOfFlight);
+
+				// Shift the aim point in the opposite direction of the drift
+				virtualTarget = Constants.VisionConstants.getHubTranslation().minus(predictedOffset);
+
+				shooterBase.currentDistanceToTarget = predictedDistance;
+			}
+
+			// Calculate the angle needed to face the new target
+			double targetAngleRad = Math.atan2(
+			  virtualTarget.getY() - robotTranslation.getY(),
+			  virtualTarget.getX() - robotTranslation.getX()
+			);
+
 			double currentAngleRad = currentPose.getRotation().getRadians();
 
+			// Apply PID to rotation
 			double angularSpeedRps = controller.calculate(currentAngleRad, targetAngleRad);
+			shooterBase.isAimed = controller.atSetpoint();
 
-			// Clamp angular speed so we don't brown out
-			// TODO: does this need rotLimiter and kTeleDriveMaxAngularSpeed calls?
-			angularSpeedRps = MathUtil.clamp(angularSpeedRps, -4.73, 4.73);
+			drivetrain.drive(xSpeed, ySpeed, angularSpeedRps, Drivetrain.isFieldRelativeTeleop);
 
-			drivetrain.drive(xSpeed, ySpeed, angularSpeedRps, drivetrain.isFieldRelativeTeleop);
 		} else if (inverted.getAsBoolean()) { // Invert all axes if requested
 			drivetrain.drive(
 			  -xSpeed,

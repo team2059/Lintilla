@@ -10,15 +10,16 @@ import static org.team2059.Lintilla.Constants.ShooterConstants.spinupToleranceRp
 
 /**
  * Spinup and shoot command with tunable RPM. Useful for data collection.
+ * Not intended for use during competition.
  */
-public class ShooterDataCollectionCmd extends Command {
+public class ShooterDataCollectionCommand extends Command {
 	private final ShooterBase shooterBase;
 	private final Collector collector;
 
 	// Holds our desired speeds
 	private final LoggedTunableNumber speedRPM = new LoggedTunableNumber("speedRPM", 0.0);
 
-	public ShooterDataCollectionCmd(ShooterBase shooterBase, Collector collector) {
+	public ShooterDataCollectionCommand(ShooterBase shooterBase, Collector collector) {
 		this.shooterBase = shooterBase;
 		this.collector = collector;
 
