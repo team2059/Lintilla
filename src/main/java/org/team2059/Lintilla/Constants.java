@@ -230,6 +230,14 @@ public final class Constants {
 				return BLUE_HUB_CENTER;
 			}
 		}
+
+		public static final double QUESTNAV_FAILURE_THRESHOLD = 6.0;
+
+		/**
+		 * The threshold for the error between the best AprilTag pose estimate and the QuestNav pose measurements for the
+		 * QuestNav pose to be considered valid
+		 */
+		public static final Distance QUESTNAV_APRILTAG_ERROR_THRESHOLD = Meters.of(0.5);
 	}
 
 	public static final class CANConstants {
