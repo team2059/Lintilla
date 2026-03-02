@@ -23,6 +23,7 @@ import org.team2059.Lintilla.Constants.OperatorConstants;
 import org.team2059.Lintilla.Constants.ShooterConstants;
 import org.team2059.Lintilla.commands.SpinupAndShootCommand;
 import org.team2059.Lintilla.commands.TeleopDriveCommand;
+import org.team2059.Lintilla.subsystems.LocalizationSystem;
 import org.team2059.Lintilla.subsystems.collector.Collector;
 import org.team2059.Lintilla.subsystems.collector.CollectorIOReal;
 import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
@@ -48,8 +49,7 @@ public class RobotContainer {
 	public static GenericHID buttonBox;
 
 	public static Drivetrain drivetrain;
-	public static Oculus oculus;
-	public static PhotonVision photonVision;
+	public static LocalizationSystem localizationSystem;
 	public static ShooterBase shooterBase;
 	public static Collector collector;
 
@@ -155,9 +155,7 @@ public class RobotContainer {
 		  )
 		);
 
-		oculus = new Oculus();
-
-		photonVision = new PhotonVision();
+		localizationSystem = new LocalizationSystem();
 
 		collector = new Collector(
 		  new CollectorIOReal(
@@ -301,30 +299,28 @@ public class RobotContainer {
 		/* QUEST MEASUREMENTS SWITCH */
 		new JoystickButton(buttonBox, OperatorConstants.ButtonBoxQuestMeasurement)
 		  .onFalse(
-			Commands.runOnce(() -> oculus.setUseMeasurements(true))
+			Commands.runOnce(() -> localizationSystem.setQnavUseMeasurements(true))
 			  .ignoringDisable(true)
 		  )
 		  .onTrue(
-			Commands.runOnce(() -> oculus.setUseMeasurements(false))
+			Commands.runOnce(() -> localizationSystem.setQnavUseMeasurements(false))
 			  .ignoringDisable(true)
 		  );
 
 		/* PHOTONVISION MEASUREMENTS SWITCH */
 		new JoystickButton(buttonBox, OperatorConstants.ButtonBoxPhotonVisionMeasurement)
 		  .onFalse(
-			Commands.runOnce(() -> photonVision.setUseMeasurements(true))
+			Commands.runOnce(() -> localizationSystem.setPVUseMeasurements(true))
 			  .ignoringDisable(true)
 		  )
 		  .onTrue(
-			Commands.runOnce(() -> photonVision.setUseMeasurements(false))
+			Commands.runOnce(() -> localizationSystem.setPVUseMeasurements(false))
 			  .ignoringDisable(true)
 		  );
 
 		new JoystickButton(buttonBox, 12)
 		  .whileTrue(Commands.runOnce(() -> {
-				  Pose3d p = photonVision.getEstimatedPose();
-
-				  if (p != null) oculus.setRobotPose(p);
+				  localizationSystem.syncPoses();
 			  })
 			  .ignoringDisable(true)
 		  );

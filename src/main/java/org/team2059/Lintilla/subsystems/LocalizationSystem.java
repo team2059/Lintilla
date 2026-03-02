@@ -211,7 +211,7 @@ public class LocalizationSystem extends SubsystemBase {
 	/**
 	 * Set whether PhotonVision measurements are being used for pose estimation
 	 */
-	public void setPvUseMeasurements(boolean b) {
+	public void setPVUseMeasurements(boolean b) {
 		pvUseMeasurements = b;
 	}
 
@@ -267,10 +267,18 @@ public class LocalizationSystem extends SubsystemBase {
 	}
 
 	/**
-	 * Sets QuestNav pose to PhotonVision pose
+	 * Sets QuestNav pose to PhotonVision pose, if tags are viewable
 	 */
 	public void syncPoses() {
-		setQnavRobotPose(getPvRobotPose());
+		Pose3d p = getPvRobotPose();
+
+		if (p != null) {
+			setQnavRobotPose(p);
+			System.out.println("[i] QuestNav pose reset successfully");
+		} else {
+			System.out.println("[!] QuestNav pose reset failed");
+		}
+
 	}
 
 	/**
