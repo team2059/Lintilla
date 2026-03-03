@@ -91,7 +91,7 @@ public class CollectorIOReal implements CollectorIO {
 	}
 
 	@Override
-	public void stopCollector() {
+	public void stopIntake() {
 		intakeMotor.setVoltage(0);
 	}
 
@@ -116,7 +116,7 @@ public class CollectorIOReal implements CollectorIO {
 	}
 
 	@Override
-	public void runConveyor(double speed) {
+	public void setConveyorSpeed(double speed) {
 		conveyorMotor.set(speed);
 	}
 

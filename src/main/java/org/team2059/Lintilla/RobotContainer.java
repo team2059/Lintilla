@@ -6,7 +6,6 @@ package org.team2059.Lintilla;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -23,6 +22,7 @@ import org.team2059.Lintilla.Constants.OperatorConstants;
 import org.team2059.Lintilla.Constants.ShooterConstants;
 import org.team2059.Lintilla.commands.SpinupAndShootCommand;
 import org.team2059.Lintilla.commands.TeleopDriveCommand;
+import org.team2059.Lintilla.subsystems.vision.LocalizationSystem;
 import org.team2059.Lintilla.subsystems.collector.Collector;
 import org.team2059.Lintilla.subsystems.collector.CollectorIOReal;
 import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
@@ -30,8 +30,6 @@ import org.team2059.Lintilla.subsystems.drivetrain.MK5nModule;
 import org.team2059.Lintilla.subsystems.drivetrain.Pigeon2Gyroscope;
 import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
 import org.team2059.Lintilla.subsystems.shooter.VortexShooter;
-import org.team2059.Lintilla.subsystems.vision.Oculus;
-import org.team2059.Lintilla.subsystems.vision.PhotonVision;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -48,8 +46,7 @@ public class RobotContainer {
 	public static GenericHID buttonBox;
 
 	public static Drivetrain drivetrain;
-	public static Oculus oculus;
-	public static PhotonVision photonVision;
+	public static LocalizationSystem localizationSystem;
 	public static ShooterBase shooterBase;
 	public static Collector collector;
 
@@ -155,9 +152,7 @@ public class RobotContainer {
 		  )
 		);
 
-		oculus = new Oculus();
-
-		photonVision = new PhotonVision();
+		localizationSystem = new LocalizationSystem();
 
 		collector = new Collector(
 		  new CollectorIOReal(
@@ -172,25 +167,6 @@ public class RobotContainer {
 		/* ========== */
 
 		/* NAMED COMMANDS */
-		NamedCommands.registerCommand(
-		  "Shoot5SecDistance",
-		  new SpinupAndShootCommand(drivetrain, shooterBase, collector)
-			.withTimeout(5)
-		);
-
-		NamedCommands.registerCommand(
-		  "CollectorOut",
-		  collector.collectorOut().withTimeout(0.5)
-		);
-
-		NamedCommands.registerCommand(
-		  "CollectorOutAndIntake5Sec",
-		  collector.collectorOut()
-			.alongWith(
-			  Commands.startEnd(() -> collector.io.runConveyor(0.5), () -> collector.io.stopConveyor())
-			)
-			.withTimeout(5)
-		);
 
 		// Build auto chooser - you can also set a default.
 		autoChooser = AutoBuilder.buildAutoChooser();
@@ -264,67 +240,48 @@ public class RobotContainer {
 
 		/* COLLECTOR OUT & INTAKE */
 		new JoystickButton(buttonBox, OperatorConstants.ButtonBoxCollectorOutIntake)
-		  .whileTrue(
-			collector.collectorOut()
-			  .alongWith(
-				Commands.runOnce(() -> collector.io.runConveyor(0.5))
-			  )
-		  )
-		  .onFalse(
-			Commands.runOnce(() -> collector.io.runConveyor(0))
-		  );
+		  .whileTrue(collector.tiltOutAndIntake());
 
-		/* COLLECTOR IN */
+		/* COLLECTOR TILT IN */
 		new JoystickButton(buttonBox, OperatorConstants.ButtonBoxCollectorIn)
-		  .whileTrue(
-			collector.collectorIn()
-		  );
+		  .whileTrue(collector.tiltIn());
 
-		/* COLLECTOR ROLLERS OUT/UNJAM */
+		/* COLLECTOR OUTTAKE/UNJAM */
 		new JoystickButton(buttonBox, OperatorConstants.ButtonBoxCollectorUnjam)
-		  .whileTrue(
-			Commands.runOnce(() -> collector.io.setIntakeSpeed(-1))
-		  )
-		  .onFalse(
-			Commands.runOnce(() -> collector.io.stopCollector())
-		  );
+		  .whileTrue(collector.outtake());
 
 		/* COLLECTOR ROLLERS IN/INTAKE */
 		new JoystickButton(buttonBox, OperatorConstants.ButtonBoxCollectorIntake)
-		  .whileTrue(
-			Commands.runOnce(() -> collector.io.setIntakeSpeed(1))
-		  )
-		  .onFalse(
-			Commands.runOnce(() -> collector.io.stopCollector())
-		  );
+		  .whileTrue(collector.outtake());
 
 		/* QUEST MEASUREMENTS SWITCH */
 		new JoystickButton(buttonBox, OperatorConstants.ButtonBoxQuestMeasurement)
 		  .onFalse(
-			Commands.runOnce(() -> oculus.setUseMeasurements(true))
+			Commands.runOnce(() -> localizationSystem.setQnavUseMeasurements(true))
 			  .ignoringDisable(true)
 		  )
 		  .onTrue(
-			Commands.runOnce(() -> oculus.setUseMeasurements(false))
+			Commands.runOnce(() -> localizationSystem.setQnavUseMeasurements(false))
 			  .ignoringDisable(true)
 		  );
 
 		/* PHOTONVISION MEASUREMENTS SWITCH */
 		new JoystickButton(buttonBox, OperatorConstants.ButtonBoxPhotonVisionMeasurement)
 		  .onFalse(
-			Commands.runOnce(() -> photonVision.setUseMeasurements(true))
+			Commands.runOnce(() -> localizationSystem.setPVUseMeasurements(true))
 			  .ignoringDisable(true)
 		  )
 		  .onTrue(
-			Commands.runOnce(() -> photonVision.setUseMeasurements(false))
+			Commands.runOnce(() -> localizationSystem.setPVUseMeasurements(false))
 			  .ignoringDisable(true)
 		  );
 
+		new JoystickButton(buttonBox, 11)
+		  .whileTrue(collector.tiltOut());
+
 		new JoystickButton(buttonBox, 12)
 		  .whileTrue(Commands.runOnce(() -> {
-				  Pose3d p = photonVision.getEstimatedPose();
-
-				  if (p != null) oculus.setRobotPose(p);
+				  localizationSystem.syncPoses();
 			  })
 			  .ignoringDisable(true)
 		  );

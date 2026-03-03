@@ -110,9 +110,9 @@ public class TeleopDriveCommand extends Command {
 		rot = Math.abs(rot) > 0.4 ? rot : 0.0;
 
 		// Make the driving smoother
-		xSpeed = xLimiter.calculate(xSpeed) * DrivetrainConstants.kTeleDriveMaxSpeed;
-		ySpeed = yLimiter.calculate(ySpeed) * DrivetrainConstants.kTeleDriveMaxSpeed;
-		rot = rotLimiter.calculate(rot) * DrivetrainConstants.kTeleDriveMaxAngularSpeed;
+		xSpeed = xLimiter.calculate(xSpeed) * DrivetrainConstants.TELE_DRIVE_MAX_SPEED;
+		ySpeed = yLimiter.calculate(ySpeed) * DrivetrainConstants.TELE_DRIVE_MAX_SPEED;
+		rot = rotLimiter.calculate(rot) * DrivetrainConstants.TELE_DRIVE_MAX_ANGULAR_SPEED;
 
 		// Apply slider limit
 		double sliderVal = (-slider.getAsDouble() + 1) / 2;

@@ -13,7 +13,7 @@ public interface CollectorIO {
 
 	default public void setIntakeSpeed(double speed) {}
 
-	default public void stopCollector() {}
+	default public void stopIntake() {}
 
 	default public void setTiltSpeed(double speed) {}
 
@@ -23,7 +23,7 @@ public interface CollectorIO {
 
 	default public void setTiltPosition(double position) {}
 
-	default public void runConveyor(double speed) {}
+	default public void setConveyorSpeed(double speed) {}
 
 	default public void stopConveyor() {}
 

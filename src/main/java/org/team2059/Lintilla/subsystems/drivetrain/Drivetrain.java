@@ -334,8 +334,8 @@ public class Drivetrain extends SubsystemBase {
 			  this::getRobotRelativeSpeeds, // ChassisSpeeds supplier, MUST be robot relative
 			  (speeds) -> driveRobotRelative(speeds), // Method that will drive the robot given robot-relative chassis speeds
 			  new PPHolonomicDriveController(
-				new PIDConstants(AutoConstants.kAutoTranslationP, 0.0, AutoConstants.kAutoTranslationD),
-				new PIDConstants(AutoConstants.kAutoRotationP, 0.0, AutoConstants.kAutoRotationD)),
+				new PIDConstants(AutoConstants.AUTO_TRANSLATION_P, 0.0, AutoConstants.AUTO_TRANSLATION_D),
+				new PIDConstants(AutoConstants.AUTO_ROTATION_P, 0.0, AutoConstants.AUTO_ROTATION_D)),
 			  config,
 			  () -> {
 				  // Boolean supplier that controls when the path will be mirrored for the red
