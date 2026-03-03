@@ -1,4 +1,4 @@
-package org.team2059.Lintilla.subsystems;
+package org.team2059.Lintilla.subsystems.vision;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;

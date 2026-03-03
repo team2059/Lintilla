@@ -22,7 +22,7 @@ import org.team2059.Lintilla.Constants.OperatorConstants;
 import org.team2059.Lintilla.Constants.ShooterConstants;
 import org.team2059.Lintilla.commands.SpinupAndShootCommand;
 import org.team2059.Lintilla.commands.TeleopDriveCommand;
-import org.team2059.Lintilla.subsystems.LocalizationSystem;
+import org.team2059.Lintilla.subsystems.vision.LocalizationSystem;
 import org.team2059.Lintilla.subsystems.collector.Collector;
 import org.team2059.Lintilla.subsystems.collector.CollectorIOReal;
 import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
@@ -30,8 +30,6 @@ import org.team2059.Lintilla.subsystems.drivetrain.MK5nModule;
 import org.team2059.Lintilla.subsystems.drivetrain.Pigeon2Gyroscope;
 import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
 import org.team2059.Lintilla.subsystems.shooter.VortexShooter;
-import org.team2059.Lintilla.subsystems.vision.Oculus;
-import org.team2059.Lintilla.subsystems.vision.PhotonVision;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
