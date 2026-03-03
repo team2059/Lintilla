@@ -167,25 +167,6 @@ public class RobotContainer {
 		/* ========== */
 
 		/* NAMED COMMANDS */
-		NamedCommands.registerCommand(
-		  "Shoot5SecDistance",
-		  new SpinupAndShootCommand(drivetrain, shooterBase, collector)
-			.withTimeout(5)
-		);
-
-		NamedCommands.registerCommand(
-		  "CollectorOut",
-		  collector.collectorOut().withTimeout(0.5)
-		);
-
-		NamedCommands.registerCommand(
-		  "CollectorOutAndIntake5Sec",
-		  collector.collectorOut()
-			.alongWith(
-			  Commands.startEnd(() -> collector.io.runConveyor(0.5), () -> collector.io.stopConveyor())
-			)
-			.withTimeout(5)
-		);
 
 		// Build auto chooser - you can also set a default.
 		autoChooser = AutoBuilder.buildAutoChooser();
@@ -259,39 +240,19 @@ public class RobotContainer {
 
 		/* COLLECTOR OUT & INTAKE */
 		new JoystickButton(buttonBox, OperatorConstants.ButtonBoxCollectorOutIntake)
-		  .whileTrue(
-			collector.collectorOut()
-			  .alongWith(
-				Commands.runOnce(() -> collector.io.runConveyor(0.5))
-			  )
-		  )
-		  .onFalse(
-			Commands.runOnce(() -> collector.io.runConveyor(0))
-		  );
+		  .whileTrue(collector.tiltOutAndIntake());
 
-		/* COLLECTOR IN */
+		/* COLLECTOR TILT IN */
 		new JoystickButton(buttonBox, OperatorConstants.ButtonBoxCollectorIn)
-		  .whileTrue(
-			collector.collectorIn()
-		  );
+		  .whileTrue(collector.tiltIn());
 
-		/* COLLECTOR ROLLERS OUT/UNJAM */
+		/* COLLECTOR OUTTAKE/UNJAM */
 		new JoystickButton(buttonBox, OperatorConstants.ButtonBoxCollectorUnjam)
-		  .whileTrue(
-			Commands.runOnce(() -> collector.io.setIntakeSpeed(-1))
-		  )
-		  .onFalse(
-			Commands.runOnce(() -> collector.io.stopCollector())
-		  );
+		  .whileTrue(collector.outtake());
 
 		/* COLLECTOR ROLLERS IN/INTAKE */
 		new JoystickButton(buttonBox, OperatorConstants.ButtonBoxCollectorIntake)
-		  .whileTrue(
-			Commands.runOnce(() -> collector.io.setIntakeSpeed(1))
-		  )
-		  .onFalse(
-			Commands.runOnce(() -> collector.io.stopCollector())
-		  );
+		  .whileTrue(collector.outtake());
 
 		/* QUEST MEASUREMENTS SWITCH */
 		new JoystickButton(buttonBox, OperatorConstants.ButtonBoxQuestMeasurement)
@@ -314,6 +275,9 @@ public class RobotContainer {
 			Commands.runOnce(() -> localizationSystem.setPVUseMeasurements(false))
 			  .ignoringDisable(true)
 		  );
+
+		new JoystickButton(buttonBox, 11)
+		  .whileTrue(collector.tiltOut());
 
 		new JoystickButton(buttonBox, 12)
 		  .whileTrue(Commands.runOnce(() -> {

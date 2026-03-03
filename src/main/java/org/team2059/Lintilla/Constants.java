@@ -357,9 +357,16 @@ public final class Constants {
 		public static final double kVTilt = 1.234 / 60;
 		public static final double kATilt = 0;
 
+		// Error in rotations at which to stop tilting commands
+		public static final double tiltTolerance = 0.01;
+
 		public static final double thruBoreOffset = 0.91;
 
 		public static final double thruBoreOut = 0;
 		public static final double thruBoreIn = 0.25;
+
+		public static final double intakingSpeed = 0.75;
+		public static final double outtakingSpeed = -0.75;
+		public static final double conveyorIntakeSpeed = 0.25;
 	}
 }

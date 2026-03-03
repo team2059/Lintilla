@@ -40,12 +40,12 @@ public class ShooterDataCollectionCommand extends Command {
 		if (Math.abs(shooterBase.leftShooterInputs.flywheelVelocity.in(RPM) - speedRPM.get()) <= spinupToleranceRpm) {
 			// Left shooter is within tolerance. Spin indexer
 			shooterBase.leftShooter.setIndexerSpeed(Constants.ShooterConstants.indexerShootingSpeed);
-			collector.io.runConveyor(Constants.ShooterConstants.conveyorShootingSpeed);
+			collector.io.setConveyorSpeed(Constants.ShooterConstants.conveyorShootingSpeed);
 		}
 		if (Math.abs(shooterBase.rightShooterInputs.flywheelVelocity.in(RPM) - speedRPM.get()) <= spinupToleranceRpm) {
 			// Right shooter is within tolerance. Spin indexer
 			shooterBase.rightShooter.setIndexerSpeed(Constants.ShooterConstants.indexerShootingSpeed);
-			collector.io.runConveyor(Constants.ShooterConstants.conveyorShootingSpeed);
+			collector.io.setConveyorSpeed(Constants.ShooterConstants.conveyorShootingSpeed);
 		}
 	}
 

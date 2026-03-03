@@ -8,13 +8,13 @@ import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.units.measure.Time;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import org.littletonrobotics.junction.Logger;
 import org.team2059.Lintilla.Constants.CollectorConstants;
 
 import static edu.wpi.first.units.Units.*;
+import static org.team2059.Lintilla.Constants.CollectorConstants.*;
 
 public class Collector extends SubsystemBase {
 
@@ -58,45 +58,58 @@ public class Collector extends SubsystemBase {
 	}
 
 	/**
-	 * Sets tilt to outward position, runs intake, stops when interrupted
-	 *
-	 * @return Command
+	 * @return Command which sets tilt position to OUTward, stops tilt when within tolerance
 	 */
-	public Command collectorOut() {
-		return this.startEnd(
-		  () -> {
-			  io.setTiltPosition(CollectorConstants.thruBoreOut);
-			  io.setIntakeSpeed(0.75);
-		  },
-		  () -> {
-			  io.stopTilt();
-			  io.stopCollector();
-		  }
-		);
+	public Command tiltOut() {
+		return this.run(() -> io.setTiltPosition(thruBoreOut))
+		  .until(() -> Math.abs(inputs.tiltPosition.in(Rotations) - thruBoreOut) <= tiltTolerance)
+		  .finallyDo(io::stopTilt);
 	}
 
-	public Command intakeCommand() {
-		return this.startEnd(
-		  () -> {
-			  io.setIntakeSpeed(0.75);
-		  },
-		  () -> {
-			  io.stopCollector();
-		  }
+	/**
+	 * @return Command which sets tilt position to INward, stops tilt when within tolerance
+	 */
+	public Command tiltIn() {
+		return this.run(() -> io.setTiltPosition(thruBoreIn))
+		  .until(() -> Math.abs(inputs.tiltPosition.in(Rotations) - thruBoreIn) <= tiltTolerance)
+		  .finallyDo(io::stopTilt);
+	}
+
+	/**
+	 * Runs rollers in the intaking direction
+	 */
+	public Command intake() {
+		return Commands.startEnd(
+		  () -> io.setIntakeSpeed(intakingSpeed),
+		  io::stopIntake
 		);
 	}
 
 	/**
-	 * @return Command that sets tilt to inward position, then stops when interrupted
+	 * Runs rollers in the outtaking (unjam) direction
 	 */
-	public Command collectorIn() {
-		return this.startEnd(
-		  () -> {
-			  io.setTiltPosition(CollectorConstants.thruBoreIn);
-		  },
-		  () -> {
-			  io.stopTilt();
-		  }
+	public Command outtake() {
+		return Commands.startEnd(
+		  () -> io.setIntakeSpeed(outtakingSpeed),
+		  io::stopIntake
+		);
+	}
+
+	public Command conveyorIn() {
+		return Commands.startEnd(
+		  () -> io.setConveyorSpeed(conveyorIntakeSpeed),
+		  io::stopConveyor
+		);
+	}
+
+	/**
+	 * Runs tilt out, intake, and conveyor in commands in parallel
+	 */
+	public Command tiltOutAndIntake() {
+		return new ParallelCommandGroup(
+		  tiltOut(),
+		  intake(),
+		  conveyorIn()
 		);
 	}
 
