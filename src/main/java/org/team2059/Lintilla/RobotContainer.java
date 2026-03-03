@@ -167,6 +167,32 @@ public class RobotContainer {
 		/* ========== */
 
 		/* NAMED COMMANDS */
+		NamedCommands.registerCommand(
+		  "Shoot5SecDistance",
+		  new SpinupAndShootCommand(drivetrain, shooterBase, collector)
+			.withTimeout(5)
+		);
+
+		NamedCommands.registerCommand(
+		  "CollectorOut",
+		  collector.tiltOut()
+		);
+
+		NamedCommands.registerCommand(
+		  "CollectorIn",
+		  collector.tiltIn()
+		);
+
+		NamedCommands.registerCommand(
+		  "Intake",
+		  collector.intake()
+		);
+
+		NamedCommands.registerCommand(
+		  "CollectorOutAndIntake5Sec",
+		  collector.tiltOutAndIntake()
+			.withTimeout(5)
+		);
 
 		// Build auto chooser - you can also set a default.
 		autoChooser = AutoBuilder.buildAutoChooser();
@@ -235,6 +261,19 @@ public class RobotContainer {
 			  shooterBase,
 			  collector,
 			  2000
+			)
+		  );
+
+		new JoystickButton(buttonBox, 4)
+		  .whileTrue(
+			Commands.startEnd(
+			  () -> {
+				  shooterBase.leftShooter.setIndexerSpeed(-1);
+				  shooterBase.rightShooter.setIndexerSpeed(-1);
+			  },
+			  () -> {
+				  shooterBase.stopAllSubsystemMotors();
+			  }
 			)
 		  );
 

@@ -1,13 +1,18 @@
 package org.team2059.Lintilla.commands;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import org.team2059.Lintilla.Constants;
+import org.team2059.Lintilla.RobotContainer;
 import org.team2059.Lintilla.subsystems.collector.Collector;
 import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
 import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
 
+import java.sql.Driver;
+
 import static edu.wpi.first.units.Units.RPM;
 import static org.team2059.Lintilla.Constants.ShooterConstants.spinupToleranceRpm;
+import static org.team2059.Lintilla.Constants.VisionConstants.getHubTranslation;
 
 /**
  * Command to spin the shooters up at a specific velocity (or calculate velocity based on distance to hub) and shoot
@@ -68,8 +73,13 @@ public class SpinupAndShootCommand extends Command {
 		// If the desired RPM is not hardcoded, we use our lookup table with the
 		// latest distance that was published to shooterBase.
 		if (!desiredRPMHardcoded) {
-			double distanceMeters = shooterBase.currentDistanceToTarget;
-			desiredRPM = shooterBase.getTargetRpm(distanceMeters);
+			if (!DriverStation.isAutonomous()) {
+				double distanceMeters = shooterBase.currentDistanceToTarget;
+				desiredRPM = shooterBase.getTargetRpm(distanceMeters);
+			} else {
+				double distanceMeters = getHubTranslation().getDistance(RobotContainer.drivetrain.getEstimatedPose().getTranslation());
+				desiredRPM = shooterBase.getTargetRpm(distanceMeters);
+			}
 		}
 
 		// Set the two flywheels to the desired RPM, whether it's hardcoded or
@@ -91,12 +101,12 @@ public class SpinupAndShootCommand extends Command {
 				collector.io.setConveyorSpeed(Constants.ShooterConstants.conveyorShootingSpeed);
 			}
 		} else {
-			if (shooterBase.isAimed && Math.abs(shooterBase.leftShooterInputs.flywheelVelocity.in(RPM) - desiredRPM) <= spinupToleranceRpm) {
+			if (Math.abs(shooterBase.leftShooterInputs.flywheelVelocity.in(RPM) - desiredRPM) <= spinupToleranceRpm) {
 				// Left shooter is within tolerance. Spin indexer
 				shooterBase.leftShooter.setIndexerSpeed(Constants.ShooterConstants.indexerShootingSpeed);
 				collector.io.setConveyorSpeed(Constants.ShooterConstants.conveyorShootingSpeed);
 			}
-			if (shooterBase.isAimed && Math.abs(shooterBase.rightShooterInputs.flywheelVelocity.in(RPM) - desiredRPM) <= spinupToleranceRpm) {
+			if (Math.abs(shooterBase.rightShooterInputs.flywheelVelocity.in(RPM) - desiredRPM) <= spinupToleranceRpm) {
 				// Right shooter is within tolerance. Spin indexer
 				shooterBase.rightShooter.setIndexerSpeed(Constants.ShooterConstants.indexerShootingSpeed);
 				collector.io.setConveyorSpeed(Constants.ShooterConstants.conveyorShootingSpeed);

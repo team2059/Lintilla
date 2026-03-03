@@ -178,8 +178,8 @@ public final class Constants {
 		public static final Translation2d RED_TOWER_CENTER = new Translation2d(15.3952, 4.3236);
 
 		public static final Transform3d ROBOT_TO_QUEST = new Transform3d(
-		  -0.30449689,
-		  0.16938114,
+		  -0.26545065,
+		  0.18207046,
 		  0,
 		  new Rotation3d(
 			0,
@@ -358,7 +358,7 @@ public final class Constants {
 		public static final double kATilt = 0;
 
 		// Error in rotations at which to stop tilting commands
-		public static final double tiltTolerance = 0.01;
+		public static final double tiltTolerance = 0.05;
 
 		public static final double thruBoreOffset = 0.91;
 

@@ -1,0 +1,62 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot5SecDistance"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "LeftTrenchToCenter"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "CollectorOut"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "LeftCenterCollect"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "LeftCenterToTrench"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot5SecDistance"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": false,
+  "folder": "Tests",
+  "choreoAuto": false
+}
