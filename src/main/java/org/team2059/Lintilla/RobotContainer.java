@@ -252,7 +252,7 @@ public class RobotContainer {
 
 		/* COLLECTOR ROLLERS IN/INTAKE */
 		new JoystickButton(buttonBox, OperatorConstants.ButtonBoxCollectorIntake)
-		  .whileTrue(collector.outtake());
+		  .whileTrue(collector.intake());
 
 		/* QUEST MEASUREMENTS SWITCH */
 		new JoystickButton(buttonBox, OperatorConstants.ButtonBoxQuestMeasurement)
