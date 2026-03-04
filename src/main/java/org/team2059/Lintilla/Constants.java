@@ -40,35 +40,40 @@ public final class Constants {
 		/* PORTS */
 		/* ===== */
 
-		public static final int logitechPort = 0;
-		public static final int buttonBoxPort = 1;
+		public static final int LOGITECH_PORT = 0;
+		public static final int BUTTON_BOX_PORT = 1;
 
 		/* ==== */
 		/* AXES */
 		/* ==== */
 
-		public static final int JoystickTranslationAxis = 1;
-		public static final int JoystickStrafeAxis = 0;
-		public static final int JoystickRotationAxis = 2;
-		public static final int JoystickSliderAxis = 3;
+		public static final int TRANSLATION_AXIS = 1;
+		public static final int STRAFE_AXIS = 0;
+		public static final int ROTATION_AXIS = 2;
+		public static final int SLIDER_AXIS = 3;
 
 		/* ======= */
 		/* BUTTONS */
 		/* ======= */
 
-		public static final int JoystickResetHeading = 5;
-		public static final int JoystickRobotRelative = 6;
-		public static final int JoystickInvertedDrive = 4;
-		public static final int JoystickStrafeOnly = 3;
+		public static final int RESET_HEADING = 5;
+		public static final int ROBOT_RELATIVE = 6;
+		public static final int INVERT_DRIVE = 4;
+		public static final int STRAFE_ONLY = 3;
+		public static final int HUB_ALIGN = 2;
+		public static final int SPINUP_SHOOT_DISTANCE = 1;
+		public static final int SPINUP_SHOOT_FIXED = 2;
+		public static final int COLLECTOR_OUT_INTAKE = 5;
+		public static final int COLLECTOR_IN = 6;
+		public static final int COLLECTOR_UNJAM = 7;
+		public static final int COLLECTOR_INTAKE = 8;
 
-		public static final int ButtonBoxSpinupShootDistance = 1;
-		public static final int ButtonBoxSpinupShootFixed = 2;
-		public static final int ButtonBoxCollectorOutIntake = 5;
-		public static final int ButtonBoxCollectorIn = 6;
-		public static final int ButtonBoxCollectorUnjam = 7;
-		public static final int ButtonBoxCollectorIntake = 8;
-		public static final int ButtonBoxQuestMeasurement = 13;
-		public static final int ButtonBoxPhotonVisionMeasurement = 14;
+		/* ======== */
+		/* SWITCHES */
+		/* ======== */
+
+		public static final int QUEST_MEASUREMENT_SWITCH = 13;
+		public static final int PHOTONVISION_MEASUREMENT_SWITCH = 14;
 	}
 
 	/**
@@ -83,16 +88,6 @@ public final class Constants {
 		// Feedback constants for theta (rotation) in auto.
 		public static final double AUTO_ROTATION_P = 5.0;
 		public static final double AUTO_ROTATION_D = 0.0;
-
-		/* FOR ROBOTCONFIG AUTO STUFF... */
-		/* Not used right now. */
-		// public static final double kMass = 30;
-		// public static final double kMomentOfIntertia = 3;
-
-		// // CoF taken from https://www.chiefdelphi.com/t/coefficient-of-friction/467778
-		// public static final double kWheelCoF = 1.542; // Coefficient of friction of wheels
-		// public static final int driveCurrentLimit = 40;
-		// public static final int turnCurrentLimit = 20;
 	}
 
 	/**
@@ -100,10 +95,10 @@ public final class Constants {
 	 */
 	public static final class DrivetrainConstants {
 		// Global maximums
-		public static final double maxVelocity = 3; // meters/sec
-		public static final double maxAcceleration = 3; // meters/sec^2
-		public static final double maxAngularVelocity = 2 * Math.PI; // rad/sec
-		public static final double maxAngularAcceleration = 4 * Math.PI; // rad/sec^2
+		public static final double MAX_VELOCITY = 3; // meters/sec
+		public static final double MAX_ACCELERATION = 3; // meters/sec^2
+		public static final double MAX_ANGULAR_VELOCITY = 2 * Math.PI; // rad/sec
+		public static final double MAX_ANGULAR_ACCELERATION = 4 * Math.PI; // rad/sec^2
 		// Teleop max speeds
 		public static final double TELE_DRIVE_MAX_SPEED = 4;
 		public static final double TELE_DRIVE_MAX_ANGULAR_SPEED = Math.PI;
@@ -121,21 +116,21 @@ public final class Constants {
 		 * Wheel Diameter: 4 inches, 0.1016 meters
 		 */
 
-		public static final Distance wheelBase = Inches.of(26); // Distance from center of wheels on side
-		public static final Distance trackWidth = Inches.of(19); // Distance between front wheels (like train track)
+		public static final Distance WHEEL_BASE = Inches.of(26); // Distance from center of wheels on side
+		public static final Distance TRACK_WIDTH = Inches.of(19); // Distance between front wheels (like train track)
 
 		// Kinematics give each module relative to center. X is forward/backward and Y is left/right.
 		public static final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
-		  new Translation2d(wheelBase.in(Meters) / 2.0, trackWidth.in(Meters) / 2.0), // front right (+,+)
-		  new Translation2d(wheelBase.in(Meters) / 2.0, -trackWidth.in(Meters) / 2.0), // back right (+,-)
-		  new Translation2d(-wheelBase.in(Meters) / 2.0, trackWidth.in(Meters) / 2.0), // front left (-,+)
-		  new Translation2d(-wheelBase.in(Meters) / 2.0, -trackWidth.in(Meters) / 2.0) // back left (-,-)
+		  new Translation2d(WHEEL_BASE.in(Meters) / 2.0, TRACK_WIDTH.in(Meters) / 2.0), // front right (+,+)
+		  new Translation2d(WHEEL_BASE.in(Meters) / 2.0, -TRACK_WIDTH.in(Meters) / 2.0), // back right (+,-)
+		  new Translation2d(-WHEEL_BASE.in(Meters) / 2.0, TRACK_WIDTH.in(Meters) / 2.0), // front left (-,+)
+		  new Translation2d(-WHEEL_BASE.in(Meters) / 2.0, -TRACK_WIDTH.in(Meters) / 2.0) // back left (-,-)
 		);
 
-		public static final double drivePositionConversionFactor = 0.05293297075;
-		public static final double driveVelocityConversionFactor = 0.0008822161791;
+		public static final double DRIVE_POSITION_FACTOR = 0.05293297075;
+		public static final double DRIVE_VELOCITY_FACTOR = 0.0008822161791;
 
-		public static final double rotationGearRatio = 26.09090909091;
+		public static final double ROTATION_GEAR_RATIO = 26.09090909091;
 
 		/*
 		 * CANcoder offsets, in rotations
@@ -144,18 +139,18 @@ public final class Constants {
 		 * Open Phoenix Tuner X and locate your CANcoder. Run self-test.
 		 * Read value from "Absolute Position - No Offset". Add a negative. Paste the value here.
 		 */
-		public static final double frontRightEncoderOffset = -0.847900;
-		public static final double frontLeftEncoderOffset = -0.981934;
-		public static final double backRightEncoderOffset = -0.605225;
-		public static final double backLeftEncoderOffset = -0.150635;
+		public static final double FR_ENCODER_OFFFSET = -0.847900;
+		public static final double FL_ENCODER_OFFSET = -0.981934;
+		public static final double BR_ENCODER_OFFSET = -0.605225;
+		public static final double BL_ENCODER_OFFSET = -0.150635;
 
 		// Drive motor inversions
-		public static final boolean frontRightInverted = false;
-		public static final boolean frontLeftInverted = false;
-		public static final boolean backRightInverted = true;
-		public static final boolean backLeftInverted = true;
-		public static final SimpleMotorFeedforward driveFF = new SimpleMotorFeedforward(0.17821, 1.9047, 0.14686);
-		public static double kPRotation = 0.5;
+		public static final boolean FR_INVERTED = false;
+		public static final boolean FL_INVERTED = false;
+		public static final boolean BR_INVERTED = true;
+		public static final boolean BL_INVERTED = true;
+		public static final SimpleMotorFeedforward DRIVE_FEEDFORWARD = new SimpleMotorFeedforward(0.17821, 1.9047, 0.14686);
+		public static double ROTATION_P = 0.5;
 	}
 
 	/**
@@ -165,17 +160,6 @@ public final class Constants {
 	public static final class VisionConstants {
 
 		public static final Transform2d SHOOTER_OFFSET = new Transform2d(-Units.inchesToMeters(10), 0, Rotation2d.kZero);
-
-		public static final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
-
-		public static final Translation2d BLUE_HUB_CENTER = new Translation2d(4.6116, 4.0213);
-		public static final Translation2d BLUE_HUB_BACK = new Translation2d(5.2342, 4.0213);
-
-		public static final Translation2d RED_HUB_CENTER = new Translation2d(11.9014, 4.0213);
-		public static final Translation2d RED_HUB_BACK = new Translation2d(11.3044, 4.0213);
-
-		public static final Translation2d BLUE_TOWER_CENTER = new Translation2d(1.1434, 3.7457);
-		public static final Translation2d RED_TOWER_CENTER = new Translation2d(15.3952, 4.3236);
 
 		public static final Transform3d ROBOT_TO_QUEST = new Transform3d(
 		  -0.26545065,
@@ -188,7 +172,6 @@ public final class Constants {
 		  )
 		);
 
-		public static final String PV_CAM_NAME = "Bcam9782";
 		public static final Transform3d ROBOT_TO_PV = new Transform3d(
 		  -Units.inchesToMeters(5),
 		  -Units.inchesToMeters(1.375),
@@ -199,10 +182,23 @@ public final class Constants {
 			0
 		  )
 		);
-		// The standard deviations of our vision estimated poses, which affect correction rate
-		public static final Matrix<N3, N1> singleTagStdDevsPV = VecBuilder.fill(2, 2, 8);
-		public static final Matrix<N3, N1> multiTagStdDevsPV = VecBuilder.fill(0.5, 0.5, 1);
-		public static Matrix<N3, N1> questNavStdDevs = VecBuilder.fill(
+
+		public static final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
+
+		public static final Translation2d BLUE_HUB_CENTER = new Translation2d(4.6116, 4.0213);
+		public static final Translation2d BLUE_HUB_BACK = new Translation2d(5.2342, 4.0213);
+
+		public static final Translation2d RED_HUB_CENTER = new Translation2d(11.9014, 4.0213);
+		public static final Translation2d RED_HUB_BACK = new Translation2d(11.3044, 4.0213);
+
+		public static final Translation2d BLUE_TOWER_CENTER = new Translation2d(1.1434, 3.7457);
+		public static final Translation2d RED_TOWER_CENTER = new Translation2d(15.3952, 4.3236);
+
+		public static final String PV_CAM_NAME = "Bcam9782";
+		// The standard deviations of our estimated poses, which affect correction rate
+		public static final Matrix<N3, N1> PV_SINGLE_TAG_STD_DEVS = VecBuilder.fill(2, 2, 8);
+		public static final Matrix<N3, N1> PV_MULTI_TAG_STD_DEVS = VecBuilder.fill(0.5, 0.5, 1);
+		public static Matrix<N3, N1> QNAV_STD_DEVS = VecBuilder.fill(
 		  0.02, // Trust down to 2 cm in X direction
 		  0.02, // Trust down to 2 cm in Y direction
 		  0.035 // Trust down to 2 degrees rotational
@@ -237,33 +233,33 @@ public final class Constants {
 	 */
 	public static final class CANConstants {
 
-		public static final CANBus canivore = new CANBus("Deep Control");
+		public static final CANBus CANIVORE = new CANBus("Deep Control");
 
-		public static final int pigeon2 = 60;
+		public static final int PIGEON = 60;
 
-		public static final int frontRightDriveMotor = 1;
-		public static final int frontRightTurnMotor = 2;
-		public static final int frontRightCancoder = 10;
-		public static final int frontLeftDriveMotor = 3;
-		public static final int frontLeftTurnMotor = 4;
-		public static final int frontLeftCancoder = 20;
-		public static final int backRightDriveMotor = 5;
-		public static final int backRightTurnMotor = 6;
-		public static final int backRightCancoder = 30;
-		public static final int backLeftDriveMotor = 7;
-		public static final int backLeftTurnMotor = 8;
-		public static final int backLeftCancoder = 40;
+		public static final int FR_DRIVE = 1;
+		public static final int FR_TURN = 2;
+		public static final int FR_CANCODER = 10;
+		public static final int FL_DRIVE = 3;
+		public static final int FL_TURN = 4;
+		public static final int FL_CANCODER = 20;
+		public static final int BR_DRIVE = 5;
+		public static final int BR_TURN = 6;
+		public static final int BR_CANCODER = 30;
+		public static final int BL_DRIVE = 7;
+		public static final int BL_TURN = 8;
+		public static final int BL_CANCODER = 40;
 
-		public static final int powerDistributionHub = 50;
+		public static final int PDH = 50;
 
-		public static final int leftShooterIndexerMotor = 54; // Same ID for both shooters for now (will be changed later)
-		public static final int rightShooterIndexerMotor = 55;
-		public static final int leftShooterFlywheel = 53;
-		public static final int rightShooterFlywheel = 56;
+		public static final int LEFT_SHOOTER_INDEXER = 54; // Same ID for both shooters for now (will be changed later)
+		public static final int RIGHT_SHOOTER_INDEXER = 55;
+		public static final int LEFT_SHOOTER_FLYWHEEL = 53;
+		public static final int RIGHT_SHOOTER_FLYWHEEL = 56;
 
-		public static final int collectorTiltMotor = 57;
-		public static final int collectorIntakeMotor = 58;
-		public static final int conveyorMotor = 59;
+		public static final int COLLECTOR_TILT = 57;
+		public static final int COLLECTOR_INTAKE = 58;
+		public static final int CONVEYOR = 59;
 	}
 
 	/**
@@ -281,12 +277,14 @@ public final class Constants {
 		  )
 		);
 		// Error to tolerate when spinning up to shoot (in RPMs)
-		public static final double spinupToleranceRpm = 50;
+		public static final double SPINUP_TOLERANCE_RPM = 50;
 		// Speed [-1,1] to run the indexer at while shooting
-		public static final double indexerShootingSpeed = 0.65;
+		public static final double INDEXER_SPEED_WHILE_SHOOTING = 0.65;
 		// Speed [-1,1] to run the conveyor at while shooting
-		public static final double conveyorShootingSpeed = 0.5;
-		public static final double hubHeightMeters = 1.83; // End height of trajectory
+		public static final double CONVEYOR_SPEED_WHILE_SHOOTING = 0.5;
+		public static final double HUB_HEIGHT_METERS = 1.83; // End height of trajectory
+		public static final double SHOOTER_HEIGHT_METERS = 0.5; // Start height of trajectory
+		public static final double FUEL_EXIT_ANGLE_RADIANS = 0.983936078; // RADIANS At what angle does fuel leave the shooter
 
 		/*
 		 * Units of Flywheel Constants (Thanks Rev for good docs this year)
@@ -297,41 +295,40 @@ public final class Constants {
 		 * - kV: Volts per RPM
 		 * - kA: Volts per RPM/sec
 		 */
-		public static final double shooterHeightMeters = 0.5; // Start height of trajectory
-		public static final double fuelExitAngleRadians = 0.983936078; // RADIANS At what angle does fuel leave the shooter
 
 		// LEFT SHOOTER CONSTANTS
-		public static final boolean leftFlywheelInverted = true;
-		public static final boolean leftIndexerInverted = true;
-		public static final double leftIndexerkP = 0.0;
-		public static final double leftIndexerkI = 0.0;
-		public static final double leftIndexerkD = 0.0;
-		public static final double leftIndexerkS = 0.079892;
-		public static final double leftIndexerkV = 0.10559 / 60;
-		public static final double leftIndexerkA = 0.0073533 / 60;
-		public static final double leftFlywheelkP = 0.001;
-		public static final double leftFlywheelkI = 0.0;
-		public static final double leftFlywheelkD = 0.01;
-		public static final double leftFlywheelkS = 0.089332;
-		public static final double leftFlywheelkV = 0.10669 / 60;
-		public static final double leftFlywheelkA = 0.020699 / 60;
+		public static final boolean LEFT_FLYWHEEL_INVERTED = true;
+		public static final boolean LEFT_INDEXER_INVERTED = true;
+		public static final double LEFT_INDEXER_P = 0.0;
+		public static final double LEFT_INDEXER_I = 0.0;
+		public static final double LEFT_INDEXER_D = 0.0;
+		public static final double LEFT_INDEXER_S = 0.079892;
+		public static final double LEFT_INDEXER_V = 0.10559 / 60;
+		public static final double LEFT_INDEXER_A = 0.0073533 / 60;
+		public static final double LEFT_FLYWHEEL_P = 0.001;
+		public static final double LEFT_FLYWHEEL_I = 0.0;
+		public static final double LEFT_FLYWHEEL_D = 0.01;
+		public static final double LEFT_FLYWHEEL_S = 0.089332;
+		public static final double LEFT_FLYWHEEL_V = 0.10669 / 60;
+		public static final double LEFT_FLYWHEEL_A = 0.020699 / 60;
 		// RIGHT SHOOTER CONSTANTS
-		public static final boolean rightFlywheelInverted = false;
-		public static final double rightIndexerkP = 0.0;
-		public static final double rightIndexerkI = 0.0;
-		public static final double rightIndexerkD = 0.0;
-		public static final double rightIndexerkS = 0.080536;
-		public static final double rightIndexerkV = 0.10572 / 60;
-		public static final double rightIndexerkA = 0.008408 / 60;
-		public static final double rightFlywheelkP = 0.001;
-		public static final double rightFlywheelkI = 0.0;
-		public static final double rightFlywheelkD = 0.01;
-		public static final double rightFlywheelkS = 0.04773;
-		public static final double rightFlywheelkV = 0.10424 / 60;
-		public static final double rightFlywheelkA = 0.020809 / 60;
+		public static final boolean RIGHT_FLYWHEEL_INVERTED = false;
+		public static boolean RIGHT_INDEXER_INVERTED = false;
+		public static final double RIGHT_INDEXER_P = 0.0;
+		public static final double RIGHT_INDEXER_I = 0.0;
+		public static final double RIGHT_INDEXER_D = 0.0;
+		public static final double RIGHT_INDEXER_S = 0.080536;
+		public static final double RIGHT_INDEXER_V = 0.10572 / 60;
+		public static final double RIGHT_INDEXER_A = 0.008408 / 60;
+		public static final double RIGHT_FLYWHEEL_P = 0.001;
+		public static final double RIGHT_FLYWHEEL_I = 0.0;
+		public static final double RIGHT_FLYWHEEL_D = 0.01;
+		public static final double RIGHT_FLYWHEEL_S = 0.04773;
+		public static final double RIGHT_FLYWHEEL_V = 0.10424 / 60;
+		public static final double RIGHT_FLYWHEEL_A = 0.020809 / 60;
+
 		// For SOTF
 		public static final double SYSTEM_LATENCY_SECONDS = 0.3;
-		public static boolean rightIndexerInverted = false;
 
 		static {
 			SHOOTER_MAP.put(2.6, new ShooterParams(2750, 0.68));
@@ -349,24 +346,24 @@ public final class Constants {
 	 * Constants class for the Collector subsystem.
 	 */
 	public static final class CollectorConstants {
-		public static final double kPTilt = 0.6;
-		public static final double kITilt = 0;
-		public static final double kDTilt = 0;
-		public static final double kCosTilt = 0.35487;
-		public static final double kSTilt = 0.49117;
-		public static final double kVTilt = 1.234 / 60;
-		public static final double kATilt = 0;
+		public static final double TILT_P = 0.6;
+		public static final double TILT_I = 0;
+		public static final double TILT_D = 0;
+		public static final double TILT_COS = 0.35487;
+		public static final double TILT_S = 0.49117;
+		public static final double TILT_V = 1.234 / 60;
+		public static final double TILT_A = 0;
 
 		// Error in rotations at which to stop tilting commands
-		public static final double tiltTolerance = 0.05;
+		public static final double TILT_TOLERANCE_ROTATIONS = 0.05;
 
-		public static final double thruBoreOffset = 0.91;
+		public static final double THRUBORE_OFFSET = 0.91;
 
-		public static final double thruBoreOut = 0;
-		public static final double thruBoreIn = 0.25;
+		public static final double THRUBORE_OUT = 0;
+		public static final double THRUBORE_IN = 0.25;
 
-		public static final double intakingSpeed = 0.75;
-		public static final double outtakingSpeed = -0.75;
-		public static final double conveyorIntakeSpeed = 0.25;
+		public static final double INTAKING_ROLLER_SPEED = 0.75;
+		public static final double OUTTAKING_ROLLER_SPEED = -0.75;
+		public static final double INTAKING_CONVEYOR_SPEED = 0.25;
 	}
 }

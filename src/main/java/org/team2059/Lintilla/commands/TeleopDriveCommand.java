@@ -68,9 +68,9 @@ public class TeleopDriveCommand extends Command {
 		this.inverted = inverted;
 		this.hubTracking = hubTracking;
 
-		this.xLimiter = new SlewRateLimiter(DrivetrainConstants.maxAcceleration);
-		this.yLimiter = new SlewRateLimiter(DrivetrainConstants.maxAcceleration);
-		this.rotLimiter = new SlewRateLimiter(DrivetrainConstants.maxAngularAcceleration);
+		this.xLimiter = new SlewRateLimiter(DrivetrainConstants.MAX_ACCELERATION);
+		this.yLimiter = new SlewRateLimiter(DrivetrainConstants.MAX_ACCELERATION);
+		this.rotLimiter = new SlewRateLimiter(DrivetrainConstants.MAX_ANGULAR_ACCELERATION);
 
 		// Configure controller to handle angles
 		controller = new PIDController(kP.get(), kI.get(), kD.get());

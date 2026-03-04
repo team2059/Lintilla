@@ -22,6 +22,7 @@ import org.team2059.Lintilla.Constants.CANConstants;
 import org.team2059.Lintilla.util.SwerveUtilities;
 
 import static edu.wpi.first.units.Units.*;
+import static org.team2059.Lintilla.Constants.DrivetrainConstants.DRIVE_FEEDFORWARD;
 
 public class MK5nModule implements SwerveModuleIO {
 	private final SparkFlex driveMotor;
@@ -43,7 +44,7 @@ public class MK5nModule implements SwerveModuleIO {
 	  boolean driveInverted
 	) {
 		// Configure PID controller
-		azimuthController = new PIDController(Constants.DrivetrainConstants.kPRotation, 0, 0);
+		azimuthController = new PIDController(Constants.DrivetrainConstants.ROTATION_P, 0, 0);
 		azimuthController.enableContinuousInput(-Math.PI, Math.PI);
 		azimuthController.setTolerance(Units.degreesToRadians(1));
 
@@ -55,8 +56,8 @@ public class MK5nModule implements SwerveModuleIO {
 		  .idleMode(SparkBaseConfig.IdleMode.kBrake);
 
 		driveMotorConfig.encoder
-		  .positionConversionFactor(Constants.DrivetrainConstants.drivePositionConversionFactor)
-		  .velocityConversionFactor(Constants.DrivetrainConstants.driveVelocityConversionFactor);
+		  .positionConversionFactor(Constants.DrivetrainConstants.DRIVE_POSITION_FACTOR)
+		  .velocityConversionFactor(Constants.DrivetrainConstants.DRIVE_VELOCITY_FACTOR);
 
 		driveMotor.configure(driveMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
@@ -65,7 +66,7 @@ public class MK5nModule implements SwerveModuleIO {
 		driveMotor.clearFaults();
 
 		// Configure cancoder
-		canCoder = new CANcoder(canCoderCanId, CANConstants.canivore);
+		canCoder = new CANcoder(canCoderCanId, CANConstants.CANIVORE);
 
 		canCoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
 		canCoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
@@ -74,12 +75,12 @@ public class MK5nModule implements SwerveModuleIO {
 		canCoder.getConfigurator().apply(canCoderConfig);
 
 		// Configure turn motor
-		azimuthMotor = new TalonFX(azimuthMotorCanId, CANConstants.canivore);
+		azimuthMotor = new TalonFX(azimuthMotorCanId, CANConstants.CANIVORE);
 
 		azimuthMotorConfig.Feedback.FeedbackRemoteSensorID = canCoder.getDeviceID();
 		azimuthMotorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
 		azimuthMotorConfig.Feedback.SensorToMechanismRatio = 1.0;
-		azimuthMotorConfig.Feedback.RotorToSensorRatio = Constants.DrivetrainConstants.rotationGearRatio;
+		azimuthMotorConfig.Feedback.RotorToSensorRatio = Constants.DrivetrainConstants.ROTATION_GEAR_RATIO;
 
 		azimuthMotor.getConfigurator().apply(azimuthMotorConfig);
 
@@ -129,7 +130,7 @@ public class MK5nModule implements SwerveModuleIO {
 		// PID-controlled rotation - temporary
 		azimuthMotor.set(azimuthController.calculate(cancoderAbsPos.getRadians(), targetState.angle.getRadians()));
 
-		driveMotor.setVoltage(Constants.DrivetrainConstants.driveFF.calculate(targetState.speedMetersPerSecond));
+		driveMotor.setVoltage(DRIVE_FEEDFORWARD.calculate(targetState.speedMetersPerSecond));
 	}
 
 	private double getDriveAppliedVolts() {

@@ -214,7 +214,7 @@ public class Drivetrain extends SubsystemBase {
 	 */
 	public void setModuleStates(SwerveModuleState[] desiredStates) {
 		// makes it never go above specified max velocity
-		SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, DrivetrainConstants.maxVelocity);
+		SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, DrivetrainConstants.MAX_VELOCITY);
 
 		// Sets the speed and rotation of each module
 		for (int i = 0; i < 4; i++) {
@@ -262,7 +262,7 @@ public class Drivetrain extends SubsystemBase {
 		// individual module states
 		SwerveModuleState[] states = DrivetrainConstants.kinematics.toSwerveModuleStates(speeds);
 
-		SwerveDriveKinematics.desaturateWheelSpeeds(states, DrivetrainConstants.maxVelocity);
+		SwerveDriveKinematics.desaturateWheelSpeeds(states, DrivetrainConstants.MAX_VELOCITY);
 
 		setModuleStates(states);
 
@@ -278,7 +278,7 @@ public class Drivetrain extends SubsystemBase {
 
 		SwerveModuleState[] newStates = DrivetrainConstants.kinematics.toSwerveModuleStates(discreteSpeeds);
 
-		SwerveDriveKinematics.desaturateWheelSpeeds(newStates, DrivetrainConstants.maxVelocity);
+		SwerveDriveKinematics.desaturateWheelSpeeds(newStates, DrivetrainConstants.MAX_VELOCITY);
 
 		setModuleStates(newStates);
 	}
@@ -295,7 +295,7 @@ public class Drivetrain extends SubsystemBase {
 
 		SwerveModuleState[] newStates = DrivetrainConstants.kinematics.toSwerveModuleStates(chassisSpeeds);
 
-		SwerveDriveKinematics.desaturateWheelSpeeds(newStates, DrivetrainConstants.maxVelocity);
+		SwerveDriveKinematics.desaturateWheelSpeeds(newStates, DrivetrainConstants.MAX_VELOCITY);
 
 		setModuleStates(newStates);
 	}

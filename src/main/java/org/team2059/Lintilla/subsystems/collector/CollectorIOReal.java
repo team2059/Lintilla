@@ -31,7 +31,7 @@ public class CollectorIOReal implements CollectorIO {
 	private final SparkFlexConfig conveyorConfig = new SparkFlexConfig();
 	private final AbsoluteEncoder thruBoreEnc;
 
-	private final LoggedTunableNumber kPTilt = new LoggedTunableNumber("kPTilt", CollectorConstants.kPTilt);
+	private final LoggedTunableNumber kPTilt = new LoggedTunableNumber("TILT_P", CollectorConstants.TILT_P);
 
 	public CollectorIOReal(int tiltMotorCanId, int intakeMotorCanId, int conveyorMotorCanId) {
 		// Initialize motors
@@ -46,21 +46,21 @@ public class CollectorIOReal implements CollectorIO {
 
 		tiltConfig.closedLoop
 		  .feedbackSensor(FeedbackSensor.kAbsoluteEncoder) // takes thrubore connected thru encoder port
-		  .pid(kPTilt.get(), CollectorConstants.kITilt, CollectorConstants.kDTilt)
+		  .pid(kPTilt.get(), CollectorConstants.TILT_I, CollectorConstants.TILT_D)
 		  .outputRange(-1, 1); // can be adjusted if we're being too harsh
 
 		// NEEDED because of shooter mass & torque requirements from gravity. ArmFeedforward is WPILib alternative
 		tiltConfig.closedLoop.feedForward
-		  .kCos(CollectorConstants.kCosTilt)
-		  .kS(CollectorConstants.kSTilt)
-		  .kV(CollectorConstants.kVTilt)
-		  .kA(CollectorConstants.kATilt);
+		  .kCos(CollectorConstants.TILT_COS)
+		  .kS(CollectorConstants.TILT_S)
+		  .kV(CollectorConstants.TILT_V)
+		  .kA(CollectorConstants.TILT_A);
 
 		// Makes reported rotations [-0.25, 0.25]
 		tiltConfig.absoluteEncoder
 		  .inverted(true)
 		  .zeroCentered(true)
-		  .zeroOffset(CollectorConstants.thruBoreOffset);
+		  .zeroOffset(CollectorConstants.THRUBORE_OFFSET);
 
 		// Push the config to the tilt motor
 		tiltMotor.configure(tiltConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);

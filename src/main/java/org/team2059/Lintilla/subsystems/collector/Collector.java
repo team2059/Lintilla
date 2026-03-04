@@ -11,7 +11,6 @@ import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import org.littletonrobotics.junction.Logger;
-import org.team2059.Lintilla.Constants.CollectorConstants;
 
 import static edu.wpi.first.units.Units.*;
 import static org.team2059.Lintilla.Constants.CollectorConstants.*;
@@ -61,8 +60,8 @@ public class Collector extends SubsystemBase {
 	 * @return Command which sets tilt position to OUTward, stops tilt when within tolerance
 	 */
 	public Command tiltOut() {
-		return this.run(() -> io.setTiltPosition(thruBoreOut))
-		  .until(() -> Math.abs(inputs.tiltPosition.in(Rotations) - thruBoreOut) <= tiltTolerance)
+		return this.run(() -> io.setTiltPosition(THRUBORE_OUT))
+		  .until(() -> Math.abs(inputs.tiltPosition.in(Rotations) - THRUBORE_OUT) <= TILT_TOLERANCE_ROTATIONS)
 		  .finallyDo(io::stopTilt);
 	}
 
@@ -70,8 +69,8 @@ public class Collector extends SubsystemBase {
 	 * @return Command which sets tilt position to INward, stops tilt when within tolerance
 	 */
 	public Command tiltIn() {
-		return this.run(() -> io.setTiltPosition(thruBoreIn))
-		  .until(() -> Math.abs(inputs.tiltPosition.in(Rotations) - thruBoreIn) <= tiltTolerance)
+		return this.run(() -> io.setTiltPosition(THRUBORE_IN))
+		  .until(() -> Math.abs(inputs.tiltPosition.in(Rotations) - THRUBORE_IN) <= TILT_TOLERANCE_ROTATIONS)
 		  .finallyDo(io::stopTilt);
 	}
 
@@ -80,7 +79,7 @@ public class Collector extends SubsystemBase {
 	 */
 	public Command intake() {
 		return Commands.startEnd(
-		  () -> io.setIntakeSpeed(intakingSpeed),
+		  () -> io.setIntakeSpeed(INTAKING_ROLLER_SPEED),
 		  io::stopIntake
 		);
 	}
@@ -90,14 +89,14 @@ public class Collector extends SubsystemBase {
 	 */
 	public Command outtake() {
 		return Commands.startEnd(
-		  () -> io.setIntakeSpeed(outtakingSpeed),
+		  () -> io.setIntakeSpeed(OUTTAKING_ROLLER_SPEED),
 		  io::stopIntake
 		);
 	}
 
 	public Command conveyorIn() {
 		return Commands.startEnd(
-		  () -> io.setConveyorSpeed(conveyorIntakeSpeed),
+		  () -> io.setConveyorSpeed(INTAKING_CONVEYOR_SPEED),
 		  io::stopConveyor
 		);
 	}

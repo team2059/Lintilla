@@ -23,8 +23,8 @@ import java.util.Optional;
 import java.util.OptionalInt;
 
 import static edu.wpi.first.units.Units.Meters;
-import static org.team2059.Lintilla.Constants.OperatorConstants.ButtonBoxPhotonVisionMeasurement;
-import static org.team2059.Lintilla.Constants.OperatorConstants.ButtonBoxQuestMeasurement;
+import static org.team2059.Lintilla.Constants.OperatorConstants.PHOTONVISION_MEASUREMENT_SWITCH;
+import static org.team2059.Lintilla.Constants.OperatorConstants.QUEST_MEASUREMENT_SWITCH;
 import static org.team2059.Lintilla.Constants.VisionConstants.*;
 
 /**
@@ -63,7 +63,7 @@ public class LocalizationSystem extends SubsystemBase {
 	public LocalizationSystem() {
 		// Set up QuestNav
 		questNav = new QuestNav();
-		qnavUseMeasurements = !RobotContainer.buttonBox.getRawButton(ButtonBoxQuestMeasurement);
+		qnavUseMeasurements = !RobotContainer.buttonBox.getRawButton(QUEST_MEASUREMENT_SWITCH);
 
 		// Set up PhotonVision camera and estimator
 		pvCam = new PhotonCamera(PV_CAM_NAME);
@@ -71,7 +71,7 @@ public class LocalizationSystem extends SubsystemBase {
 		  APRIL_TAG_FIELD_LAYOUT,
 		  ROBOT_TO_PV
 		);
-		pvUseMeasurements = !RobotContainer.buttonBox.getRawButton(ButtonBoxPhotonVisionMeasurement);
+		pvUseMeasurements = !RobotContainer.buttonBox.getRawButton(PHOTONVISION_MEASUREMENT_SWITCH);
 	}
 
 	/**
@@ -227,10 +227,10 @@ public class LocalizationSystem extends SubsystemBase {
 	) {
 		if (estimatedPose.isEmpty()) {
 			// No pose input. Default to single-tag std devs
-			pvStdDevs = Constants.VisionConstants.singleTagStdDevsPV;
+			pvStdDevs = Constants.VisionConstants.PV_SINGLE_TAG_STD_DEVS;
 		} else {
 			// Pose present. Start running heuristic.
-			var estStdDevs = Constants.VisionConstants.singleTagStdDevsPV;
+			var estStdDevs = Constants.VisionConstants.PV_SINGLE_TAG_STD_DEVS;
 			int numTags = 0;
 			double avgDist = 0;
 
@@ -249,12 +249,12 @@ public class LocalizationSystem extends SubsystemBase {
 
 			if (numTags == 0) {
 				// No tags visible. Default to single-tag std devs
-				pvStdDevs = Constants.VisionConstants.singleTagStdDevsPV;
+				pvStdDevs = Constants.VisionConstants.PV_SINGLE_TAG_STD_DEVS;
 			} else {
 				// One or more tags visible, run the full heuristic.
 				avgDist /= numTags;
 				// Increase std devs if multiple targets are visible.
-				if (numTags > 1) estStdDevs = Constants.VisionConstants.multiTagStdDevsPV;
+				if (numTags > 1) estStdDevs = Constants.VisionConstants.PV_MULTI_TAG_STD_DEVS;
 				// Increase std devs based on (average) distance
 				if (numTags == 1 && avgDist > 4) {
 					estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
@@ -327,11 +327,9 @@ public class LocalizationSystem extends SubsystemBase {
 					if (qnavFaultCounter < QUESTNAV_FAILURE_THRESHOLD) {
 						qnavFaultCounter += Math.pow(bestEstimateDistance, 2);
 					}
-				} else {
-					// QuestNav agrees with AprilTags - decrement fault counter to allow recovery
-					if (qnavFaultCounter > 0.0) {
-						qnavFaultCounter -= 1.0;
-					}
+				} else if (bestEstimate != null) {
+					// QuestNav agrees with AprilTags - decrement counter to allow recovery
+					qnavFaultCounter = Math.max(qnavFaultCounter - 1.0, 0.0);
 				}
 
 				qnavHealthy = qnavFaultCounter < QUESTNAV_FAILURE_THRESHOLD;
@@ -342,7 +340,7 @@ public class LocalizationSystem extends SubsystemBase {
 					RobotContainer.drivetrain.addVisionMeasurement(
 					  qnavRobotPose.toPose2d(),
 					  frame.dataTimestamp(),
-					  questNavStdDevs
+					  QNAV_STD_DEVS
 					);
 				}
 

@@ -61,80 +61,80 @@ public class RobotContainer {
 		/* CONTROLLERS */
 		/* =========== */
 
-		logitech = new Joystick(OperatorConstants.logitechPort);
-		buttonBox = new GenericHID(OperatorConstants.buttonBoxPort);
+		logitech = new Joystick(OperatorConstants.LOGITECH_PORT);
+		buttonBox = new GenericHID(OperatorConstants.BUTTON_BOX_PORT);
 
 		/* ========== */
 		/* SUBSYSTEMS */
 		/* ========== */
 		drivetrain = new Drivetrain(
-		  new Pigeon2Gyroscope(CANConstants.pigeon2, CANConstants.canivore),
+		  new Pigeon2Gyroscope(CANConstants.PIGEON, CANConstants.CANIVORE),
 		  new MK5nModule(
-			CANConstants.frontLeftDriveMotor,
-			CANConstants.frontLeftTurnMotor,
-			CANConstants.frontLeftCancoder,
-			DrivetrainConstants.frontLeftEncoderOffset,
-			DrivetrainConstants.frontLeftInverted
+			CANConstants.FL_DRIVE,
+			CANConstants.FL_TURN,
+			CANConstants.FL_CANCODER,
+			DrivetrainConstants.FL_ENCODER_OFFSET,
+			DrivetrainConstants.FL_INVERTED
 		  ),
 		  new MK5nModule(
-			CANConstants.frontRightDriveMotor,
-			CANConstants.frontRightTurnMotor,
-			CANConstants.frontRightCancoder,
-			DrivetrainConstants.frontRightEncoderOffset,
-			DrivetrainConstants.frontRightInverted
+			CANConstants.FR_DRIVE,
+			CANConstants.FR_TURN,
+			CANConstants.FR_CANCODER,
+			DrivetrainConstants.FR_ENCODER_OFFFSET,
+			DrivetrainConstants.FR_INVERTED
 		  ),
 		  new MK5nModule(
-			CANConstants.backLeftDriveMotor,
-			CANConstants.backLeftTurnMotor,
-			CANConstants.backLeftCancoder,
-			DrivetrainConstants.backLeftEncoderOffset,
-			DrivetrainConstants.backLeftInverted
+			CANConstants.BL_DRIVE,
+			CANConstants.BL_TURN,
+			CANConstants.BL_CANCODER,
+			DrivetrainConstants.BL_ENCODER_OFFSET,
+			DrivetrainConstants.BL_INVERTED
 		  ),
 		  new MK5nModule(
-			CANConstants.backRightDriveMotor,
-			CANConstants.backRightTurnMotor,
-			CANConstants.backRightCancoder,
-			DrivetrainConstants.backRightEncoderOffset,
-			DrivetrainConstants.backRightInverted
+			CANConstants.BR_DRIVE,
+			CANConstants.BR_TURN,
+			CANConstants.BR_CANCODER,
+			DrivetrainConstants.BR_ENCODER_OFFSET,
+			DrivetrainConstants.BR_INVERTED
 		  )
 		);
 
 		shooterBase = new ShooterBase(
 		  new VortexShooter( // LEFT SHOOTER
-			CANConstants.leftShooterFlywheel,
-			CANConstants.leftShooterIndexerMotor,
-			ShooterConstants.leftFlywheelInverted,
-			ShooterConstants.leftIndexerInverted,
-			ShooterConstants.leftFlywheelkP,
-			ShooterConstants.leftFlywheelkI,
-			ShooterConstants.leftFlywheelkD,
-			ShooterConstants.leftFlywheelkS,
-			ShooterConstants.leftFlywheelkV,
-			ShooterConstants.leftFlywheelkA,
-			ShooterConstants.leftIndexerkP,
-			ShooterConstants.leftIndexerkI,
-			ShooterConstants.leftIndexerkD,
-			ShooterConstants.leftIndexerkS,
-			ShooterConstants.leftIndexerkV,
-			ShooterConstants.leftIndexerkA
+			CANConstants.LEFT_SHOOTER_FLYWHEEL,
+			CANConstants.LEFT_SHOOTER_INDEXER,
+			ShooterConstants.LEFT_FLYWHEEL_INVERTED,
+			ShooterConstants.LEFT_INDEXER_INVERTED,
+			ShooterConstants.LEFT_FLYWHEEL_P,
+			ShooterConstants.LEFT_FLYWHEEL_I,
+			ShooterConstants.LEFT_FLYWHEEL_D,
+			ShooterConstants.LEFT_FLYWHEEL_S,
+			ShooterConstants.LEFT_FLYWHEEL_V,
+			ShooterConstants.LEFT_FLYWHEEL_A,
+			ShooterConstants.LEFT_INDEXER_P,
+			ShooterConstants.LEFT_INDEXER_I,
+			ShooterConstants.LEFT_INDEXER_D,
+			ShooterConstants.LEFT_INDEXER_S,
+			ShooterConstants.LEFT_INDEXER_V,
+			ShooterConstants.LEFT_INDEXER_A
 		  ),
 		  new VortexShooter( // RIGHT SHOOTER
-			CANConstants.rightShooterFlywheel,
-			CANConstants.rightShooterIndexerMotor,
-			ShooterConstants.rightFlywheelInverted,
-			ShooterConstants.rightIndexerInverted,
-			ShooterConstants.rightFlywheelkP,
-			ShooterConstants.rightFlywheelkI,
-			ShooterConstants.rightFlywheelkD,
-			ShooterConstants.rightFlywheelkS,
-			ShooterConstants.rightFlywheelkV,
-			ShooterConstants.rightFlywheelkA,
-			ShooterConstants.rightIndexerkP,
-			ShooterConstants.rightIndexerkI,
-			ShooterConstants.rightIndexerkD,
-			ShooterConstants.rightIndexerkS,
-			ShooterConstants.rightIndexerkV,
-			ShooterConstants.rightIndexerkA
+			CANConstants.RIGHT_SHOOTER_FLYWHEEL,
+			CANConstants.RIGHT_SHOOTER_INDEXER,
+			ShooterConstants.RIGHT_FLYWHEEL_INVERTED,
+			ShooterConstants.RIGHT_INDEXER_INVERTED,
+			ShooterConstants.RIGHT_FLYWHEEL_P,
+			ShooterConstants.RIGHT_FLYWHEEL_I,
+			ShooterConstants.RIGHT_FLYWHEEL_D,
+			ShooterConstants.RIGHT_FLYWHEEL_S,
+			ShooterConstants.RIGHT_FLYWHEEL_V,
+			ShooterConstants.RIGHT_FLYWHEEL_A,
+			ShooterConstants.RIGHT_INDEXER_P,
+			ShooterConstants.RIGHT_INDEXER_I,
+			ShooterConstants.RIGHT_INDEXER_D,
+			ShooterConstants.RIGHT_INDEXER_S,
+			ShooterConstants.RIGHT_INDEXER_V,
+			ShooterConstants.RIGHT_INDEXER_A
 		  )
 		);
 
@@ -142,13 +142,13 @@ public class RobotContainer {
 		  new TeleopDriveCommand(
 			drivetrain,
 			shooterBase,
-			() -> -logitech.getRawAxis(OperatorConstants.JoystickTranslationAxis), // forwardX
-			() -> -logitech.getRawAxis(OperatorConstants.JoystickStrafeAxis), // forwardY
-			() -> -logitech.getRawAxis(OperatorConstants.JoystickRotationAxis), // rotation
-			() -> logitech.getRawAxis(OperatorConstants.JoystickSliderAxis), // slider
-			() -> logitech.getRawButton(OperatorConstants.JoystickStrafeOnly), // Strafe Only Button
-			() -> logitech.getRawButton(OperatorConstants.JoystickInvertedDrive), // Inverted button
-			() -> logitech.getRawButton(2)
+			() -> -logitech.getRawAxis(OperatorConstants.TRANSLATION_AXIS), // forwardX
+			() -> -logitech.getRawAxis(OperatorConstants.STRAFE_AXIS), // forwardY
+			() -> -logitech.getRawAxis(OperatorConstants.ROTATION_AXIS), // rotation
+			() -> logitech.getRawAxis(OperatorConstants.SLIDER_AXIS), // slider
+			() -> logitech.getRawButton(OperatorConstants.STRAFE_ONLY), // Strafe Only Button
+			() -> logitech.getRawButton(OperatorConstants.INVERT_DRIVE), // Inverted button
+			() -> logitech.getRawButton(OperatorConstants.HUB_ALIGN)
 		  )
 		);
 
@@ -156,9 +156,9 @@ public class RobotContainer {
 
 		collector = new Collector(
 		  new CollectorIOReal(
-			CANConstants.collectorTiltMotor,
-			CANConstants.collectorIntakeMotor,
-			CANConstants.conveyorMotor
+			CANConstants.COLLECTOR_TILT,
+			CANConstants.COLLECTOR_INTAKE,
+			CANConstants.CONVEYOR
 		  )
 		);
 
@@ -226,14 +226,14 @@ public class RobotContainer {
 		/* =================== */
 
 		/* RESET GYRO HEADING */
-		new JoystickButton(logitech, OperatorConstants.JoystickResetHeading)
+		new JoystickButton(logitech, OperatorConstants.RESET_HEADING)
 		  .whileTrue(
 			Commands.runOnce(() -> drivetrain.resetGyroHeading())
 			  .ignoringDisable(true)
 		  );
 
 		/* SWITCH FIELD/ROBOT RELATIVITY */
-		new JoystickButton(logitech, OperatorConstants.JoystickRobotRelative)
+		new JoystickButton(logitech, OperatorConstants.ROBOT_RELATIVE)
 		  .whileTrue(
 			Commands.runOnce(() -> drivetrain.setFieldRelativity())
 			  .ignoringDisable(true)
@@ -244,7 +244,7 @@ public class RobotContainer {
 		/* ===================== */
 
 		/* SPINUP & SHOOT FROM CURRENT HUB DISTANCE */
-		new JoystickButton(buttonBox, OperatorConstants.ButtonBoxSpinupShootDistance)
+		new JoystickButton(buttonBox, OperatorConstants.SPINUP_SHOOT_DISTANCE)
 		  .whileTrue(
 			new SpinupAndShootCommand(
 			  drivetrain,
@@ -254,7 +254,7 @@ public class RobotContainer {
 		  );
 
 		/* SPINUP & SHOOT WITH FIXED RPM */
-		new JoystickButton(buttonBox, OperatorConstants.ButtonBoxSpinupShootFixed)
+		new JoystickButton(buttonBox, OperatorConstants.SPINUP_SHOOT_FIXED)
 		  .whileTrue(
 			new SpinupAndShootCommand(
 			  drivetrain,
@@ -278,23 +278,23 @@ public class RobotContainer {
 		  );
 
 		/* COLLECTOR OUT & INTAKE */
-		new JoystickButton(buttonBox, OperatorConstants.ButtonBoxCollectorOutIntake)
+		new JoystickButton(buttonBox, OperatorConstants.COLLECTOR_OUT_INTAKE)
 		  .whileTrue(collector.tiltOutAndIntake());
 
 		/* COLLECTOR TILT IN */
-		new JoystickButton(buttonBox, OperatorConstants.ButtonBoxCollectorIn)
+		new JoystickButton(buttonBox, OperatorConstants.COLLECTOR_IN)
 		  .whileTrue(collector.tiltIn());
 
 		/* COLLECTOR OUTTAKE/UNJAM */
-		new JoystickButton(buttonBox, OperatorConstants.ButtonBoxCollectorUnjam)
+		new JoystickButton(buttonBox, OperatorConstants.COLLECTOR_UNJAM)
 		  .whileTrue(collector.outtake());
 
 		/* COLLECTOR ROLLERS IN/INTAKE */
-		new JoystickButton(buttonBox, OperatorConstants.ButtonBoxCollectorIntake)
+		new JoystickButton(buttonBox, OperatorConstants.COLLECTOR_INTAKE)
 		  .whileTrue(collector.intake());
 
 		/* QUEST MEASUREMENTS SWITCH */
-		new JoystickButton(buttonBox, OperatorConstants.ButtonBoxQuestMeasurement)
+		new JoystickButton(buttonBox, OperatorConstants.QUEST_MEASUREMENT_SWITCH)
 		  .onFalse(
 			Commands.runOnce(() -> localizationSystem.setQnavUseMeasurements(true))
 			  .ignoringDisable(true)
@@ -305,7 +305,7 @@ public class RobotContainer {
 		  );
 
 		/* PHOTONVISION MEASUREMENTS SWITCH */
-		new JoystickButton(buttonBox, OperatorConstants.ButtonBoxPhotonVisionMeasurement)
+		new JoystickButton(buttonBox, OperatorConstants.PHOTONVISION_MEASUREMENT_SWITCH)
 		  .onFalse(
 			Commands.runOnce(() -> localizationSystem.setPVUseMeasurements(true))
 			  .ignoringDisable(true)
