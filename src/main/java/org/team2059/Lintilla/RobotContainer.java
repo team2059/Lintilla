@@ -295,28 +295,13 @@ public class RobotContainer {
 
 		/* QUEST MEASUREMENTS SWITCH */
 		new JoystickButton(buttonBox, OperatorConstants.QUEST_MEASUREMENT_SWITCH)
-		  .onFalse(
-			Commands.runOnce(() -> localizationSystem.setQnavUseMeasurements(true))
-			  .ignoringDisable(true)
-		  )
-		  .onTrue(
-			Commands.runOnce(() -> localizationSystem.setQnavUseMeasurements(false))
-			  .ignoringDisable(true)
-		  );
+		  .onFalse(localizationSystem.enableQnavMeasurements())
+		  .onTrue(localizationSystem.disableQnavMeasurements());
 
 		/* PHOTONVISION MEASUREMENTS SWITCH */
 		new JoystickButton(buttonBox, OperatorConstants.PHOTONVISION_MEASUREMENT_SWITCH)
-		  .onFalse(
-			Commands.runOnce(() -> localizationSystem.setPVUseMeasurements(true))
-			  .ignoringDisable(true)
-		  )
-		  .onTrue(
-			Commands.runOnce(() -> localizationSystem.setPVUseMeasurements(false))
-			  .ignoringDisable(true)
-		  );
-
-		new JoystickButton(buttonBox, 11)
-		  .whileTrue(collector.tiltOut());
+		  .onFalse(localizationSystem.enablePVMeasurements())
+		  .onTrue(localizationSystem.disablePVMeasurements());
 
 		new JoystickButton(buttonBox, 12)
 		  .whileTrue(Commands.runOnce(() -> {

@@ -6,6 +6,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import gg.questnav.questnav.PoseFrame;
 import gg.questnav.questnav.QuestNav;
@@ -201,18 +203,20 @@ public class LocalizationSystem extends SubsystemBase {
 		setQnavRobotPose(new Pose3d(pose));
 	}
 
-	/**
-	 * Set whether Quest measurements are being used for pose estimation
-	 */
-	public void setQnavUseMeasurements(boolean b) {
-		qnavUseMeasurements = b;
+	public Command enableQnavMeasurements() {
+		return Commands.runOnce(() -> qnavUseMeasurements = true);
 	}
 
-	/**
-	 * Set whether PhotonVision measurements are being used for pose estimation
-	 */
-	public void setPVUseMeasurements(boolean b) {
-		pvUseMeasurements = b;
+	public Command disableQnavMeasurements() {
+		return Commands.runOnce(() -> qnavUseMeasurements = false);
+	}
+
+	public Command enablePVMeasurements() {
+		return Commands.runOnce(() -> pvUseMeasurements = true);
+	}
+
+	public Command disablePVMeasurements() {
+		return Commands.runOnce(() -> pvUseMeasurements = false);
 	}
 
 	/**
