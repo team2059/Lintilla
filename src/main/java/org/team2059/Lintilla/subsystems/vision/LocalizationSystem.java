@@ -203,20 +203,34 @@ public class LocalizationSystem extends SubsystemBase {
 		setQnavRobotPose(new Pose3d(pose));
 	}
 
+	/**
+	 * Set whether Quest measurements are being used for pose estimation
+	 */
+	public void setQnavUseMeasurements(boolean b) {
+		qnavUseMeasurements = b;
+	}
+
 	public Command enableQnavMeasurements() {
-		return Commands.runOnce(() -> qnavUseMeasurements = true);
+		return Commands.runOnce(() -> setQnavUseMeasurements(true)).ignoringDisable(true);
 	}
 
 	public Command disableQnavMeasurements() {
-		return Commands.runOnce(() -> qnavUseMeasurements = false);
+		return Commands.runOnce(() -> setQnavUseMeasurements(false)).ignoringDisable(true);
+	}
+
+	/**
+	 * Set whether PhotonVision measurements are being used for pose estimation
+	 */
+	public void setPVUseMeasurements(boolean b) {
+		pvUseMeasurements = b;
 	}
 
 	public Command enablePVMeasurements() {
-		return Commands.runOnce(() -> pvUseMeasurements = true);
+		return Commands.runOnce(() -> setPVUseMeasurements(true)).ignoringDisable(true);
 	}
 
 	public Command disablePVMeasurements() {
-		return Commands.runOnce(() -> pvUseMeasurements = false);
+		return Commands.runOnce(() -> setPVUseMeasurements(false)).ignoringDisable(true);
 	}
 
 	/**
