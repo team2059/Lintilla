@@ -264,7 +264,7 @@ public class RobotContainer {
 			)
 		  );
 
-		new JoystickButton(buttonBox, 4)
+		new JoystickButton(buttonBox, 3)
 		  .whileTrue(
 			Commands.startEnd(
 			  () -> {
