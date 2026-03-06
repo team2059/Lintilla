@@ -168,9 +168,8 @@ public class RobotContainer {
 
 		/* NAMED COMMANDS */
 		NamedCommands.registerCommand(
-		  "Shoot5SecDistance",
+		  "ShootWithDistance",
 		  new SpinupAndShootCommand(drivetrain, shooterBase, collector)
-			.withTimeout(5)
 		);
 
 		NamedCommands.registerCommand(
@@ -186,12 +185,6 @@ public class RobotContainer {
 		NamedCommands.registerCommand(
 		  "Intake",
 		  collector.intake()
-		);
-
-		NamedCommands.registerCommand(
-		  "CollectorOutAndIntake5Sec",
-		  collector.tiltOutAndIntake()
-			.withTimeout(5)
 		);
 
 		// Build auto chooser - you can also set a default.
