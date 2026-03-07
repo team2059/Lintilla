@@ -9,12 +9,16 @@ import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
 import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
 
 import static edu.wpi.first.units.Units.RPM;
+import static org.team2059.Lintilla.Constants.CollectorConstants.*;
+import static org.team2059.Lintilla.Constants.ShooterConstants.INDEXER_SPEED_WHILE_SHOOTING;
 import static org.team2059.Lintilla.Constants.ShooterConstants.SPINUP_TOLERANCE_RPM;
 import static org.team2059.Lintilla.Constants.VisionConstants.getHubTranslation;
 
 /**
  * Command to spin the shooters up at a specific velocity (or calculate velocity based on distance to hub) and shoot
  * when a certain tolerance is reached.
+ * <p>
+ * Makes the collector angled 45 degrees as well as running the rollers so we have a consistent stream of balls.
  */
 public class SpinupAndShootCommand extends Command {
 	// We depend on these subsystems for certain methods & calculations
@@ -62,7 +66,13 @@ public class SpinupAndShootCommand extends Command {
 		this.desiredRPM = desiredRPM;
 		this.desiredRPMHardcoded = true;
 
-		addRequirements(this.shooterBase);
+		addRequirements(this.shooterBase, this.collector);
+	}
+
+	@Override
+	public void initialize() {
+		collector.io.setIntakeSpeed(SHOOTING_ROLLER_SPEED);
+		collector.io.setTiltPosition(THRUBORE_SHOOTING);
 	}
 
 	@Override
@@ -87,29 +97,32 @@ public class SpinupAndShootCommand extends Command {
 		shooterBase.leftShooter.setFlywheelRpm(desiredRPM);
 		shooterBase.rightShooter.setFlywheelRpm(desiredRPM);
 
+		double leftCurrentVelocityRPM = shooterBase.leftShooterInputs.flywheelVelocity.in(RPM);
+		double rightCurrentVelocityRPM = shooterBase.rightShooterInputs.flywheelVelocity.in(RPM);
+
 		// If we're using hardcoded RPM, we don't need to check whether or not we're aimed.
 		// Otherwise, we must check our aiming so we don't deliberately miss shots.
 		if (desiredRPMHardcoded) {
-			if (Math.abs(shooterBase.leftShooterInputs.flywheelVelocity.in(RPM) - desiredRPM) <= SPINUP_TOLERANCE_RPM) {
+			if (Math.abs(leftCurrentVelocityRPM - desiredRPM) <= SPINUP_TOLERANCE_RPM) {
 				// Left shooter is within tolerance. Spin indexer
-				shooterBase.leftShooter.setIndexerSpeed(Constants.ShooterConstants.INDEXER_SPEED_WHILE_SHOOTING);
-				collector.io.setConveyorSpeed(Constants.ShooterConstants.CONVEYOR_SPEED_WHILE_SHOOTING);
+				shooterBase.leftShooter.setIndexerSpeed(INDEXER_SPEED_WHILE_SHOOTING);
+				collector.io.setConveyorSpeed(SHOOTING_CONVEYOR_SPEED);
 			}
-			if (Math.abs(shooterBase.rightShooterInputs.flywheelVelocity.in(RPM) - desiredRPM) <= SPINUP_TOLERANCE_RPM) {
+			if (Math.abs(rightCurrentVelocityRPM - desiredRPM) <= SPINUP_TOLERANCE_RPM) {
 				// Right shooter is within tolerance. Spin indexer
-				shooterBase.rightShooter.setIndexerSpeed(Constants.ShooterConstants.INDEXER_SPEED_WHILE_SHOOTING);
-				collector.io.setConveyorSpeed(Constants.ShooterConstants.CONVEYOR_SPEED_WHILE_SHOOTING);
+				shooterBase.rightShooter.setIndexerSpeed(INDEXER_SPEED_WHILE_SHOOTING);
+				collector.io.setConveyorSpeed(SHOOTING_CONVEYOR_SPEED);
 			}
 		} else {
-			if (Math.abs(shooterBase.leftShooterInputs.flywheelVelocity.in(RPM) - desiredRPM) <= SPINUP_TOLERANCE_RPM) {
+			if (Math.abs(leftCurrentVelocityRPM - desiredRPM) <= SPINUP_TOLERANCE_RPM) {
 				// Left shooter is within tolerance. Spin indexer
-				shooterBase.leftShooter.setIndexerSpeed(Constants.ShooterConstants.INDEXER_SPEED_WHILE_SHOOTING);
-				collector.io.setConveyorSpeed(Constants.ShooterConstants.CONVEYOR_SPEED_WHILE_SHOOTING);
+				shooterBase.leftShooter.setIndexerSpeed(INDEXER_SPEED_WHILE_SHOOTING);
+				collector.io.setConveyorSpeed(SHOOTING_CONVEYOR_SPEED);
 			}
-			if (Math.abs(shooterBase.rightShooterInputs.flywheelVelocity.in(RPM) - desiredRPM) <= SPINUP_TOLERANCE_RPM) {
+			if (Math.abs(rightCurrentVelocityRPM - desiredRPM) <= SPINUP_TOLERANCE_RPM) {
 				// Right shooter is within tolerance. Spin indexer
-				shooterBase.rightShooter.setIndexerSpeed(Constants.ShooterConstants.INDEXER_SPEED_WHILE_SHOOTING);
-				collector.io.setConveyorSpeed(Constants.ShooterConstants.CONVEYOR_SPEED_WHILE_SHOOTING);
+				shooterBase.rightShooter.setIndexerSpeed(INDEXER_SPEED_WHILE_SHOOTING);
+				collector.io.setConveyorSpeed(SHOOTING_CONVEYOR_SPEED);
 			}
 		}
 	}
@@ -127,5 +140,7 @@ public class SpinupAndShootCommand extends Command {
 		shooterBase.rightShooter.stopIndexer();
 		shooterBase.rightShooter.stopFlywheel();
 		collector.io.stopConveyor();
+		collector.io.stopIntake();
+		collector.io.stopTilt();
 	}
 }

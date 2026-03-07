@@ -280,8 +280,6 @@ public final class Constants {
 		public static final double SPINUP_TOLERANCE_RPM = 50;
 		// Speed [-1,1] to run the indexer at while shooting
 		public static final double INDEXER_SPEED_WHILE_SHOOTING = 0.65;
-		// Speed [-1,1] to run the conveyor at while shooting
-		public static final double CONVEYOR_SPEED_WHILE_SHOOTING = 0.5;
 		public static final double HUB_HEIGHT_METERS = 1.83; // End height of trajectory
 		public static final double SHOOTER_HEIGHT_METERS = 0.5; // Start height of trajectory
 		public static final double FUEL_EXIT_ANGLE_RADIANS = 0.983936078; // RADIANS At what angle does fuel leave the shooter
@@ -360,10 +358,13 @@ public final class Constants {
 		public static final double THRUBORE_OFFSET = 0.91;
 
 		public static final double THRUBORE_OUT = 0;
+		public static final double THRUBORE_SHOOTING = 0.125;
 		public static final double THRUBORE_IN = 0.25;
 
 		public static final double INTAKING_ROLLER_SPEED = 0.75;
+		public static final double SHOOTING_ROLLER_SPEED = 0.75;
 		public static final double OUTTAKING_ROLLER_SPEED = -0.75;
 		public static final double INTAKING_CONVEYOR_SPEED = 0.25;
+		public static final double SHOOTING_CONVEYOR_SPEED = 0.5;
 	}
 }
