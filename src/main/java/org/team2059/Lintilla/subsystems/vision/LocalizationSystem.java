@@ -292,6 +292,7 @@ public class LocalizationSystem extends SubsystemBase {
 
 		if (p != null) {
 			setQnavRobotPose(p);
+			qnavFaultCounter = 0;
 			System.out.println("[i] QuestNav pose reset successfully");
 		} else {
 			System.out.println("[!] QuestNav pose reset failed");
@@ -323,7 +324,8 @@ public class LocalizationSystem extends SubsystemBase {
 
 		qnavLatency = questNav.getLatency();
 
-		if ((!qnavTracking || !qnavConnected) && qnavFaultCounter < QUESTNAV_FAILURE_THRESHOLD) {
+		boolean isQuestWorking = qnavConnected && qnavTracking;
+		if (!isQuestWorking && qnavFaultCounter < QUESTNAV_FAILURE_THRESHOLD) {
 			qnavFaultCounter++;
 		}
 
@@ -341,6 +343,7 @@ public class LocalizationSystem extends SubsystemBase {
 				  : 0;
 
 				if (bestEstimateDistance > QUESTNAV_APRILTAG_ERROR_THRESHOLD.in(Meters)) {
+					Logger.recordOutput("BestEstimateDistance", bestEstimateDistance);
 					// QuestNav disagrees with AprilTag vision: increment fault counter
 					if (qnavFaultCounter < QUESTNAV_FAILURE_THRESHOLD) {
 						qnavFaultCounter += Math.pow(bestEstimateDistance, 2);
@@ -350,7 +353,7 @@ public class LocalizationSystem extends SubsystemBase {
 					qnavFaultCounter = Math.max(qnavFaultCounter - 1.0, 0.0);
 				}
 
-				qnavHealthy = qnavTracking && qnavConnected && qnavFaultCounter < QUESTNAV_FAILURE_THRESHOLD;
+				qnavHealthy = qnavFaultCounter < QUESTNAV_FAILURE_THRESHOLD;
 
 				// Only use QuestNav measurements when fault counter is below threshold
 				// TODO: add field pose validation here

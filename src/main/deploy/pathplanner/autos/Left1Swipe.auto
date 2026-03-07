@@ -24,6 +24,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "CollectorIn"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "LeftTrenchToCenter"
@@ -36,7 +42,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "CollectorOut"
+                  "name": "CollectorOutInfinite"
                 }
               },
               {

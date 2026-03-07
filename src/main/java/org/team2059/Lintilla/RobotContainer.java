@@ -31,6 +31,8 @@ import org.team2059.Lintilla.subsystems.drivetrain.Pigeon2Gyroscope;
 import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
 import org.team2059.Lintilla.subsystems.shooter.VortexShooter;
 
+import static org.team2059.Lintilla.Constants.OperatorConstants.SHOOTER_ADDTENPERCENT_SWITCH;
+
 /**
  * This class is where the bulk of the robot should be declared. Since
  * Command-based is a
@@ -173,6 +175,16 @@ public class RobotContainer {
 		);
 
 		NamedCommands.registerCommand(
+		  "CollectorOutInfinite",
+		  collector.tiltOutInfinite()
+		);
+
+		NamedCommands.registerCommand(
+		  "CollectorInInfinite",
+		  collector.tiltInInfinite()
+		);
+
+		NamedCommands.registerCommand(
 		  "CollectorOut",
 		  collector.tiltOut()
 		);
@@ -295,6 +307,17 @@ public class RobotContainer {
 		new JoystickButton(buttonBox, OperatorConstants.PHOTONVISION_MEASUREMENT_SWITCH)
 		  .onFalse(localizationSystem.enablePVMeasurements())
 		  .onTrue(localizationSystem.disablePVMeasurements());
+
+		new JoystickButton(buttonBox, SHOOTER_ADDTENPERCENT_SWITCH)
+		  .onFalse(Commands.runOnce(() -> {
+			  shooterBase.setAddFivePercent(true);
+		  })
+			  .ignoringDisable(true)
+		  ).onTrue(Commands.runOnce(() -> {
+			  shooterBase.setAddFivePercent(false);
+		  })
+			  .ignoringDisable(true)
+		  );
 
 		new JoystickButton(buttonBox, 12)
 		  .whileTrue(Commands.runOnce(() -> {

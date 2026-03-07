@@ -8,8 +8,10 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import org.littletonrobotics.junction.Logger;
+import org.team2059.Lintilla.RobotContainer;
 
 import static edu.wpi.first.units.Units.*;
+import static org.team2059.Lintilla.Constants.OperatorConstants.SHOOTER_ADDTENPERCENT_SWITCH;
 import static org.team2059.Lintilla.Constants.ShooterConstants;
 
 public class ShooterBase extends SubsystemBase {
@@ -31,6 +33,7 @@ public class ShooterBase extends SubsystemBase {
 	private final MutAngularVelocity angularVelocityRoutine = RPM.mutable(0);
 
 	public boolean isAimed = false;
+	public boolean addFivePercent;
 	public double currentDistanceToTarget = 0.0;
 
 	public ShooterBase(
@@ -39,6 +42,8 @@ public class ShooterBase extends SubsystemBase {
 	) {
 		this.leftShooter = leftShooter;
 		this.rightShooter = rightShooter;
+
+		addFivePercent = !RobotContainer.buttonBox.getRawButton(SHOOTER_ADDTENPERCENT_SWITCH);
 
 		// Declare SysID routines
 		leftFlywheelRoutine = new SysIdRoutine(
@@ -179,6 +184,10 @@ public class ShooterBase extends SubsystemBase {
 		);
 	}
 
+	public void setAddFivePercent(boolean b) {
+		addFivePercent = b;
+	}
+
 	public Command setShooterRPM1500() {
 		return Commands.startEnd(
 		  () -> {
@@ -240,5 +249,6 @@ public class ShooterBase extends SubsystemBase {
 		Logger.processInputs("ShooterBase/Right", rightShooterInputs);
 
 		Logger.recordOutput("IsAimed", isAimed);
+		Logger.recordOutput("AddFivePercent", addFivePercent);
 	}
 }

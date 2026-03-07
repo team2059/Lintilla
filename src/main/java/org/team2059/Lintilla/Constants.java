@@ -74,6 +74,7 @@ public final class Constants {
 
 		public static final int QUEST_MEASUREMENT_SWITCH = 13;
 		public static final int PHOTONVISION_MEASUREMENT_SWITCH = 14;
+		public static final int SHOOTER_ADDTENPERCENT_SWITCH = 15;
 	}
 
 	/**
@@ -359,7 +360,7 @@ public final class Constants {
 
 		public static final double THRUBORE_OUT = 0;
 		public static final double THRUBORE_SHOOTING = 0.125;
-		public static final double THRUBORE_IN = 0.25;
+		public static final double THRUBORE_IN = 0.3;
 
 		public static final double INTAKING_ROLLER_SPEED = 0.75;
 		public static final double SHOOTING_ROLLER_SPEED = 0.75;

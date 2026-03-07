@@ -65,6 +65,13 @@ public class Collector extends SubsystemBase {
 		  .finallyDo(io::stopTilt);
 	}
 
+	public Command tiltOutInfinite() {
+		return this.startEnd(
+		  () -> io.setTiltPosition(THRUBORE_OUT),
+		  () -> io.stopTilt()
+		);
+	}
+
 	/**
 	 * @return Command which sets tilt position to INward, stops tilt when within tolerance
 	 */
@@ -72,6 +79,13 @@ public class Collector extends SubsystemBase {
 		return this.run(() -> io.setTiltPosition(THRUBORE_IN))
 		  .until(() -> Math.abs(inputs.tiltPosition.in(Rotations) - THRUBORE_IN) <= TILT_TOLERANCE_ROTATIONS)
 		  .finallyDo(io::stopTilt);
+	}
+
+	public Command tiltInInfinite() {
+		return this.startEnd(
+		  () -> io.setTiltPosition(THRUBORE_IN),
+		  () -> io.stopTilt()
+		);
 	}
 
 	/**
