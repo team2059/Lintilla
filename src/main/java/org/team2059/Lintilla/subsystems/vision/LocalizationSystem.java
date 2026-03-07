@@ -323,7 +323,7 @@ public class LocalizationSystem extends SubsystemBase {
 
 		qnavLatency = questNav.getLatency();
 
-		if (!qnavTracking && qnavFaultCounter < QUESTNAV_FAILURE_THRESHOLD) {
+		if ((!qnavTracking || !qnavConnected) && qnavFaultCounter < QUESTNAV_FAILURE_THRESHOLD) {
 			qnavFaultCounter++;
 		}
 
@@ -350,7 +350,7 @@ public class LocalizationSystem extends SubsystemBase {
 					qnavFaultCounter = Math.max(qnavFaultCounter - 1.0, 0.0);
 				}
 
-				qnavHealthy = qnavFaultCounter < QUESTNAV_FAILURE_THRESHOLD;
+				qnavHealthy = qnavTracking && qnavConnected && qnavFaultCounter < QUESTNAV_FAILURE_THRESHOLD;
 
 				// Only use QuestNav measurements when fault counter is below threshold
 				// TODO: add field pose validation here
