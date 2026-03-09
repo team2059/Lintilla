@@ -33,6 +33,6 @@
     }
   },
   "resetOdom": false,
-  "folder": null,
+  "folder": "Shoot Only",
   "choreoAuto": false
 }

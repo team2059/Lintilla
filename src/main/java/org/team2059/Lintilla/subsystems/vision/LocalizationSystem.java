@@ -419,16 +419,14 @@ public class LocalizationSystem extends SubsystemBase {
 		if (visionEst.isPresent() && pvUseMeasurements) {
 			pvRobotPose = visionEst.get().estimatedPose;
 
-			// QuestNav considered unhealthy, fall back to PhotonVision measurements
-			if (!qnavHealthy) {
+			// If QuestNav considered unhealthy, or not enabled, fall back to PhotonVision measurements
+			if (!qnavHealthy || !qnavUseMeasurements) {
 				RobotContainer.drivetrain.addVisionMeasurement(
 				  pvRobotPose.toPose2d(),
 				  visionEst.get().timestampSeconds,
 				  pvStdDevs
 				);
 			}
-		} else {
-			pvRobotPose = null;
 		}
 
 		// Log all values

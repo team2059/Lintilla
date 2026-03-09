@@ -8,9 +8,12 @@
     "Right"
   ],
   "autoFolders": [
+    "1Swipe",
+    "2Swipe",
+    "Shoot Only",
     "Tests"
   ],
-  "defaultMaxVel": 2.0,
+  "defaultMaxVel": 3.0,
   "defaultMaxAccel": 2.0,
   "defaultMaxAngVel": 180.0,
   "defaultMaxAngAccel": 180.0,

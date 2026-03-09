@@ -63,7 +63,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RightCenterToTrench"
+            "pathName": "RightCenterToFront"
           }
         },
         {
@@ -89,6 +89,6 @@
     }
   },
   "resetOdom": false,
-  "folder": null,
+  "folder": "1Swipe",
   "choreoAuto": false
 }

@@ -69,7 +69,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "LeftCenterToTrench"
+            "pathName": "LeftCenterToFront"
           }
         },
         {
@@ -95,6 +95,6 @@
     }
   },
   "resetOdom": false,
-  "folder": null,
+  "folder": "1Swipe",
   "choreoAuto": false
 }
