@@ -34,13 +34,7 @@ import org.team2059.Lintilla.subsystems.shooter.VortexShooter;
 import static org.team2059.Lintilla.Constants.OperatorConstants.SHOOTER_ADDTENPERCENT_SWITCH;
 
 /**
- * This class is where the bulk of the robot should be declared. Since
- * Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in
- * the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of
- * the robot (including
- * subsystems, commands, and trigger mappings) should be declared here.
+ * Central initialization class
  */
 public class RobotContainer {
 
@@ -69,6 +63,7 @@ public class RobotContainer {
 		/* ========== */
 		/* SUBSYSTEMS */
 		/* ========== */
+
 		drivetrain = new Drivetrain(
 		  new Pigeon2Gyroscope(CANConstants.PIGEON, CANConstants.CANIVORE),
 		  new MK5nModule(
@@ -185,6 +180,11 @@ public class RobotContainer {
 		configureBindings();
 	}
 
+	/**
+	 * Maps buttons to specific commands.
+	 * <p>
+	 * Important to note that this method runs ONCE. The commands are not remade, they are initialized once and saved.
+	 */
 	private void configureBindings() {
 
 		/* =================== */
@@ -230,7 +230,8 @@ public class RobotContainer {
 			)
 		  );
 
-		new JoystickButton(buttonBox, 3)
+		/* SHOOTER UNJAM */
+		new JoystickButton(buttonBox, OperatorConstants.SHOOTER_UNJAM)
 		  .whileTrue(
 			Commands.startEnd(
 			  () -> {
@@ -280,7 +281,7 @@ public class RobotContainer {
 			  .ignoringDisable(true)
 		  );
 
-		new JoystickButton(buttonBox, 12)
+		new JoystickButton(buttonBox, OperatorConstants.LOCALIZATION_SYNC_POSES)
 		  .whileTrue(Commands.runOnce(() -> {
 				  localizationSystem.syncPoses();
 			  })
@@ -289,8 +290,6 @@ public class RobotContainer {
 	}
 
 	/**
-	 * Use this to pass the autonomous command to the main {@link Robot} class.
-	 *
 	 * @return the command to run in autonomous
 	 */
 	public Command getAutonomousCommand() {

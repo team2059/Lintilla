@@ -63,10 +63,12 @@ public final class Constants {
 		public static final int HUB_ALIGN = 2;
 		public static final int SPINUP_SHOOT_DISTANCE = 1;
 		public static final int SPINUP_SHOOT_FIXED = 2;
+		public static final int SHOOTER_UNJAM = 3;
 		public static final int COLLECTOR_OUT_INTAKE = 5;
 		public static final int COLLECTOR_IN = 6;
 		public static final int COLLECTOR_UNJAM = 7;
 		public static final int COLLECTOR_INTAKE = 8;
+		public static final int LOCALIZATION_SYNC_POSES = 12;
 
 		/* ======== */
 		/* SWITCHES */
