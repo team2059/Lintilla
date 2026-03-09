@@ -168,41 +168,11 @@ public class RobotContainer {
 		/* AUTONOMOUS */
 		/* ========== */
 
-		/* NAMED COMMANDS */
-		NamedCommands.registerCommand(
-		  "ShootWithDistance",
-		  new SpinupAndShootCommand(drivetrain, shooterBase, collector)
-		);
-
-		NamedCommands.registerCommand(
-		  "CollectorOutInfinite",
-		  collector.tiltOutInfinite()
-		);
-
-		NamedCommands.registerCommand(
-		  "CollectorInInfinite",
-		  collector.tiltInInfinite()
-		);
-
-		NamedCommands.registerCommand(
-		  "CollectorOut",
-		  collector.tiltOut()
-		);
-
-		NamedCommands.registerCommand(
-		  "CollectorIn",
-		  collector.tiltIn()
-		);
-
-		NamedCommands.registerCommand(
-		  "Intake",
-		  collector.intake()
-		);
+		// Register NamedCommands
+		Autos.registerNamedCommands();
 
 		// Build auto chooser - you can also set a default.
 		autoChooser = AutoBuilder.buildAutoChooser();
-
-		// Publish auto chooser
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 
 		/* ======= */
@@ -215,15 +185,6 @@ public class RobotContainer {
 		configureBindings();
 	}
 
-	/**
-	 * Use this method to define your trigger->command mappings. Triggers can be created via the
-	 * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
-	 * predicate, or via the named factories in {@link
-	 * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
-	 * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-	 * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-	 * joysticks}.
-	 */
 	private void configureBindings() {
 
 		/* =================== */
