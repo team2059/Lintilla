@@ -76,7 +76,7 @@ public final class Constants {
 
 		public static final int QUEST_MEASUREMENT_SWITCH = 13;
 		public static final int PHOTONVISION_MEASUREMENT_SWITCH = 14;
-		public static final int SHOOTER_ADDTENPERCENT_SWITCH = 15;
+		public static final int SHOOTER_ADD5PERCENT_SWITCH = 15;
 	}
 
 	/**

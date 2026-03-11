@@ -11,7 +11,7 @@ import org.littletonrobotics.junction.Logger;
 import org.team2059.Lintilla.RobotContainer;
 
 import static edu.wpi.first.units.Units.*;
-import static org.team2059.Lintilla.Constants.OperatorConstants.SHOOTER_ADDTENPERCENT_SWITCH;
+import static org.team2059.Lintilla.Constants.OperatorConstants.SHOOTER_ADD5PERCENT_SWITCH;
 import static org.team2059.Lintilla.Constants.ShooterConstants;
 
 public class ShooterBase extends SubsystemBase {
@@ -43,7 +43,7 @@ public class ShooterBase extends SubsystemBase {
 		this.leftShooter = leftShooter;
 		this.rightShooter = rightShooter;
 
-		addFivePercent = !RobotContainer.buttonBox.getRawButton(SHOOTER_ADDTENPERCENT_SWITCH);
+		addFivePercent = !RobotContainer.buttonBox.getRawButton(SHOOTER_ADD5PERCENT_SWITCH);
 
 		// Declare SysID routines
 		leftFlywheelRoutine = new SysIdRoutine(
