@@ -56,6 +56,13 @@ public class Drivetrain extends SubsystemBase {
 	  new SwerveModulePosition()
 	};
 
+	private final SwerveModuleState[] cachedModuleStates = new SwerveModuleState[] {
+	  new SwerveModuleState(),
+	  new SwerveModuleState(),
+	  new SwerveModuleState(),
+	  new SwerveModuleState()
+	};
+
 	public Drivetrain(
 	  GyroscopeIO gyroIO,
 	  SwerveModuleIO frontLeftModuleIO,
@@ -126,13 +133,11 @@ public class Drivetrain extends SubsystemBase {
 	 * @return current swerve module states of all modules
 	 */
 	public SwerveModuleState[] getStates() {
-		SwerveModuleState[] states = new SwerveModuleState[4];
-
 		for (int i = 0; i < 4; i++) {
-			states[i] = modules[i].getState();
+			cachedModuleStates[i] = modules[i].getState();
 		}
 
-		return states;
+		return cachedModuleStates;
 	}
 
 	/**
