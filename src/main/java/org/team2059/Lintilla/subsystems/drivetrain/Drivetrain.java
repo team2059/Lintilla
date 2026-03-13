@@ -26,6 +26,9 @@ import org.team2059.Lintilla.Constants.DrivetrainConstants;
 import org.team2059.Lintilla.Constants.VisionConstants;
 import org.team2059.Lintilla.routines.DrivetrainRoutine;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Radians;
+
 public class Drivetrain extends SubsystemBase {
 
 	public static boolean isFieldRelativeTeleop = true;
@@ -44,6 +47,20 @@ public class Drivetrain extends SubsystemBase {
 
 	private static final String[] MODULE_LOG_KEYS = {
 	  "Drive/Module0", "Drive/Module1", "Drive/Module2", "Drive/Module3"
+	};
+
+	private final SwerveModulePosition[] cachedModulePositions = new SwerveModulePosition[] {
+	  new SwerveModulePosition(),
+	  new SwerveModulePosition(),
+	  new SwerveModulePosition(),
+	  new SwerveModulePosition()
+	};
+
+	private final SwerveModuleState[] cachedModuleStates = new SwerveModuleState[] {
+	  new SwerveModuleState(),
+	  new SwerveModuleState(),
+	  new SwerveModuleState(),
+	  new SwerveModuleState()
 	};
 
 	public Drivetrain(
@@ -116,29 +133,23 @@ public class Drivetrain extends SubsystemBase {
 	 * @return current swerve module states of all modules
 	 */
 	public SwerveModuleState[] getStates() {
-		SwerveModuleState[] states = new SwerveModuleState[4];
-
 		for (int i = 0; i < 4; i++) {
-			states[i] = modules[i].getState();
+			cachedModuleStates[i] = modules[i].getState();
 		}
 
-		return states;
+		return cachedModuleStates;
 	}
 
 	/**
 	 * @return current module positions array
 	 */
 	public SwerveModulePosition[] getModulePositions() {
-		SwerveModulePosition[] positions = new SwerveModulePosition[4];
-
 		for (int i = 0; i < 4; i++) {
-			positions[i] = new SwerveModulePosition(
-			  swerveModuleInputs[i].drivePos,
-			  new Rotation2d(swerveModuleInputs[i].azimuthAbsolutePos)
-			);
+			cachedModulePositions[i].distanceMeters = swerveModuleInputs[i].drivePos.in(Meters);
+			cachedModulePositions[i].angle = Rotation2d.fromRadians(swerveModuleInputs[i].azimuthAbsolutePos.in(Radians));
 		}
 
-		return positions;
+		return cachedModulePositions;
 	}
 
 	public SwerveModuleIO getFrontLeft() {
@@ -204,11 +215,7 @@ public class Drivetrain extends SubsystemBase {
 	}
 
 	public void setFieldRelativity() {
-		if (isFieldRelativeTeleop) {
-			isFieldRelativeTeleop = false;
-		} else {
-			isFieldRelativeTeleop = true;
-		}
+		isFieldRelativeTeleop = !isFieldRelativeTeleop;
 	}
 
 	/**
@@ -372,7 +379,6 @@ public class Drivetrain extends SubsystemBase {
 	public void periodic() {
 
 		Logger.recordOutput("Estimated Pose", getEstimatedPose());
-		Logger.recordOutput("Shooter Pose", getShooterPose());
 		Logger.recordOutput("Field Relative", isFieldRelativeTeleop);
 
 		gyroIO.updateInputs(gyroInputs);

@@ -116,7 +116,7 @@ public class TeleopDriveCommand extends Command {
 
 		// Apply slider limit
 		double sliderVal = (-slider.getAsDouble() + 1) / 2;
-		sliderVal = sliderVal < 0.15 ? 0.15 : sliderVal;
+		sliderVal = Math.max(sliderVal, 0.15);
 		xSpeed *= sliderVal;
 		ySpeed *= sliderVal;
 		rot *= sliderVal;
