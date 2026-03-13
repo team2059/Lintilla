@@ -215,11 +215,7 @@ public class Drivetrain extends SubsystemBase {
 	}
 
 	public void setFieldRelativity() {
-		if (isFieldRelativeTeleop) {
-			isFieldRelativeTeleop = false;
-		} else {
-			isFieldRelativeTeleop = true;
-		}
+		isFieldRelativeTeleop = !isFieldRelativeTeleop;
 	}
 
 	/**
@@ -383,7 +379,6 @@ public class Drivetrain extends SubsystemBase {
 	public void periodic() {
 
 		Logger.recordOutput("Estimated Pose", getEstimatedPose());
-		Logger.recordOutput("Shooter Pose", getShooterPose());
 		Logger.recordOutput("Field Relative", isFieldRelativeTeleop);
 
 		gyroIO.updateInputs(gyroInputs);
