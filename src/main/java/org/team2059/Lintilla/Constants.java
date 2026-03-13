@@ -120,7 +120,7 @@ public final class Constants {
 		 */
 
 		public static final Distance WHEEL_BASE = Inches.of(26); // Distance from center of wheels on side
-		public static final Distance TRACK_WIDTH = Inches.of(19); // Distance between front wheels (like train track)
+		public static final Distance TRACK_WIDTH = Inches.of(19); // Distance between front wheels
 
 		// Kinematics give each module relative to center. X is forward/backward and Y is left/right.
 		public static final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
@@ -152,7 +152,9 @@ public final class Constants {
 		public static final boolean FL_INVERTED = false;
 		public static final boolean BR_INVERTED = true;
 		public static final boolean BL_INVERTED = true;
+
 		public static final SimpleMotorFeedforward DRIVE_FEEDFORWARD = new SimpleMotorFeedforward(0.17821, 1.9047, 0.14686);
+
 		public static double ROTATION_P = 0.5;
 	}
 
@@ -161,6 +163,8 @@ public final class Constants {
 	 * and poses of field elements for tracking
 	 */
 	public static final class VisionConstants {
+
+		public static final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
 
 		public static final Transform2d SHOOTER_OFFSET = new Transform2d(-Units.inchesToMeters(10), 0, Rotation2d.kZero);
 
@@ -185,8 +189,6 @@ public final class Constants {
 			0
 		  )
 		);
-
-		public static final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
 
 		public static final Translation2d BLUE_HUB_CENTER = new Translation2d(4.6116, 4.0213);
 		public static final Translation2d BLUE_HUB_BACK = new Translation2d(5.2342, 4.0213);
