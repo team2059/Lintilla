@@ -61,6 +61,7 @@ public final class Constants {
 		public static final int INVERT_DRIVE = 4;
 		public static final int STRAFE_ONLY = 3;
 		public static final int HUB_ALIGN = 2;
+		public static final int SNAKE_MODE = 1;
 		public static final int SPINUP_SHOOT_DISTANCE = 1;
 		public static final int SPINUP_SHOOT_FIXED = 2;
 		public static final int SHOOTER_UNJAM = 3;

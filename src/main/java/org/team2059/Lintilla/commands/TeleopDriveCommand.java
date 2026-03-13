@@ -4,9 +4,12 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
+
+import org.opencv.core.Mat;
 import org.team2059.Lintilla.Constants;
 import org.team2059.Lintilla.Constants.DrivetrainConstants;
 import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
@@ -25,7 +28,7 @@ public class TeleopDriveCommand extends Command {
 	private final ShooterBase shooterBase;
 
 	private final DoubleSupplier forwardX, forwardY, rotation, slider;
-	private final BooleanSupplier strafeOnly, inverted, hubTracking;
+	private final BooleanSupplier strafeOnly, inverted, hubTracking, snakeMode;
 	private final SlewRateLimiter xLimiter, yLimiter, rotLimiter;
 
 	// Values for autorotation to hub
@@ -34,6 +37,10 @@ public class TeleopDriveCommand extends Command {
 	private final LoggedTunableNumber kI = new LoggedTunableNumber("HubTurnKi", 0);
 	private final LoggedTunableNumber kD = new LoggedTunableNumber("HubTurnKd", 0);
 	private final Translation2d shooterOffset = Constants.VisionConstants.SHOOTER_OFFSET.getTranslation();
+
+	// Values for snake mode
+	private final PIDController snakeController;
+	private final LoggedTunableNumber snakeKp = new LoggedTunableNumber("SnakeKp", 0.0);
 
 	/**
 	 * @param drivetrain  the Drivetrain subsystem to interface with
@@ -54,7 +61,8 @@ public class TeleopDriveCommand extends Command {
 	  DoubleSupplier slider,
 	  BooleanSupplier strafeOnly,
 	  BooleanSupplier inverted,
-	  BooleanSupplier hubTracking
+	  BooleanSupplier hubTracking,
+	  BooleanSupplier snakeMode
 	) {
 
 		this.drivetrain = drivetrain;
@@ -67,6 +75,7 @@ public class TeleopDriveCommand extends Command {
 		this.strafeOnly = strafeOnly;
 		this.inverted = inverted;
 		this.hubTracking = hubTracking;
+		this.snakeMode = snakeMode;
 
 		this.xLimiter = new SlewRateLimiter(DrivetrainConstants.MAX_ACCELERATION);
 		this.yLimiter = new SlewRateLimiter(DrivetrainConstants.MAX_ACCELERATION);
@@ -75,6 +84,9 @@ public class TeleopDriveCommand extends Command {
 		// Configure controller to handle angles
 		controller = new PIDController(kP.get(), kI.get(), kD.get());
 		controller.enableContinuousInput(-Math.PI, Math.PI);
+
+		snakeController = new PIDController(snakeKp.get(), 0, 0);
+		snakeController.enableContinuousInput(-Math.PI, Math.PI);	
 
 		addRequirements(drivetrain);
 	}
@@ -95,8 +107,9 @@ public class TeleopDriveCommand extends Command {
 		  hashCode(),
 		  () -> {
 			  controller.setPID(kP.get(), kI.get(), kD.get());
+			  snakeController.setPID(snakeKp.get(), 0, 0);
 		  },
-		  kP, kI, kD
+		  kP, kI, kD, snakeKp
 		);
 
 		// Get joystick input as x, y, and rotation
@@ -198,6 +211,26 @@ public class TeleopDriveCommand extends Command {
 			  0,
 			  true
 			);
+		} else if (snakeMode.getAsBoolean()) {
+			Rotation2d snakeAngle = new Rotation2d(xSpeed, ySpeed);
+			double snakeRotSpeed = 0;
+			if (Math.abs(Math.hypot(xSpeed, ySpeed)) > 0.05) {
+				Pose2d currentPose = drivetrain.getEstimatedPose();
+				snakeRotSpeed = MathUtil.clamp(snakeController.calculate(currentPose.getRotation().getRadians(), snakeAngle.getRadians() - (Math.PI / 2)), -1, 1);
+				snakeRotSpeed *= DrivetrainConstants.MAX_ANGULAR_VELOCITY;
+
+				drivetrain.drive(
+					xSpeed, 
+					ySpeed, 
+					-snakeRotSpeed, // TODO: Test this 
+					Drivetrain.isFieldRelativeTeleop); // Should always be true for snake mode
+			} else {
+				drivetrain.drive(
+					xSpeed, 
+					ySpeed, 
+					rot, 
+					Drivetrain.isFieldRelativeTeleop);
+			}
 		} else { // Drive normally
 			drivetrain.drive(
 			  xSpeed,

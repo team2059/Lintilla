@@ -142,7 +142,8 @@ public class RobotContainer {
 			() -> logitech.getRawAxis(OperatorConstants.SLIDER_AXIS), // slider
 			() -> logitech.getRawButton(OperatorConstants.STRAFE_ONLY), // Strafe Only Button
 			() -> logitech.getRawButton(OperatorConstants.INVERT_DRIVE), // Inverted button
-			() -> logitech.getRawButton(OperatorConstants.HUB_ALIGN)
+			() -> logitech.getRawButton(OperatorConstants.HUB_ALIGN),
+			() -> logitech.getRawButton(OperatorConstants.SNAKE_MODE)
 		  )
 		);
 
