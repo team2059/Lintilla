@@ -70,7 +70,7 @@ public class CollectorIOReal implements CollectorIO {
 
 		// Configure intake and conveyor, simple bang-bang
 		intakeConfig
-		  .inverted(false)
+		  .inverted(true)
 		  .idleMode(SparkFlexConfig.IdleMode.kBrake);
 		intakeMotor.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 		intakeMotor.clearFaults();

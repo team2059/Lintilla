@@ -223,7 +223,7 @@ public class RobotContainer {
 			  drivetrain,
 			  shooterBase,
 			  collector,
-			  2800
+			  3700
 			)
 		  );
 

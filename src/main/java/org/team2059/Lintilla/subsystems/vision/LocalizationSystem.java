@@ -297,7 +297,6 @@ public class LocalizationSystem extends SubsystemBase {
 		} else {
 			System.out.println("[!] QuestNav pose reset failed");
 		}
-
 	}
 
 	/**
@@ -389,6 +388,8 @@ public class LocalizationSystem extends SubsystemBase {
 		// Grab all unread results from camera
 		List<PhotonPipelineResult> pvCamResults = pvCam.getAllUnreadResults();
 
+		Optional<EstimatedRobotPose> visionEst = Optional.empty();
+
 		// Process logging & variables if unread results found
 		if (!pvCamResults.isEmpty()) {
 			PhotonPipelineResult pvCamResult = pvCamResults.get(pvCamResults.size() - 1);
@@ -400,20 +401,14 @@ public class LocalizationSystem extends SubsystemBase {
 			} else {
 				pvBestTargetId = -1;
 			}
-		}
 
-		Optional<EstimatedRobotPose> visionEst = Optional.empty();
-		for (var change : pvCamResults) {
 			// Attempt multi-tag estimation
-			visionEst = pvEstimator.estimateCoprocMultiTagPose(change);
+			visionEst = pvEstimator.estimateCoprocMultiTagPose(pvCamResult);
 
 			// If multi-tag fails, fall back to lowest ambiguity
-			if (visionEst.isEmpty()) {
-				visionEst = pvEstimator.estimateLowestAmbiguityPose(change);
-			}
+			if (visionEst.isEmpty()) visionEst = pvEstimator.estimateLowestAmbiguityPose(pvCamResult);
 
-			// Process standard deviations
-			updateEstimationStdDevs(visionEst, change.getTargets());
+			updateEstimationStdDevs(visionEst, pvCamResult.getTargets());
 		}
 
 		if (visionEst.isPresent() && pvUseMeasurements) {

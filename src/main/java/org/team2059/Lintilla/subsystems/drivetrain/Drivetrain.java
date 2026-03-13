@@ -42,6 +42,10 @@ public class Drivetrain extends SubsystemBase {
 
 	private final SwerveDrivePoseEstimator poseEstimator;
 
+	private static final String[] MODULE_LOG_KEYS = {
+	  "Drive/Module0", "Drive/Module1", "Drive/Module2", "Drive/Module3"
+	};
+
 	public Drivetrain(
 	  GyroscopeIO gyroIO,
 	  SwerveModuleIO frontLeftModuleIO,
@@ -376,7 +380,7 @@ public class Drivetrain extends SubsystemBase {
 
 		for (int i = 0; i < 4; i++) {
 			modules[i].updateInputs(swerveModuleInputs[i]);
-			Logger.processInputs(("Drive/Module" + Integer.toString(i)), swerveModuleInputs[i]);
+			Logger.processInputs(MODULE_LOG_KEYS[i], swerveModuleInputs[i]);
 		}
 
 		// Update pose estimator based on wheel positions

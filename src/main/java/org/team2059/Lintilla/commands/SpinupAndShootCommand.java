@@ -71,8 +71,8 @@ public class SpinupAndShootCommand extends Command {
 
 	@Override
 	public void initialize() {
-		collector.io.setIntakeSpeed(SHOOTING_ROLLER_SPEED);
-		collector.io.setTiltPosition(THRUBORE_SHOOTING);
+//		collector.io.setIntakeSpeed(SHOOTING_ROLLER_SPEED);
+//		collector.io.setTiltPosition(THRUBORE_SHOOTING);
 	}
 
 	@Override
@@ -148,6 +148,6 @@ public class SpinupAndShootCommand extends Command {
 		collector.io.stopIntake();
 		collector.io.stopTilt();
 
-		RobotContainer.localizationSystem.syncPoses();
+//		RobotContainer.localizationSystem.syncPoses();
 	}
 }
