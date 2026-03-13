@@ -26,6 +26,9 @@ import org.team2059.Lintilla.Constants.DrivetrainConstants;
 import org.team2059.Lintilla.Constants.VisionConstants;
 import org.team2059.Lintilla.routines.DrivetrainRoutine;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Radians;
+
 public class Drivetrain extends SubsystemBase {
 
 	public static boolean isFieldRelativeTeleop = true;
@@ -44,6 +47,13 @@ public class Drivetrain extends SubsystemBase {
 
 	private static final String[] MODULE_LOG_KEYS = {
 	  "Drive/Module0", "Drive/Module1", "Drive/Module2", "Drive/Module3"
+	};
+
+	private final SwerveModulePosition[] cachedModulePositions = new SwerveModulePosition[] {
+	  new SwerveModulePosition(),
+	  new SwerveModulePosition(),
+	  new SwerveModulePosition(),
+	  new SwerveModulePosition()
 	};
 
 	public Drivetrain(
@@ -129,16 +139,12 @@ public class Drivetrain extends SubsystemBase {
 	 * @return current module positions array
 	 */
 	public SwerveModulePosition[] getModulePositions() {
-		SwerveModulePosition[] positions = new SwerveModulePosition[4];
-
 		for (int i = 0; i < 4; i++) {
-			positions[i] = new SwerveModulePosition(
-			  swerveModuleInputs[i].drivePos,
-			  new Rotation2d(swerveModuleInputs[i].azimuthAbsolutePos)
-			);
+			cachedModulePositions[i].distanceMeters = swerveModuleInputs[i].drivePos.in(Meters);
+			cachedModulePositions[i].angle = Rotation2d.fromRadians(swerveModuleInputs[i].azimuthAbsolutePos.in(Radians));
 		}
 
-		return positions;
+		return cachedModulePositions;
 	}
 
 	public SwerveModuleIO getFrontLeft() {
