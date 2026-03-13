@@ -272,16 +272,6 @@ public final class Constants {
 	 * Constants class for the ShooterBase subsystem and subcomponents. Contains lookup table for RPM/ToF/distance
 	 */
 	public static final class ShooterConstants {
-
-		public static final InterpolatingTreeMap<Double, ShooterParams> SHOOTER_MAP = new InterpolatingTreeMap<>(
-		  InverseInterpolator.forDouble(),
-
-		  // Value interpolator: blends RPMs and flight times based on distance ratio, t
-		  (start, end, t) -> new ShooterParams(
-			MathUtil.interpolate(start.rpm(), end.rpm(), t),
-			MathUtil.interpolate(start.timeOfFlight(), end.timeOfFlight(), t)
-		  )
-		);
 		// Error to tolerate when spinning up to shoot (in RPMs)
 		public static final double SPINUP_TOLERANCE_RPM = 50;
 		// Speed [-1,1] to run the indexer at while shooting
@@ -332,9 +322,21 @@ public final class Constants {
 		public static final double RIGHT_FLYWHEEL_A = 0.020809 / 60;
 
 		// For SOTF
+
+		public static final InterpolatingTreeMap<Double, ShooterParams> SHOOTER_MAP = new InterpolatingTreeMap<>(
+		  InverseInterpolator.forDouble(),
+
+		  // Value interpolator: blends RPMs and flight times based on distance ratio, t
+		  (start, end, t) -> new ShooterParams(
+			MathUtil.interpolate(start.rpm(), end.rpm(), t),
+			MathUtil.interpolate(start.timeOfFlight(), end.timeOfFlight(), t)
+		  )
+		);
+
 		public static final double SYSTEM_LATENCY_SECONDS = 0.3;
 
 		static {
+			// X/Y DISTANCE FROM CENTER OF SHOOTER TO CENTER OF HUB, IN METERS
 			SHOOTER_MAP.put(2.6, new ShooterParams(2750, 0.68));
 			SHOOTER_MAP.put(3.0, new ShooterParams(2900, 0.8));
 			SHOOTER_MAP.put(3.5, new ShooterParams(2950, 0.9));
