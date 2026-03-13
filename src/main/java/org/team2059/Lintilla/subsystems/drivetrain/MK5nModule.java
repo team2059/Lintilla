@@ -36,6 +36,8 @@ public class MK5nModule implements SwerveModuleIO {
 
 	private final PIDController azimuthController;
 
+	private final SwerveModuleState currentState = new SwerveModuleState();
+
 	public MK5nModule(
 	  int driveMotorCanId,
 	  int azimuthMotorCanId,
@@ -111,7 +113,10 @@ public class MK5nModule implements SwerveModuleIO {
 
 	@Override
 	public SwerveModuleState getState() {
-		return new SwerveModuleState(driveEncoder.getVelocity(), new Rotation2d(canCoder.getAbsolutePosition().getValue()));
+		currentState.speedMetersPerSecond = driveEncoder.getVelocity();
+		currentState.angle = Rotation2d.fromRadians(canCoder.getAbsolutePosition().getValue().in(Radians));
+
+		return currentState;
 	}
 
 	@Override
@@ -122,7 +127,7 @@ public class MK5nModule implements SwerveModuleIO {
 			return;
 		}
 
-		Rotation2d cancoderAbsPos = new Rotation2d(canCoder.getAbsolutePosition().getValue());
+		Rotation2d cancoderAbsPos = Rotation2d.fromRadians(canCoder.getAbsolutePosition().getValue().in(Radians));
 
 		// Optimize angle
 		targetState = SwerveUtilities.optimize(targetState, cancoderAbsPos);
