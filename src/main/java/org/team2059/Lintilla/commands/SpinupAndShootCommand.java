@@ -2,14 +2,13 @@ package org.team2059.Lintilla.commands;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
-import org.team2059.Lintilla.Constants;
 import org.team2059.Lintilla.RobotContainer;
 import org.team2059.Lintilla.subsystems.collector.Collector;
 import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
 import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
 
 import static edu.wpi.first.units.Units.RPM;
-import static org.team2059.Lintilla.Constants.CollectorConstants.*;
+import static org.team2059.Lintilla.Constants.CollectorConstants.SHOOTING_CONVEYOR_SPEED;
 import static org.team2059.Lintilla.Constants.ShooterConstants.INDEXER_SPEED_WHILE_SHOOTING;
 import static org.team2059.Lintilla.Constants.ShooterConstants.SPINUP_TOLERANCE_RPM;
 import static org.team2059.Lintilla.Constants.VisionConstants.getHubTranslation;

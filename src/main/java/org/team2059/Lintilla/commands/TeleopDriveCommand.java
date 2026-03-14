@@ -8,8 +8,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
-
-import org.opencv.core.Mat;
 import org.team2059.Lintilla.Constants;
 import org.team2059.Lintilla.Constants.DrivetrainConstants;
 import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
@@ -86,7 +84,7 @@ public class TeleopDriveCommand extends Command {
 		controller.enableContinuousInput(-Math.PI, Math.PI);
 
 		snakeController = new PIDController(snakeKp.get(), 0, 0);
-		snakeController.enableContinuousInput(-Math.PI, Math.PI);	
+		snakeController.enableContinuousInput(-Math.PI, Math.PI);
 
 		addRequirements(drivetrain);
 	}
@@ -152,7 +150,7 @@ public class TeleopDriveCommand extends Command {
 			Translation2d vRobot = // Robot velocity vector
 			  new Translation2d(
 				currentSpeeds.vxMetersPerSecond,
-			    currentSpeeds.vyMetersPerSecond
+				currentSpeeds.vyMetersPerSecond
 			  );
 
 			Translation2d vTan = new Translation2d( // Robot tangential velocity vector
@@ -220,16 +218,16 @@ public class TeleopDriveCommand extends Command {
 				snakeRotSpeed *= DrivetrainConstants.MAX_ANGULAR_VELOCITY;
 
 				drivetrain.drive(
-					xSpeed, 
-					ySpeed, 
-					-snakeRotSpeed, // TODO: Test this 
-					Drivetrain.isFieldRelativeTeleop); // Should always be true for snake mode
+				  xSpeed,
+				  ySpeed,
+				  -snakeRotSpeed, // TODO: Test this
+				  Drivetrain.isFieldRelativeTeleop); // Should always be true for snake mode
 			} else {
 				drivetrain.drive(
-					xSpeed, 
-					ySpeed, 
-					rot, 
-					Drivetrain.isFieldRelativeTeleop);
+				  xSpeed,
+				  ySpeed,
+				  rot,
+				  Drivetrain.isFieldRelativeTeleop);
 			}
 		} else { // Drive normally
 			drivetrain.drive(

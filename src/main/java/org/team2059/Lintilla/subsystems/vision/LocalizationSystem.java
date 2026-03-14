@@ -37,6 +37,8 @@ import static org.team2059.Lintilla.Constants.VisionConstants.*;
  */
 public class LocalizationSystem extends SubsystemBase {
 	private final QuestNav questNav;
+	private final PhotonCamera pvCam;
+	private final PhotonPoseEstimator pvEstimator;
 	private boolean qnavConnected = false;
 	private boolean qnavTracking = false;
 	private int qnavLostTrackingCount = -1;
@@ -47,9 +49,6 @@ public class LocalizationSystem extends SubsystemBase {
 	private boolean qnavUseMeasurements;
 	private double qnavFaultCounter = 0.0;
 	private boolean qnavHealthy = false;
-
-	private final PhotonCamera pvCam;
-	private final PhotonPoseEstimator pvEstimator;
 	private Matrix<N3, N1> pvStdDevs;
 	private Pose3d pvRobotPose = new Pose3d();
 	private boolean pvUseMeasurements;
@@ -119,10 +118,37 @@ public class LocalizationSystem extends SubsystemBase {
 	}
 
 	/**
+	 * Set the Quest-reported ROBOT pose. Offset applied automatically. Where do you want the robot to think it is?
+	 *
+	 * @param pose the Pose3d to set to
+	 */
+	public void setQnavRobotPose(Pose3d pose) {
+		setQnavRawPose(pose.transformBy(ROBOT_TO_QUEST));
+	}
+
+	/**
+	 * Pose2d version of this method. All other values set to zero. Check whether you need 3d positioning data.
+	 *
+	 * @param pose the Pose2d to set to
+	 */
+	public void setQnavRobotPose(Pose2d pose) {
+		setQnavRobotPose(new Pose3d(pose));
+	}
+
+	/**
 	 * @return the current estimated Pose3d from QuestNav WITHOUT robot transform applied
 	 */
 	public Pose3d getQnavRawPose() {
 		return qnavRawPose;
+	}
+
+	/**
+	 * Set the raw Quest pose, with NO robot offsets included.
+	 *
+	 * @param pose the Pose3d to set to
+	 */
+	public void setQnavRawPose(Pose3d pose) {
+		questNav.setPose(pose);
 	}
 
 	/**
@@ -177,33 +203,6 @@ public class LocalizationSystem extends SubsystemBase {
 	}
 
 	/**
-	 * Set the raw Quest pose, with NO robot offsets included.
-	 *
-	 * @param pose the Pose3d to set to
-	 */
-	public void setQnavRawPose(Pose3d pose) {
-		questNav.setPose(pose);
-	}
-
-	/**
-	 * Set the Quest-reported ROBOT pose. Offset applied automatically. Where do you want the robot to think it is?
-	 *
-	 * @param pose the Pose3d to set to
-	 */
-	public void setQnavRobotPose(Pose3d pose) {
-		setQnavRawPose(pose.transformBy(ROBOT_TO_QUEST));
-	}
-
-	/**
-	 * Pose2d version of this method. All other values set to zero. Check whether you need 3d positioning data.
-	 *
-	 * @param pose the Pose2d to set to
-	 */
-	public void setQnavRobotPose(Pose2d pose) {
-		setQnavRobotPose(new Pose3d(pose));
-	}
-
-	/**
 	 * Set whether Quest measurements are being used for pose estimation
 	 */
 	public void setQnavUseMeasurements(boolean b) {
@@ -237,7 +236,7 @@ public class LocalizationSystem extends SubsystemBase {
 	 * Internal method which dynamically updates standard deviations based on number of tags
 	 *
 	 * @param estimatedPose estimated robot pose
-	 * @param targets List of PhotonTrackedTargets
+	 * @param targets       List of PhotonTrackedTargets
 	 */
 	private void updateEstimationStdDevs(
 	  Optional<EstimatedRobotPose> estimatedPose,

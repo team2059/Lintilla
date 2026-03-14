@@ -31,32 +31,25 @@ import static edu.wpi.first.units.Units.Radians;
 
 public class Drivetrain extends SubsystemBase {
 
-	public static boolean isFieldRelativeTeleop = true;
-
-	public final DrivetrainRoutine routine;
-
-	private final GyroscopeIO gyroIO;
-	private final GyroscopeIOInputsAutoLogged gyroInputs = new GyroscopeIOInputsAutoLogged();
-
-	private final SwerveModuleIO[] modules;
-	private final SwerveModuleIOInputsAutoLogged[] swerveModuleInputs = new SwerveModuleIOInputsAutoLogged[4];
-
-	private final Field2d field = new Field2d();
-
-	private final SwerveDrivePoseEstimator poseEstimator;
-
 	private static final String[] MODULE_LOG_KEYS = {
 	  "Drive/Module0", "Drive/Module1", "Drive/Module2", "Drive/Module3"
 	};
-
-	private final SwerveModulePosition[] cachedModulePositions = new SwerveModulePosition[] {
+	public static boolean isFieldRelativeTeleop = true;
+	public final DrivetrainRoutine routine;
+	private final GyroscopeIO gyroIO;
+	private final GyroscopeIOInputsAutoLogged gyroInputs = new GyroscopeIOInputsAutoLogged();
+	private final SwerveModuleIO[] modules;
+	private final SwerveModuleIOInputsAutoLogged[] swerveModuleInputs = new SwerveModuleIOInputsAutoLogged[4];
+	private final Field2d field = new Field2d();
+	private final SwerveDrivePoseEstimator poseEstimator;
+	private final SwerveModulePosition[] cachedModulePositions = new SwerveModulePosition[]{
 	  new SwerveModulePosition(),
 	  new SwerveModulePosition(),
 	  new SwerveModulePosition(),
 	  new SwerveModulePosition()
 	};
 
-	private final SwerveModuleState[] cachedModuleStates = new SwerveModuleState[] {
+	private final SwerveModuleState[] cachedModuleStates = new SwerveModuleState[]{
 	  new SwerveModuleState(),
 	  new SwerveModuleState(),
 	  new SwerveModuleState(),

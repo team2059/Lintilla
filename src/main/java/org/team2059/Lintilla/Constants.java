@@ -204,6 +204,12 @@ public final class Constants {
 		// The standard deviations of our estimated poses, which affect correction rate
 		public static final Matrix<N3, N1> PV_SINGLE_TAG_STD_DEVS = VecBuilder.fill(2, 2, 8);
 		public static final Matrix<N3, N1> PV_MULTI_TAG_STD_DEVS = VecBuilder.fill(0.5, 0.5, 1);
+		public static final double QUESTNAV_FAILURE_THRESHOLD = 6.0;
+		/**
+		 * The threshold for the error between the best AprilTag pose estimate and the QuestNav pose measurements for the
+		 * QuestNav pose to be considered valid
+		 */
+		public static final Distance QUESTNAV_APRILTAG_ERROR_THRESHOLD = Meters.of(0.5);
 		public static Matrix<N3, N1> QNAV_STD_DEVS = VecBuilder.fill(
 		  0.02, // Trust down to 2 cm in X direction
 		  0.02, // Trust down to 2 cm in Y direction
@@ -224,14 +230,6 @@ public final class Constants {
 				return BLUE_HUB_CENTER;
 			}
 		}
-
-		public static final double QUESTNAV_FAILURE_THRESHOLD = 6.0;
-
-		/**
-		 * The threshold for the error between the best AprilTag pose estimate and the QuestNav pose measurements for the
-		 * QuestNav pose to be considered valid
-		 */
-		public static final Distance QUESTNAV_APRILTAG_ERROR_THRESHOLD = Meters.of(0.5);
 	}
 
 	/**
@@ -264,7 +262,7 @@ public final class Constants {
 		public static final int RIGHT_SHOOTER_FLYWHEEL = 56;
 
 		public static final int COLLECTOR_TILT = 57;
-//		public static final int COLLECTOR_INTAKE = 58;
+		//		public static final int COLLECTOR_INTAKE = 58;
 		public static final int COLLECTOR_INTAKE = 60;
 		public static final int CONVEYOR = 59;
 	}
@@ -308,7 +306,6 @@ public final class Constants {
 		public static final double LEFT_FLYWHEEL_A = 0.020699 / 60;
 		// RIGHT SHOOTER CONSTANTS
 		public static final boolean RIGHT_FLYWHEEL_INVERTED = false;
-		public static boolean RIGHT_INDEXER_INVERTED = false;
 		public static final double RIGHT_INDEXER_P = 0.0;
 		public static final double RIGHT_INDEXER_I = 0.0;
 		public static final double RIGHT_INDEXER_D = 0.0;
@@ -321,9 +318,6 @@ public final class Constants {
 		public static final double RIGHT_FLYWHEEL_S = 0.04773;
 		public static final double RIGHT_FLYWHEEL_V = 0.10424 / 60;
 		public static final double RIGHT_FLYWHEEL_A = 0.020809 / 60;
-
-		// For SOTF
-
 		public static final InterpolatingTreeMap<Double, ShooterParams> SHOOTER_MAP = new InterpolatingTreeMap<>(
 		  InverseInterpolator.forDouble(),
 
@@ -334,7 +328,9 @@ public final class Constants {
 		  )
 		);
 
+		// For SOTF
 		public static final double SYSTEM_LATENCY_SECONDS = 0.3;
+		public static boolean RIGHT_INDEXER_INVERTED = false;
 
 		static {
 			// X/Y DISTANCE FROM CENTER OF SHOOTER TO CENTER OF HUB, IN METERS
