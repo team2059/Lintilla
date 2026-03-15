@@ -224,7 +224,7 @@ public class RobotContainer {
 			  drivetrain,
 			  shooterBase,
 			  collector,
-			  3700
+			  4000
 			)
 		  );
 
@@ -243,8 +243,11 @@ public class RobotContainer {
 		  );
 
 		/* COLLECTOR OUT & INTAKE */
+		// new JoystickButton(buttonBox, OperatorConstants.COLLECTOR_OUT_INTAKE)
+		//   .whileTrue(collector.tiltOutAndIntake());
+
 		new JoystickButton(buttonBox, OperatorConstants.COLLECTOR_OUT_INTAKE)
-		  .whileTrue(collector.tiltOutAndIntake());
+			  .whileTrue(collector.intake());
 
 		/* COLLECTOR TILT IN */
 		new JoystickButton(buttonBox, OperatorConstants.COLLECTOR_IN)
