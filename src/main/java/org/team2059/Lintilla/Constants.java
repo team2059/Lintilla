@@ -262,8 +262,8 @@ public final class Constants {
 		public static final int RIGHT_SHOOTER_FLYWHEEL = 56;
 
 		public static final int COLLECTOR_TILT = 57;
-		//		public static final int COLLECTOR_INTAKE = 58;
-		public static final int COLLECTOR_INTAKE = 60;
+		public static final int COLLECTOR_INTAKE = 58;
+		// public static final int COLLECTOR_INTAKE = 60;
 		public static final int CONVEYOR = 59;
 	}
 
