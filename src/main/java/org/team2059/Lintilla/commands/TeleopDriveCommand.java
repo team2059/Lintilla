@@ -36,10 +36,6 @@ public class TeleopDriveCommand extends Command {
 	private final LoggedTunableNumber kD = new LoggedTunableNumber("HubTurnKd", 0);
 	private final Translation2d shooterOffset = Constants.VisionConstants.SHOOTER_OFFSET.getTranslation();
 
-	// Values for snake mode
-	private final PIDController snakeController;
-	private final LoggedTunableNumber snakeKp = new LoggedTunableNumber("SnakeKp", 0.0);
-
 	/**
 	 * @param drivetrain  the Drivetrain subsystem to interface with
 	 * @param forwardX    X-axis input supplier
@@ -83,9 +79,6 @@ public class TeleopDriveCommand extends Command {
 		controller = new PIDController(kP.get(), kI.get(), kD.get());
 		controller.enableContinuousInput(-Math.PI, Math.PI);
 
-		snakeController = new PIDController(snakeKp.get(), 0, 0);
-		snakeController.enableContinuousInput(-Math.PI, Math.PI);
-
 		addRequirements(drivetrain);
 	}
 
@@ -105,9 +98,8 @@ public class TeleopDriveCommand extends Command {
 		  hashCode(),
 		  () -> {
 			  controller.setPID(kP.get(), kI.get(), kD.get());
-			  snakeController.setPID(snakeKp.get(), 0, 0);
 		  },
-		  kP, kI, kD, snakeKp
+		  kP, kI, kD
 		);
 
 		// Get joystick input as x, y, and rotation
@@ -214,7 +206,7 @@ public class TeleopDriveCommand extends Command {
 			double snakeRotSpeed = 0;
 			if (Math.abs(Math.hypot(xSpeed, ySpeed)) > 0.05) {
 				Pose2d currentPose = drivetrain.getEstimatedPose();
-				snakeRotSpeed = MathUtil.clamp(snakeController.calculate(currentPose.getRotation().getRadians(), snakeAngle.getRadians() - (Math.PI / 2)), -1, 1);
+				snakeRotSpeed = MathUtil.clamp(controller.calculate(currentPose.getRotation().getRadians(), snakeAngle.getRadians() - (Math.PI / 2)), -1, 1);
 				snakeRotSpeed *= DrivetrainConstants.MAX_ANGULAR_VELOCITY;
 
 				drivetrain.drive(
