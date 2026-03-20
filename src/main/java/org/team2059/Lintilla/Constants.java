@@ -334,12 +334,14 @@ public final class Constants {
 
 		static {
 			// X/Y DISTANCE FROM CENTER OF SHOOTER TO CENTER OF HUB, IN METERS
-			SHOOTER_MAP.put(2.6, new ShooterParams(2750, 0.68));
-			SHOOTER_MAP.put(3.0, new ShooterParams(2900, 0.8));
-			SHOOTER_MAP.put(3.5, new ShooterParams(2950, 0.9));
-			SHOOTER_MAP.put(4.0, new ShooterParams(3150, 1.0));
-			SHOOTER_MAP.put(4.865, new ShooterParams(3550, 1.3));
-			SHOOTER_MAP.put(5.269, new ShooterParams(3800, 1.34));
+			SHOOTER_MAP.put(1.7, new ShooterParams(2525, 0));
+			SHOOTER_MAP.put(2.01, new ShooterParams(2650, 0));
+			SHOOTER_MAP.put(2.13, new ShooterParams(2675, 0.85));
+			SHOOTER_MAP.put(2.31, new ShooterParams(2725, 0.94));
+			SHOOTER_MAP.put(2.44, new ShooterParams(2775, 1.11));
+			SHOOTER_MAP.put(2.59, new ShooterParams(2825, 1.13));
+			SHOOTER_MAP.put(2.74, new ShooterParams(2875, 1));
+			SHOOTER_MAP.put(3.81, new ShooterParams(3225, 1.25));
 		}
 
 		public record ShooterParams(double rpm, double timeOfFlight) {}
@@ -370,6 +372,6 @@ public final class Constants {
 		public static final double SHOOTING_ROLLER_SPEED = 0.75;
 		public static final double OUTTAKING_ROLLER_SPEED = -0.75;
 		public static final double INTAKING_CONVEYOR_SPEED = 0.25;
-		public static final double SHOOTING_CONVEYOR_SPEED = 0.5;
+		public static final double SHOOTING_CONVEYOR_SPEED = 0.90;
 	}
 }

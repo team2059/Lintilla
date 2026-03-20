@@ -1,17 +1,19 @@
 package org.team2059.Lintilla.commands;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj2.command.Command;
-import org.team2059.Lintilla.RobotContainer;
-import org.team2059.Lintilla.subsystems.collector.Collector;
-import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
-import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
-
 import static edu.wpi.first.units.Units.RPM;
 import static org.team2059.Lintilla.Constants.CollectorConstants.SHOOTING_CONVEYOR_SPEED;
 import static org.team2059.Lintilla.Constants.ShooterConstants.INDEXER_SPEED_WHILE_SHOOTING;
 import static org.team2059.Lintilla.Constants.ShooterConstants.SPINUP_TOLERANCE_RPM;
 import static org.team2059.Lintilla.Constants.VisionConstants.getHubTranslation;
+
+import org.team2059.Lintilla.RobotContainer;
+import org.team2059.Lintilla.subsystems.collector.Collector;
+import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
+import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
+import org.team2059.Lintilla.util.LoggedTunableNumber;
+
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.Command;
 
 /**
  * Command to spin the shooters up at a specific velocity (or calculate velocity based on distance to hub) and shoot
@@ -29,6 +31,7 @@ public class SpinupAndShootCommand extends Command {
 	private double desiredRPM;
 
 	private boolean desiredRPMHardcoded;
+	private static final LoggedTunableNumber tunableRPM = new LoggedTunableNumber("fixedRpm", 4000);
 
 	/**
 	 * Constructor for distance-based shots (shoots on the fly)
@@ -106,6 +109,14 @@ public class SpinupAndShootCommand extends Command {
 		// If we're using hardcoded RPM, we don't need to check whether or not we're aimed.
 		// Otherwise, we must check our aiming so we don't deliberately miss shots.
 		if (desiredRPMHardcoded) {
+			LoggedTunableNumber.ifChanged(
+				hashCode(),
+				() -> {
+					desiredRPM = tunableRPM.get();
+				},
+				tunableRPM
+			);
+
 			if (Math.abs(leftCurrentVelocityRPM - desiredRPM) <= SPINUP_TOLERANCE_RPM) {
 				// Left shooter is within tolerance. Spin indexer
 				shooterBase.leftShooter.setIndexerSpeed(INDEXER_SPEED_WHILE_SHOOTING);

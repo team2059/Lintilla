@@ -174,8 +174,8 @@ public class ShooterBase extends SubsystemBase {
 	public Command runIndexerSpeed() {
 		return Commands.startEnd(
 		  () -> {
-			  leftShooter.setIndexerSpeed(-0.5);
-			  rightShooter.setIndexerSpeed(0.5);
+			  leftShooter.setIndexerSpeed(-0.65);
+			  rightShooter.setIndexerSpeed(0.65);
 		  },
 		  () -> {
 			  leftShooter.stopIndexer();
