@@ -368,10 +368,14 @@ public final class Constants {
 		public static final double THRUBORE_SHOOTING = 0.125;
 		public static final double THRUBORE_IN = 0.3;
 
+		public static final double AGITATION_OUT = 0;
+		public static final double AGITATION_IN = 0.25;
+
 		public static final double INTAKING_ROLLER_SPEED = 1;
 		public static final double SHOOTING_ROLLER_SPEED = 0.75;
 		public static final double OUTTAKING_ROLLER_SPEED = -0.75;
 		public static final double INTAKING_CONVEYOR_SPEED = 0.25;
 		public static final double SHOOTING_CONVEYOR_SPEED = 0.90;
+
 	}
 }

@@ -214,7 +214,7 @@ public class RobotContainer {
 			  drivetrain,
 			  shooterBase,
 			  collector
-			)
+			).alongWith(collector.agitationCommand())
 		  );
 
 		/* SPINUP & SHOOT WITH FIXED RPM */
@@ -225,7 +225,7 @@ public class RobotContainer {
 			  shooterBase,
 			  collector,
 			  4000
-			)
+			).alongWith(collector.agitationCommand())
 		  );
 
 		/* SHOOTER UNJAM */
