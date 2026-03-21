@@ -60,6 +60,15 @@ public class Collector extends SubsystemBase {
 	}
 
 	/**
+	 * @return Command which sets tilt position to a given setpoint, stops tilt when within tolerance
+	 */
+	public Command tiltToSetpoint(double setpoint) {
+		return this.run(() -> io.setTiltPosition(setpoint))
+		  .until(() -> Math.abs(inputs.tiltPosition.in(Rotations) - setpoint) <= TILT_TOLERANCE_ROTATIONS)
+		  .finallyDo(io::stopTilt);
+	}
+
+	/**
 	 * @return Command which sets tilt position to OUTward, stops tilt when within tolerance
 	 */
 	public Command tiltOut() {
@@ -111,23 +120,27 @@ public class Collector extends SubsystemBase {
 		);
 	}
 
-	public Command conveyorIn() {
-		return Commands.startEnd(
-		  () -> io.setConveyorSpeed(INTAKING_CONVEYOR_SPEED),
-		  io::stopConveyor
-		);
-	}
-
 	/**
-	 * Runs tilt out, intake, and conveyor in commands in parallel
+	 * Runs tilt out and intake commands in parallel
 	 */
 	public Command tiltOutAndIntake() {
 		return new ParallelCommandGroup(
 		  tiltOut(),
-		  intake(),
-		  conveyorIn()
+		  intake()
 		);
 	}
+
+	// Agitation command to help prevent jams, runs intake up and down repeatedly
+	// From Team 5667: https://github.com/NAHSRobotics-Team5667/FRC-2026/blob/main/src/main/java/frc/robot/subsystems/IntakeSubsystem.java
+	public Command agitationCommand() {
+		return Commands.sequence(
+				Commands.waitSeconds(0.2),
+				tiltIn(),
+				Commands.waitSeconds(0.25),
+				tiltOut(),
+				Commands.waitSeconds(0.25))
+		.repeatedly();
+  }
 
 	public Command sysIdQuasiForward() {
 		return routine.quasistatic(SysIdRoutine.Direction.kForward);

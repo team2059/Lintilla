@@ -1,13 +1,13 @@
 package org.team2059.Lintilla.commands;
 
 import static edu.wpi.first.units.Units.RPM;
-import static org.team2059.Lintilla.Constants.CollectorConstants.SHOOTING_CONVEYOR_SPEED;
+import static org.team2059.Lintilla.Constants.ConveyorConstants.SHOOTING_CONVEYOR_SPEED;
 import static org.team2059.Lintilla.Constants.ShooterConstants.INDEXER_SPEED_WHILE_SHOOTING;
 import static org.team2059.Lintilla.Constants.ShooterConstants.SPINUP_TOLERANCE_RPM;
 import static org.team2059.Lintilla.Constants.VisionConstants.getHubTranslation;
 
 import org.team2059.Lintilla.RobotContainer;
-import org.team2059.Lintilla.subsystems.collector.Collector;
+import org.team2059.Lintilla.subsystems.conveyor.Conveyor;
 import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
 import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
 import org.team2059.Lintilla.util.LoggedTunableNumber;
@@ -24,7 +24,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class SpinupAndShootCommand extends Command {
 	// We depend on these subsystems for certain methods & calculations
 	private final ShooterBase shooterBase;
-	private final Collector collector;
+	private final Conveyor conveyor;
 	private final Drivetrain drivetrain;
 
 	// Holds our desired speeds
@@ -38,18 +38,18 @@ public class SpinupAndShootCommand extends Command {
 	 *
 	 * @param drivetrain  the Drivetrain subsystem
 	 * @param shooterBase the ShooterBase subsystem
-	 * @param collector   the Collector subsystem (so we can run the conveyor)
+	 * @param conveyor  the Conveyor subsystem (so we can run the conveyor)
 	 */
-	public SpinupAndShootCommand(Drivetrain drivetrain, ShooterBase shooterBase, Collector collector) {
+	public SpinupAndShootCommand(Drivetrain drivetrain, ShooterBase shooterBase, Conveyor conveyor) {
 		this.shooterBase = shooterBase;
 		this.drivetrain = drivetrain;
-		this.collector = collector;
+		this.conveyor = conveyor;
 
 		// Begin by precalculating the distance to from the shooter to the hub
 		this.desiredRPM = shooterBase.getTargetRpm(shooterBase.currentDistanceToTarget);
 		this.desiredRPMHardcoded = false;
 
-		addRequirements(this.shooterBase);
+		addRequirements(this.shooterBase, this.conveyor);
 	}
 
 	/**
@@ -57,18 +57,18 @@ public class SpinupAndShootCommand extends Command {
 	 *
 	 * @param drivetrain  the Drivetrain subsystem
 	 * @param shooterBase the ShooterBase subsystem
-	 * @param collector   the Collector subsystem (so we can run the conveyor)
+	 * @param conveyor  the Conveyor subsystem (so we can run the conveyor)
 	 * @param desiredRPM  the desired speeds in RPM
 	 */
-	public SpinupAndShootCommand(Drivetrain drivetrain, ShooterBase shooterBase, Collector collector, double desiredRPM) {
+	public SpinupAndShootCommand(Drivetrain drivetrain, ShooterBase shooterBase, Conveyor conveyor, double desiredRPM) {
 		this.shooterBase = shooterBase;
 		this.drivetrain = drivetrain;
-		this.collector = collector;
+		this.conveyor = conveyor;
 
 		this.desiredRPM = desiredRPM;
 		this.desiredRPMHardcoded = true;
 
-		addRequirements(this.shooterBase, this.collector);
+		addRequirements(this.shooterBase, this.conveyor);
 	}
 
 	@Override
@@ -120,23 +120,23 @@ public class SpinupAndShootCommand extends Command {
 			if (Math.abs(leftCurrentVelocityRPM - desiredRPM) <= SPINUP_TOLERANCE_RPM) {
 				// Left shooter is within tolerance. Spin indexer
 				shooterBase.leftShooter.setIndexerSpeed(INDEXER_SPEED_WHILE_SHOOTING);
-				collector.io.setConveyorSpeed(SHOOTING_CONVEYOR_SPEED);
+				conveyor.io.setConveyorSpeed(SHOOTING_CONVEYOR_SPEED);
 			}
 			if (Math.abs(rightCurrentVelocityRPM - desiredRPM) <= SPINUP_TOLERANCE_RPM) {
 				// Right shooter is within tolerance. Spin indexer
 				shooterBase.rightShooter.setIndexerSpeed(INDEXER_SPEED_WHILE_SHOOTING);
-				collector.io.setConveyorSpeed(SHOOTING_CONVEYOR_SPEED);
+				conveyor.io.setConveyorSpeed(SHOOTING_CONVEYOR_SPEED);
 			}
 		} else {
 			if (Math.abs(leftCurrentVelocityRPM - desiredRPM) <= SPINUP_TOLERANCE_RPM) {
 				// Left shooter is within tolerance. Spin indexer
 				shooterBase.leftShooter.setIndexerSpeed(INDEXER_SPEED_WHILE_SHOOTING);
-				collector.io.setConveyorSpeed(SHOOTING_CONVEYOR_SPEED);
+				conveyor.io.setConveyorSpeed(SHOOTING_CONVEYOR_SPEED);
 			}
 			if (Math.abs(rightCurrentVelocityRPM - desiredRPM) <= SPINUP_TOLERANCE_RPM) {
 				// Right shooter is within tolerance. Spin indexer
 				shooterBase.rightShooter.setIndexerSpeed(INDEXER_SPEED_WHILE_SHOOTING);
-				collector.io.setConveyorSpeed(SHOOTING_CONVEYOR_SPEED);
+				conveyor.io.setConveyorSpeed(SHOOTING_CONVEYOR_SPEED);
 			}
 		}
 	}
@@ -154,9 +154,7 @@ public class SpinupAndShootCommand extends Command {
 		shooterBase.leftShooter.stopFlywheel();
 		shooterBase.rightShooter.stopIndexer();
 		shooterBase.rightShooter.stopFlywheel();
-		collector.io.stopConveyor();
-		collector.io.stopIntake();
-		collector.io.stopTilt();
+		conveyor.io.stopConveyor();
 
 //		RobotContainer.localizationSystem.syncPoses();
 	}

@@ -21,6 +21,8 @@ import org.team2059.Lintilla.commands.SpinupAndShootCommand;
 import org.team2059.Lintilla.commands.TeleopDriveCommand;
 import org.team2059.Lintilla.subsystems.collector.Collector;
 import org.team2059.Lintilla.subsystems.collector.CollectorIOReal;
+import org.team2059.Lintilla.subsystems.conveyor.Conveyor;
+import org.team2059.Lintilla.subsystems.conveyor.ConveyorIOReal;
 import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
 import org.team2059.Lintilla.subsystems.drivetrain.MK5nModule;
 import org.team2059.Lintilla.subsystems.drivetrain.Pigeon2Gyroscope;
@@ -42,6 +44,7 @@ public class RobotContainer {
 	public static LocalizationSystem localizationSystem;
 	public static ShooterBase shooterBase;
 	public static Collector collector;
+	public static Conveyor conveyor;
 
 	SendableChooser<Command> autoChooser;
 
@@ -152,10 +155,16 @@ public class RobotContainer {
 		collector = new Collector(
 		  new CollectorIOReal(
 			CANConstants.COLLECTOR_TILT,
-			CANConstants.COLLECTOR_INTAKE,
+			CANConstants.COLLECTOR_INTAKE
+		  )
+		);
+
+		conveyor = new Conveyor(
+		  new ConveyorIOReal(
 			CANConstants.CONVEYOR
 		  )
 		);
+	
 
 		/* ========== */
 		/* AUTONOMOUS */
@@ -213,8 +222,8 @@ public class RobotContainer {
 			new SpinupAndShootCommand(
 			  drivetrain,
 			  shooterBase,
-			  collector
-			)
+			  conveyor
+			).alongWith(collector.agitationCommand())
 		  );
 
 		/* SPINUP & SHOOT WITH FIXED RPM */
@@ -223,10 +232,13 @@ public class RobotContainer {
 			new SpinupAndShootCommand(
 			  drivetrain,
 			  shooterBase,
-			  collector,
-			  4000
-			)
+			  conveyor,
+			  1200
+			).alongWith(collector.agitationCommand())
 		  );
+		
+		// new JoystickButton(buttonBox, OperatorConstants.SPINUP_SHOOT_FIXED)
+		// 	.whileTrue(collector.agitationCommand());
 
 		/* SHOOTER UNJAM */
 		new JoystickButton(buttonBox, OperatorConstants.SHOOTER_UNJAM)
@@ -243,11 +255,11 @@ public class RobotContainer {
 		  );
 
 		/* COLLECTOR OUT & INTAKE */
-		// new JoystickButton(buttonBox, OperatorConstants.COLLECTOR_OUT_INTAKE)
-		//   .whileTrue(collector.tiltOutAndIntake());
-
 		new JoystickButton(buttonBox, OperatorConstants.COLLECTOR_OUT_INTAKE)
-			  .whileTrue(collector.intake());
+		  .whileTrue(collector.tiltOutAndIntake());
+
+		// new JoystickButton(buttonBox, OperatorConstants.COLLECTOR_OUT_INTAKE)
+		// 	.whileTrue(collector.intake());
 
 		/* COLLECTOR TILT IN */
 		new JoystickButton(buttonBox, OperatorConstants.COLLECTOR_IN)
