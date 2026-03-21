@@ -342,6 +342,8 @@ public final class Constants {
 			SHOOTER_MAP.put(2.59, new ShooterParams(2825, 1.13));
 			SHOOTER_MAP.put(2.74, new ShooterParams(2875, 1));
 			SHOOTER_MAP.put(3.81, new ShooterParams(3225, 1.25));
+			SHOOTER_MAP.put(4.0, new ShooterParams(3425, 1.32));
+			SHOOTER_MAP.put(4.976, new ShooterParams(3725, 1.48));
 		}
 
 		public record ShooterParams(double rpm, double timeOfFlight) {}
@@ -371,8 +373,7 @@ public final class Constants {
 		public static final double AGITATION_OUT = 0.1;
 		public static final double AGITATION_IN = 0.25;
 
-		public static final double INTAKING_ROLLER_SPEED = 1;
-		public static final double SHOOTING_ROLLER_SPEED = 0.75;
+		public static final double INTAKING_ROLLER_SPEED = 0.5;
 		public static final double OUTTAKING_ROLLER_SPEED = -0.75;
 	}
 
