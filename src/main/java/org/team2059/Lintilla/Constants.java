@@ -262,7 +262,7 @@ public final class Constants {
 		public static final int RIGHT_SHOOTER_FLYWHEEL = 56;
 
 		public static final int COLLECTOR_TILT = 57;
-		public static final int COLLECTOR_INTAKE = 58;
+		public static final int COLLECTOR_INTAKE = 58; // 2 hour superglue
 		// public static final int COLLECTOR_INTAKE = 60;
 		public static final int CONVEYOR = 59;
 	}
@@ -274,7 +274,7 @@ public final class Constants {
 		// Error to tolerate when spinning up to shoot (in RPMs)
 		public static final double SPINUP_TOLERANCE_RPM = 50;
 		// Speed [-1,1] to run the indexer at while shooting
-		public static final double INDEXER_SPEED_WHILE_SHOOTING = 0.65;
+		public static final double INDEXER_SPEED_WHILE_SHOOTING = 0.9;
 		public static final double HUB_HEIGHT_METERS = 1.83; // End height of trajectory
 		public static final double SHOOTER_HEIGHT_METERS = 0.5; // Start height of trajectory
 		public static final double FUEL_EXIT_ANGLE_RADIANS = 0.983936078; // RADIANS At what angle does fuel leave the shooter
@@ -351,31 +351,33 @@ public final class Constants {
 	 * Constants class for the Collector subsystem.
 	 */
 	public static final class CollectorConstants {
-		public static final double TILT_P = 0.6;
+		public static final double TILT_P = 0.8;
 		public static final double TILT_I = 0;
 		public static final double TILT_D = 0;
-		public static final double TILT_COS = 0.35487;
-		public static final double TILT_S = 0.49117;
-		public static final double TILT_V = 1.234 / 60;
+		public static final double TILT_COS = 0.36576;
+		public static final double TILT_S = 0.34309;
+		public static final double TILT_V = 0.7001 / 60;
 		public static final double TILT_A = 0;
 
 		// Error in rotations at which to stop tilting commands
 		public static final double TILT_TOLERANCE_ROTATIONS = 0.05;
 
-		public static final double THRUBORE_OFFSET = 0.91;
+		public static final double THRUBORE_OFFSET = 0.086;
 
 		public static final double THRUBORE_OUT = 0;
 		public static final double THRUBORE_SHOOTING = 0.125;
-		public static final double THRUBORE_IN = 0.3;
+		public static final double THRUBORE_IN = 0.361;
 
-		public static final double AGITATION_OUT = 0;
+		public static final double AGITATION_OUT = 0.1;
 		public static final double AGITATION_IN = 0.25;
 
 		public static final double INTAKING_ROLLER_SPEED = 1;
 		public static final double SHOOTING_ROLLER_SPEED = 0.75;
 		public static final double OUTTAKING_ROLLER_SPEED = -0.75;
-		public static final double INTAKING_CONVEYOR_SPEED = 0.25;
-		public static final double SHOOTING_CONVEYOR_SPEED = 0.90;
+	}
 
+	public static final class ConveyorConstants {
+		public static final double INTAKING_CONVEYOR_SPEED = 0.25;
+		public static final double SHOOTING_CONVEYOR_SPEED = 0.80;
 	}
 }

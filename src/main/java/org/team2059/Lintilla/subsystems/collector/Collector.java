@@ -120,21 +120,13 @@ public class Collector extends SubsystemBase {
 		);
 	}
 
-	public Command conveyorIn() {
-		return Commands.startEnd(
-		  () -> io.setConveyorSpeed(INTAKING_CONVEYOR_SPEED),
-		  io::stopConveyor
-		);
-	}
-
 	/**
-	 * Runs tilt out, intake, and conveyor in commands in parallel
+	 * Runs tilt out and intake commands in parallel
 	 */
 	public Command tiltOutAndIntake() {
 		return new ParallelCommandGroup(
 		  tiltOut(),
-		  intake(),
-		  conveyorIn()
+		  intake()
 		);
 	}
 
@@ -142,10 +134,10 @@ public class Collector extends SubsystemBase {
 	// From Team 5667: https://github.com/NAHSRobotics-Team5667/FRC-2026/blob/main/src/main/java/frc/robot/subsystems/IntakeSubsystem.java
 	public Command agitationCommand() {
 		return Commands.sequence(
-				Commands.waitSeconds(1.5),
-				this.runOnce(() -> tiltToSetpoint(AGITATION_OUT)),
+				Commands.waitSeconds(0.2),
+				runOnce(() -> tiltIn()),
 				Commands.waitSeconds(0.25),
-				this.runOnce(() -> tiltToSetpoint(AGITATION_IN)),
+				runOnce(() -> tiltOut()),
 				Commands.waitSeconds(0.25))
 		.repeatedly();
   }

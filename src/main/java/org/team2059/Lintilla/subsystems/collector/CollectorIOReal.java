@@ -22,22 +22,20 @@ public class CollectorIOReal implements CollectorIO {
 
 	private final SparkFlex tiltMotor;
 	private final SparkFlex intakeMotor;
-	private final SparkFlex conveyorMotor;
 
 	private final SparkClosedLoopController tiltController;
 
 	private final SparkFlexConfig tiltConfig = new SparkFlexConfig();
 	private final SparkFlexConfig intakeConfig = new SparkFlexConfig();
-	private final SparkFlexConfig conveyorConfig = new SparkFlexConfig();
+
 	private final AbsoluteEncoder thruBoreEnc;
 
 	private final LoggedTunableNumber kPTilt = new LoggedTunableNumber("TILT_P", CollectorConstants.TILT_P);
 
-	public CollectorIOReal(int tiltMotorCanId, int intakeMotorCanId, int conveyorMotorCanId) {
+	public CollectorIOReal(int tiltMotorCanId, int intakeMotorCanId) {
 		// Initialize motors
 		intakeMotor = new SparkFlex(intakeMotorCanId, SparkLowLevel.MotorType.kBrushless);
 		tiltMotor = new SparkFlex(tiltMotorCanId, SparkLowLevel.MotorType.kBrushless);
-		conveyorMotor = new SparkFlex(conveyorMotorCanId, SparkLowLevel.MotorType.kBrushless);
 
 		// Configure tilt motor - this is the most complicated part of this entire subsystem
 		tiltConfig
@@ -68,19 +66,12 @@ public class CollectorIOReal implements CollectorIO {
 
 		thruBoreEnc = tiltMotor.getAbsoluteEncoder();
 
-		// Configure intake and conveyor, simple bang-bang
+		// Configure intake, simple bang-bang
 		intakeConfig
 		  .inverted(false)
 		  .idleMode(SparkFlexConfig.IdleMode.kBrake);
 		intakeMotor.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 		intakeMotor.clearFaults();
-
-		conveyorConfig
-		  .inverted(false)
-		  .idleMode(SparkFlexConfig.IdleMode.kBrake);
-
-		conveyorMotor.configure(conveyorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-		conveyorMotor.clearFaults();
 
 		tiltController = tiltMotor.getClosedLoopController();
 	}
@@ -116,16 +107,6 @@ public class CollectorIOReal implements CollectorIO {
 	}
 
 	@Override
-	public void setConveyorSpeed(double speed) {
-		conveyorMotor.set(speed);
-	}
-
-	@Override
-	public void stopConveyor() {
-		conveyorMotor.setVoltage(0);
-	}
-
-	@Override
 	public void updateInputs(CollectorIOInputs inputs) {
 
 		LoggedTunableNumber.ifChanged(
@@ -146,9 +127,5 @@ public class CollectorIOReal implements CollectorIO {
 		inputs.tiltTemp.mut_replace(tiltMotor.getMotorTemperature(), Celsius);
 		inputs.tiltPosition.mut_replace(thruBoreEnc.getPosition(), Rotations);
 		inputs.tiltVelocity.mut_replace(thruBoreEnc.getVelocity(), RPM);
-
-		inputs.conveyorAppliedVolts.mut_replace(conveyorMotor.getAppliedOutput() * conveyorMotor.getBusVoltage(), Volts);
-		inputs.conveyorCurrent.mut_replace(conveyorMotor.getOutputCurrent(), Amps);
-		inputs.conveyorTemp.mut_replace(conveyorMotor.getMotorTemperature(), Celsius);
 	}
 }
