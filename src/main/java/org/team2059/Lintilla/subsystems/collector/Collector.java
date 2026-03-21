@@ -135,9 +135,9 @@ public class Collector extends SubsystemBase {
 	public Command agitationCommand() {
 		return Commands.sequence(
 				Commands.waitSeconds(0.2),
-				runOnce(() -> tiltIn()),
+				tiltIn(),
 				Commands.waitSeconds(0.25),
-				runOnce(() -> tiltOut()),
+				tiltOut(),
 				Commands.waitSeconds(0.25))
 		.repeatedly();
   }

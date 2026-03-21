@@ -227,18 +227,18 @@ public class RobotContainer {
 		  );
 
 		/* SPINUP & SHOOT WITH FIXED RPM */
-		// new JoystickButton(buttonBox, OperatorConstants.SPINUP_SHOOT_FIXED)
-		//   .whileTrue(
-		// 	new SpinupAndShootCommand(
-		// 	  drivetrain,
-		// 	  shooterBase,
-		// 	  conveyor,
-		// 	  1200
-		// 	).alongWith(collector.agitationCommand())
-		//   );
-		
 		new JoystickButton(buttonBox, OperatorConstants.SPINUP_SHOOT_FIXED)
-			.whileTrue(collector.agitationCommand());
+		  .whileTrue(
+			new SpinupAndShootCommand(
+			  drivetrain,
+			  shooterBase,
+			  conveyor,
+			  1200
+			).alongWith(collector.agitationCommand())
+		  );
+		
+		// new JoystickButton(buttonBox, OperatorConstants.SPINUP_SHOOT_FIXED)
+		// 	.whileTrue(collector.agitationCommand());
 
 		/* SHOOTER UNJAM */
 		new JoystickButton(buttonBox, OperatorConstants.SHOOTER_UNJAM)
