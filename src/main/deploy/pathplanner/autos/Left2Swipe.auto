@@ -7,7 +7,26 @@
         {
           "type": "path",
           "data": {
-            "pathName": "LeftTrenchToCenter"
+            "pathName": "LeftTrenchMid"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "CollectorOut"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "LeftTrenchToCenter"
+                }
+              }
+            ]
           }
         },
         {
@@ -54,7 +73,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 3.0
+                  "waitTime": 2.5
                 }
               }
             ]
@@ -64,12 +83,6 @@
           "type": "sequential",
           "data": {
             "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "CollectorIn"
-                }
-              },
               {
                 "type": "path",
                 "data": {
@@ -123,7 +136,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 3.0
+                  "waitTime": 2.5
                 }
               }
             ]

@@ -139,7 +139,7 @@ public class Collector extends SubsystemBase {
 				Commands.waitSeconds(0.12),
 				tiltOut(),
 				Commands.waitSeconds(0.12))
-		.repeatedly();
+		.repeatedly().alongWith(intake());
   }
 
 	public Command sysIdQuasiForward() {

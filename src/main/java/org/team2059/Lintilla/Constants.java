@@ -274,7 +274,7 @@ public final class Constants {
 		// Error to tolerate when spinning up to shoot (in RPMs)
 		public static final double SPINUP_TOLERANCE_RPM = 50;
 		// Speed [-1,1] to run the indexer at while shooting
-		public static final double INDEXER_SPEED_WHILE_SHOOTING = 0.9;
+		public static final double INDEXER_SPEED_WHILE_SHOOTING = 0.65;
 		public static final double HUB_HEIGHT_METERS = 1.83; // End height of trajectory
 		public static final double SHOOTER_HEIGHT_METERS = 0.5; // Start height of trajectory
 		public static final double FUEL_EXIT_ANGLE_RADIANS = 0.983936078; // RADIANS At what angle does fuel leave the shooter
@@ -334,8 +334,8 @@ public final class Constants {
 
 		static {
 			// X/Y DISTANCE FROM CENTER OF SHOOTER TO CENTER OF HUB, IN METERS
-			SHOOTER_MAP.put(1.7, new ShooterParams(2525, 0));
-			SHOOTER_MAP.put(2.01, new ShooterParams(2650, 0));
+			SHOOTER_MAP.put(1.7, new ShooterParams(2525, 0.96));
+			SHOOTER_MAP.put(2.01, new ShooterParams(2625, 1.07));
 			SHOOTER_MAP.put(2.13, new ShooterParams(2675, 0.85));
 			SHOOTER_MAP.put(2.31, new ShooterParams(2725, 0.94));
 			SHOOTER_MAP.put(2.44, new ShooterParams(2775, 1.11));
@@ -353,7 +353,7 @@ public final class Constants {
 	 * Constants class for the Collector subsystem.
 	 */
 	public static final class CollectorConstants {
-		public static final double TILT_P = 0.8;
+		public static final double TILT_P = 1;
 		public static final double TILT_I = 0;
 		public static final double TILT_D = 0;
 		public static final double TILT_COS = 0.36576;
@@ -373,12 +373,12 @@ public final class Constants {
 		public static final double AGITATION_OUT = 0.1;
 		public static final double AGITATION_IN = 0.25;
 
-		public static final double INTAKING_ROLLER_SPEED = 0.5;
+		public static final double INTAKING_ROLLER_SPEED = 1;
 		public static final double OUTTAKING_ROLLER_SPEED = -0.75;
 	}
 
 	public static final class ConveyorConstants {
 		public static final double INTAKING_CONVEYOR_SPEED = 0.25;
-		public static final double SHOOTING_CONVEYOR_SPEED = 0.80;
+		public static final double SHOOTING_CONVEYOR_SPEED = 1;
 	}
 }
