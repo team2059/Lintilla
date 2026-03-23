@@ -1,19 +1,18 @@
 package org.team2059.Lintilla.commands;
 
-import static edu.wpi.first.units.Units.RPM;
-import static org.team2059.Lintilla.Constants.ConveyorConstants.SHOOTING_CONVEYOR_SPEED;
-import static org.team2059.Lintilla.Constants.ShooterConstants.INDEXER_SPEED_WHILE_SHOOTING;
-import static org.team2059.Lintilla.Constants.ShooterConstants.SPINUP_TOLERANCE_RPM;
-import static org.team2059.Lintilla.Constants.VisionConstants.getHubTranslation;
-
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.Command;
 import org.team2059.Lintilla.RobotContainer;
 import org.team2059.Lintilla.subsystems.conveyor.Conveyor;
 import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
 import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
 import org.team2059.Lintilla.util.LoggedTunableNumber;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj2.command.Command;
+import static edu.wpi.first.units.Units.RPM;
+import static org.team2059.Lintilla.Constants.ConveyorConstants.SHOOTING_CONVEYOR_SPEED;
+import static org.team2059.Lintilla.Constants.ShooterConstants.INDEXER_SPEED_WHILE_SHOOTING;
+import static org.team2059.Lintilla.Constants.ShooterConstants.SPINUP_TOLERANCE_RPM;
+import static org.team2059.Lintilla.Constants.VisionConstants.getHubTranslation;
 
 /**
  * Command to spin the shooters up at a specific velocity (or calculate velocity based on distance to hub) and shoot
@@ -22,23 +21,21 @@ import edu.wpi.first.wpilibj2.command.Command;
  * Makes the collector angled 45 degrees as well as running the rollers so we have a consistent stream of balls.
  */
 public class SpinupAndShootCommand extends Command {
+	private static final LoggedTunableNumber tunableRPM = new LoggedTunableNumber("fixedRpm", 2525);
 	// We depend on these subsystems for certain methods & calculations
 	private final ShooterBase shooterBase;
 	private final Conveyor conveyor;
 	private final Drivetrain drivetrain;
-
 	// Holds our desired speeds
 	private double desiredRPM;
-
 	private boolean desiredRPMHardcoded;
-	private static final LoggedTunableNumber tunableRPM = new LoggedTunableNumber("fixedRpm", 2525);
 
 	/**
 	 * Constructor for distance-based shots (shoots on the fly)
 	 *
 	 * @param drivetrain  the Drivetrain subsystem
 	 * @param shooterBase the ShooterBase subsystem
-	 * @param conveyor  the Conveyor subsystem (so we can run the conveyor)
+	 * @param conveyor    the Conveyor subsystem (so we can run the conveyor)
 	 */
 	public SpinupAndShootCommand(Drivetrain drivetrain, ShooterBase shooterBase, Conveyor conveyor) {
 		this.shooterBase = shooterBase;
@@ -57,7 +54,7 @@ public class SpinupAndShootCommand extends Command {
 	 *
 	 * @param drivetrain  the Drivetrain subsystem
 	 * @param shooterBase the ShooterBase subsystem
-	 * @param conveyor  the Conveyor subsystem (so we can run the conveyor)
+	 * @param conveyor    the Conveyor subsystem (so we can run the conveyor)
 	 * @param desiredRPM  the desired speeds in RPM
 	 */
 	public SpinupAndShootCommand(Drivetrain drivetrain, ShooterBase shooterBase, Conveyor conveyor, double desiredRPM) {
@@ -110,11 +107,11 @@ public class SpinupAndShootCommand extends Command {
 		// Otherwise, we must check our aiming so we don't deliberately miss shots.
 		if (desiredRPMHardcoded) {
 			LoggedTunableNumber.ifChanged(
-				hashCode(),
-				() -> {
-					desiredRPM = tunableRPM.get();
-				},
-				tunableRPM
+			  hashCode(),
+			  () -> {
+				  desiredRPM = tunableRPM.get();
+			  },
+			  tunableRPM
 			);
 
 			if (Math.abs(leftCurrentVelocityRPM - desiredRPM) <= SPINUP_TOLERANCE_RPM) {

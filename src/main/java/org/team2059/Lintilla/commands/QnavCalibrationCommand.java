@@ -16,17 +16,15 @@ import java.util.function.Supplier;
 public class QnavCalibrationCommand extends Command {
 	private final Supplier<Pose3d> getQnavRawPose;
 	private final Supplier<Pose2d> getEstimatedPose;
-
+	private final double targetRotationRads = 2 * Math.PI;
 	// Regression accumulators
 	private double sum_x = 0, sum_y = 0;
 	private double sum_x2, sum_y2 = 0, sum_xy = 0;
 	private double sum_xz = 0, sum_yz = 0, sum_z = 0;
 	private int n = 0;
-
 	// Rotation tracking
 	private Rotation2d lastRotation;
 	private double accumulatedRotationRads = 0;
-	private final double targetRotationRads = 2 * Math.PI;
 
 	public QnavCalibrationCommand(
 	  Supplier<Pose3d> getQnavRawPose,
@@ -42,8 +40,15 @@ public class QnavCalibrationCommand extends Command {
 		RobotContainer.localizationSystem.setQnavRawPose(Pose3d.kZero);
 
 		// Reset accumulators
-		sum_x = 0; sum_y = 0; sum_x2 = 0; sum_y2 = 0; sum_xy = 0;
-		sum_xz = 0; sum_yz = 0; sum_z = 0; n = 0;
+		sum_x = 0;
+		sum_y = 0;
+		sum_x2 = 0;
+		sum_y2 = 0;
+		sum_xy = 0;
+		sum_xz = 0;
+		sum_yz = 0;
+		sum_z = 0;
+		n = 0;
 
 		lastRotation = getEstimatedPose.get().getRotation();
 		accumulatedRotationRads = 0;
@@ -92,9 +97,15 @@ public class QnavCalibrationCommand extends Command {
 
 		// Construct matrices for U^T U * beta = U^T Z
 		Matrix<N3, N3> UTU = new Matrix<>(Nat.N3(), Nat.N3());
-		UTU.set(0, 0, sum_x2); UTU.set(0, 1, sum_xy); UTU.set(0, 2, sum_x);
-		UTU.set(1, 0, sum_xy); UTU.set(1, 1, sum_y2); UTU.set(1, 2, sum_y);
-		UTU.set(2, 0, sum_x);  UTU.set(2, 1, sum_y);  UTU.set(2, 2, n);
+		UTU.set(0, 0, sum_x2);
+		UTU.set(0, 1, sum_xy);
+		UTU.set(0, 2, sum_x);
+		UTU.set(1, 0, sum_xy);
+		UTU.set(1, 1, sum_y2);
+		UTU.set(1, 2, sum_y);
+		UTU.set(2, 0, sum_x);
+		UTU.set(2, 1, sum_y);
+		UTU.set(2, 2, n);
 
 		Matrix<N3, N1> UTZ = new Matrix<>(Nat.N3(), Nat.N1());
 		UTZ.set(0, 0, sum_xz);

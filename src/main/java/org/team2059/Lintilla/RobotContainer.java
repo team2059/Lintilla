@@ -164,7 +164,7 @@ public class RobotContainer {
 			CANConstants.CONVEYOR
 		  )
 		);
-	
+
 
 		/* ========== */
 		/* AUTONOMOUS */
@@ -236,7 +236,7 @@ public class RobotContainer {
 			  1200
 			).alongWith(collector.agitationCommand())
 		  );
-		
+
 		// new JoystickButton(buttonBox, OperatorConstants.SPINUP_SHOOT_FIXED)
 		// 	.whileTrue(collector.agitationCommand());
 

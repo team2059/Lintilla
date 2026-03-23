@@ -17,6 +17,7 @@ import org.littletonrobotics.junction.Logger;
 
 import static edu.wpi.first.units.Units.*;
 import static org.team2059.Lintilla.Constants.CollectorConstants.*;
+import static org.team2059.Lintilla.Constants.OperatorConstants.tuningMode;
 
 public class Collector extends SubsystemBase {
 
@@ -25,9 +26,9 @@ public class Collector extends SubsystemBase {
 
 	// Declare all stuff for a SysID routine
 	private final SysIdRoutine routine;
-	private final MutVoltage appliedVoltageRoutine = Volts.mutable(0);
-	private final MutAngle angleRoutine = Rotations.mutable(0);
-	private final MutAngularVelocity angularVelocityRoutine = RPM.mutable(0);
+	private final MutVoltage appliedVoltageRoutine;
+	private final MutAngle angleRoutine;
+	private final MutAngularVelocity angularVelocityRoutine;
 
 	/**
 	 * Creates a new Collector.
@@ -36,27 +37,32 @@ public class Collector extends SubsystemBase {
 		this.io = io;
 		inputs = new CollectorIOInputsAutoLogged();
 
-		// Configure SysID routine
-		routine = new SysIdRoutine(
-		  new SysIdRoutine.Config(
-			Volts.of(1).per(Second), // Ramp rate in volts per second
-			Volts.of(2), // Dynamic step voltage
-			Time.ofBaseUnits(6, Second), // Test duration in seconds
-			null
-		  ),
-		  new SysIdRoutine.Mechanism(
-			voltage -> {
-				io.setTiltVolts(voltage.in(Volts));
-			},
-			log -> {
-				log.motor("collector-tiltmotor")
-				  .voltage(appliedVoltageRoutine.mut_replace(inputs.tiltAppliedVolts))
-				  .angularPosition(angleRoutine.mut_replace(inputs.tiltPosition))
-				  .angularVelocity(angularVelocityRoutine.mut_replace(inputs.tiltVelocity));
-			},
-			this
-		  )
-		);
+		if (tuningMode) {
+			// Configure SysID routine
+			appliedVoltageRoutine = Volts.mutable(0);
+			angleRoutine = Rotations.mutable(0);
+			angularVelocityRoutine = RPM.mutable(0);
+			routine = new SysIdRoutine(
+			  new SysIdRoutine.Config(
+				Volts.of(1).per(Second), // Ramp rate in volts per second
+				Volts.of(2), // Dynamic step voltage
+				Time.ofBaseUnits(6, Second), // Test duration in seconds
+				null
+			  ),
+			  new SysIdRoutine.Mechanism(
+				voltage -> {
+					io.setTiltVolts(voltage.in(Volts));
+				},
+				log -> {
+					log.motor("collector-tiltmotor")
+					  .voltage(appliedVoltageRoutine.mut_replace(inputs.tiltAppliedVolts))
+					  .angularPosition(angleRoutine.mut_replace(inputs.tiltPosition))
+					  .angularVelocity(angularVelocityRoutine.mut_replace(inputs.tiltVelocity));
+				},
+				this
+			  )
+			);
+		}
 	}
 
 	/**
@@ -134,27 +140,31 @@ public class Collector extends SubsystemBase {
 	// From Team 5667: https://github.com/NAHSRobotics-Team5667/FRC-2026/blob/main/src/main/java/frc/robot/subsystems/IntakeSubsystem.java
 	public Command agitationCommand() {
 		return Commands.sequence(
-				Commands.waitSeconds(0.5),
-				tiltIn(),
-				Commands.waitSeconds(0.12),
-				tiltOut(),
-				Commands.waitSeconds(0.12))
-		.repeatedly().alongWith(intake());
-  }
+			Commands.waitSeconds(0.5),
+			tiltIn(),
+			Commands.waitSeconds(0.12),
+			tiltOut(),
+			Commands.waitSeconds(0.12))
+		  .repeatedly().alongWith(intake());
+	}
 
 	public Command sysIdQuasiForward() {
+		if (routine == null) return Commands.none();
 		return routine.quasistatic(SysIdRoutine.Direction.kForward);
 	}
 
 	public Command sysIdQuasiReverse() {
+		if (routine == null) return Commands.none();
 		return routine.quasistatic(SysIdRoutine.Direction.kReverse);
 	}
 
 	public Command sysIdDynamicForward() {
+		if (routine == null) return Commands.none();
 		return routine.dynamic(SysIdRoutine.Direction.kForward);
 	}
 
 	public Command sysIdDynamicReverse() {
+		if (routine == null) return Commands.none();
 		return routine.dynamic(SysIdRoutine.Direction.kReverse);
 	}
 

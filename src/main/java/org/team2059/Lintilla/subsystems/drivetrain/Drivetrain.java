@@ -42,6 +42,7 @@ public class Drivetrain extends SubsystemBase {
 	private final SwerveModuleIOInputsAutoLogged[] swerveModuleInputs = new SwerveModuleIOInputsAutoLogged[4];
 	private final Field2d field = new Field2d();
 	private final SwerveDrivePoseEstimator poseEstimator;
+
 	private final SwerveModulePosition[] cachedModulePositions = new SwerveModulePosition[]{
 	  new SwerveModulePosition(),
 	  new SwerveModulePosition(),
