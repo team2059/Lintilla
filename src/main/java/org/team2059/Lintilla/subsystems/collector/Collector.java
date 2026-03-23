@@ -62,6 +62,11 @@ public class Collector extends SubsystemBase {
 				this
 			  )
 			);
+		} else {
+			appliedVoltageRoutine = null;
+			angleRoutine = null;
+			angularVelocityRoutine = null;
+			routine = null;
 		}
 	}
 

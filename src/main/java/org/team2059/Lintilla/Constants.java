@@ -33,8 +33,8 @@ public final class Constants {
 	 */
 	public static final class OperatorConstants {
 
-		// Sets whether tunable numbers can be changed. If false, only defaults will be used.
-		public static final boolean tuningMode = true;
+		// If true, tunable numbers can be modified, and SysID routines will be instantiated (memory heavy!)
+		public static final boolean tuningMode = false;
 
 		/* ===== */
 		/* PORTS */

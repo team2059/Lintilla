@@ -95,6 +95,20 @@ public class DrivetrainRoutine {
 				drivetrain
 			  )
 			);
+		} else {
+			sysIdRoutine = null;
+			flAppliedVolts = null;
+			frAppliedVolts = null;
+			blAppliedVolts = null;
+			brAppliedVolts = null;
+			flDistance = null;
+			frDistance = null;
+			blDistance = null;
+			brDistance = null;
+			flVelocity = null;
+			frVelocity = null;
+			blVelocity = null;
+			brVelocity = null;
 		}
 	}
 

@@ -109,6 +109,14 @@ public class ShooterBase extends SubsystemBase {
 				this
 			  )
 			);
+		} else {
+			leftFlywheelRoutine = null;
+			rightFlywheelRoutine = null;
+			leftIndexerRoutine = null;
+			rightIndexerRoutine = null;
+			appliedVoltsRoutine = null;
+			angleRoutine = null;
+			angularVelocityRoutine = null;
 		}
 	}
 
