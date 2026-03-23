@@ -31,7 +31,7 @@ public class SpinupAndShootCommand extends Command {
 	private double desiredRPM;
 
 	private boolean desiredRPMHardcoded;
-	private static final LoggedTunableNumber tunableRPM = new LoggedTunableNumber("fixedRpm", 4000);
+	private static final LoggedTunableNumber tunableRPM = new LoggedTunableNumber("fixedRpm", 2525);
 
 	/**
 	 * Constructor for distance-based shots (shoots on the fly)

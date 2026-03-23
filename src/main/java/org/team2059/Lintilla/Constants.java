@@ -334,14 +334,16 @@ public final class Constants {
 
 		static {
 			// X/Y DISTANCE FROM CENTER OF SHOOTER TO CENTER OF HUB, IN METERS
-			SHOOTER_MAP.put(1.7, new ShooterParams(2525, 0));
-			SHOOTER_MAP.put(2.01, new ShooterParams(2650, 0));
+			SHOOTER_MAP.put(1.7, new ShooterParams(2525, 0.96));
+			SHOOTER_MAP.put(2.01, new ShooterParams(2625, 1.07));
 			SHOOTER_MAP.put(2.13, new ShooterParams(2675, 0.85));
 			SHOOTER_MAP.put(2.31, new ShooterParams(2725, 0.94));
 			SHOOTER_MAP.put(2.44, new ShooterParams(2775, 1.11));
 			SHOOTER_MAP.put(2.59, new ShooterParams(2825, 1.13));
 			SHOOTER_MAP.put(2.74, new ShooterParams(2875, 1));
 			SHOOTER_MAP.put(3.81, new ShooterParams(3225, 1.25));
+			SHOOTER_MAP.put(4.0, new ShooterParams(3425, 1.32));
+			SHOOTER_MAP.put(4.976, new ShooterParams(3725, 1.48));
 		}
 
 		public record ShooterParams(double rpm, double timeOfFlight) {}
@@ -351,7 +353,7 @@ public final class Constants {
 	 * Constants class for the Collector subsystem.
 	 */
 	public static final class CollectorConstants {
-		public static final double TILT_P = 0.8;
+		public static final double TILT_P = 1;
 		public static final double TILT_I = 0;
 		public static final double TILT_D = 0;
 		public static final double TILT_COS = 0.36576;
@@ -372,12 +374,11 @@ public final class Constants {
 		public static final double AGITATION_IN = 0.25;
 
 		public static final double INTAKING_ROLLER_SPEED = 1;
-		public static final double SHOOTING_ROLLER_SPEED = 0.75;
 		public static final double OUTTAKING_ROLLER_SPEED = -0.75;
 	}
 
 	public static final class ConveyorConstants {
 		public static final double INTAKING_CONVEYOR_SPEED = 0.25;
-		public static final double SHOOTING_CONVEYOR_SPEED = 0.80;
+		public static final double SHOOTING_CONVEYOR_SPEED = 1;
 	}
 }

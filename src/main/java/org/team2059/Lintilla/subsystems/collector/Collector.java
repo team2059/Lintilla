@@ -134,12 +134,12 @@ public class Collector extends SubsystemBase {
 	// From Team 5667: https://github.com/NAHSRobotics-Team5667/FRC-2026/blob/main/src/main/java/frc/robot/subsystems/IntakeSubsystem.java
 	public Command agitationCommand() {
 		return Commands.sequence(
-				Commands.waitSeconds(0.2),
+				Commands.waitSeconds(0.5),
 				tiltIn(),
-				Commands.waitSeconds(0.25),
+				Commands.waitSeconds(0.12),
 				tiltOut(),
-				Commands.waitSeconds(0.25))
-		.repeatedly();
+				Commands.waitSeconds(0.12))
+		.repeatedly().alongWith(intake());
   }
 
 	public Command sysIdQuasiForward() {
