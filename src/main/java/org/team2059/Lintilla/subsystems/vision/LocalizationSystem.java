@@ -73,6 +73,8 @@ public class LocalizationSystem extends SubsystemBase {
 		  ROBOT_TO_PV
 		);
 		pvUseMeasurements = !RobotContainer.buttonBox.getRawButton(PHOTONVISION_MEASUREMENT_SWITCH);
+
+		PhotonCamera.setVersionCheckEnabled(false);
 	}
 
 	/**
