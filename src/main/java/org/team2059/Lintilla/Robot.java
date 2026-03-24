@@ -9,6 +9,7 @@ import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.littletonrobotics.junction.LogFileUtil;
@@ -30,6 +31,9 @@ public class Robot extends LoggedRobot {
 
 	private final RobotContainer robotContainer;
 	private Command autonomousCommand;
+
+	private double lastLoopTime = 0.0;
+	private int loopOverrunCount = 0;
 
 	/**
 	 * This method is run when the robot is first started up and should be used for any
@@ -72,6 +76,17 @@ public class Robot extends LoggedRobot {
 	 */
 	@Override
 	public void robotPeriodic() {
+
+		double currentTime = Timer.getFPGATimestamp();
+		double loopDurationSeconds = currentTime - lastLoopTime;
+
+		if (lastLoopTime != 0.0 && loopDurationSeconds > 0.03) loopOverrunCount++;
+
+		Logger.recordOutput("LoopDurationMs", loopDurationSeconds * 1000.0);
+		Logger.recordOutput("LoopOverrunCount", loopOverrunCount);
+
+		lastLoopTime = currentTime;
+
 		// Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
 		// commands, running already-scheduled commands, removing finished or interrupted commands,
 		// and running subsystem periodic() methods.  This must be called from the robot's periodic
