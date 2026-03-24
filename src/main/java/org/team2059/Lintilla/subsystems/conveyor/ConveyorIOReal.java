@@ -7,6 +7,10 @@ import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
 import static edu.wpi.first.units.Units.*;
+import static org.team2059.Lintilla.Constants.CANConstants.*;
+import static org.team2059.Lintilla.Constants.CANConstants.REV_MOTOR_FAULTS_PERIOD_MS;
+import static org.team2059.Lintilla.Constants.CANConstants.REV_MOTOR_TEMP_PERIOD_MS;
+import static org.team2059.Lintilla.Constants.CANConstants.REV_OUTPUT_CURRENT_PERIOD_MS;
 
 public class ConveyorIOReal implements ConveyorIO {
 	private final SparkFlex conveyorMotor;
@@ -18,6 +22,14 @@ public class ConveyorIOReal implements ConveyorIO {
 		conveyorConfig
 		  .inverted(false)
 		  .idleMode(SparkFlexConfig.IdleMode.kBrake);
+
+		conveyorConfig.signals
+		  .primaryEncoderPositionPeriodMs(REV_POSITION_PERIOD_MS)
+		  .primaryEncoderVelocityPeriodMs(REV_VELOCITY_PERIOD_MS)
+		  .appliedOutputPeriodMs(REV_APPLIED_OUTPUT_PERIOD_MS)
+		  .outputCurrentPeriodMs(REV_OUTPUT_CURRENT_PERIOD_MS)
+		  .motorTemperaturePeriodMs(REV_MOTOR_TEMP_PERIOD_MS)
+		  .faultsPeriodMs(REV_MOTOR_FAULTS_PERIOD_MS);
 
 		conveyorMotor.configure(conveyorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 		conveyorMotor.clearFaults();

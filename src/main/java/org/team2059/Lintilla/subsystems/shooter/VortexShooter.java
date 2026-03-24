@@ -11,6 +11,7 @@ import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
 import static edu.wpi.first.units.Units.*;
+import static org.team2059.Lintilla.Constants.CANConstants.*;
 
 public class VortexShooter implements ShooterIO {
 
@@ -54,6 +55,22 @@ public class VortexShooter implements ShooterIO {
 		  .pid(kPIndexer, kIIndexer, kDIndexer)
 		  .feedForward
 		  .kS(kSIndexer).kV(kVIndexer).kA(kAIndexer);
+
+		// Configure signal update rates
+		flywheelMotorConfig.signals
+		  .primaryEncoderPositionPeriodMs(REV_POSITION_PERIOD_MS)
+		  .primaryEncoderVelocityPeriodMs(REV_VELOCITY_PERIOD_MS)
+		  .appliedOutputPeriodMs(REV_APPLIED_OUTPUT_PERIOD_MS)
+		  .outputCurrentPeriodMs(REV_OUTPUT_CURRENT_PERIOD_MS)
+		  .motorTemperaturePeriodMs(REV_MOTOR_TEMP_PERIOD_MS)
+		  .faultsPeriodMs(REV_MOTOR_FAULTS_PERIOD_MS);
+		indexerMotorConfig.signals
+		  .primaryEncoderPositionPeriodMs(REV_POSITION_PERIOD_MS)
+		  .primaryEncoderVelocityPeriodMs(REV_VELOCITY_PERIOD_MS)
+		  .appliedOutputPeriodMs(REV_APPLIED_OUTPUT_PERIOD_MS)
+		  .outputCurrentPeriodMs(REV_OUTPUT_CURRENT_PERIOD_MS)
+		  .motorTemperaturePeriodMs(REV_MOTOR_TEMP_PERIOD_MS)
+		  .faultsPeriodMs(REV_MOTOR_FAULTS_PERIOD_MS);
 
 		flywheelMotor.configure(flywheelMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 		indexerMotor.configure(indexerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);

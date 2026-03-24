@@ -22,6 +22,10 @@ import org.team2059.Lintilla.Constants.CANConstants;
 import org.team2059.Lintilla.util.SwerveUtilities;
 
 import static edu.wpi.first.units.Units.*;
+import static org.team2059.Lintilla.Constants.CANConstants.*;
+import static org.team2059.Lintilla.Constants.CANConstants.REV_MOTOR_FAULTS_PERIOD_MS;
+import static org.team2059.Lintilla.Constants.CANConstants.REV_MOTOR_TEMP_PERIOD_MS;
+import static org.team2059.Lintilla.Constants.CANConstants.REV_OUTPUT_CURRENT_PERIOD_MS;
 import static org.team2059.Lintilla.Constants.DrivetrainConstants.DRIVE_FEEDFORWARD;
 
 public class MK5nModule implements SwerveModuleIO {
@@ -60,6 +64,14 @@ public class MK5nModule implements SwerveModuleIO {
 		driveMotorConfig.encoder
 		  .positionConversionFactor(Constants.DrivetrainConstants.DRIVE_POSITION_FACTOR)
 		  .velocityConversionFactor(Constants.DrivetrainConstants.DRIVE_VELOCITY_FACTOR);
+
+		driveMotorConfig.signals
+		  .primaryEncoderPositionPeriodMs(REV_POSITION_PERIOD_MS)
+		  .primaryEncoderVelocityPeriodMs(REV_VELOCITY_PERIOD_MS)
+		  .appliedOutputPeriodMs(REV_APPLIED_OUTPUT_PERIOD_MS)
+		  .outputCurrentPeriodMs(REV_OUTPUT_CURRENT_PERIOD_MS)
+		  .motorTemperaturePeriodMs(REV_MOTOR_TEMP_PERIOD_MS)
+		  .faultsPeriodMs(REV_MOTOR_FAULTS_PERIOD_MS);
 
 		driveMotor.configure(driveMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 

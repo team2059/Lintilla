@@ -237,6 +237,13 @@ public final class Constants {
 	 */
 	public static final class CANConstants {
 
+		public static final int REV_POSITION_PERIOD_MS = 20;
+		public static final int REV_VELOCITY_PERIOD_MS = 20;
+		public static final int REV_APPLIED_OUTPUT_PERIOD_MS = 20;
+		public static final int REV_OUTPUT_CURRENT_PERIOD_MS = 100;
+		public static final int REV_MOTOR_TEMP_PERIOD_MS = 500;
+		public static final int REV_MOTOR_FAULTS_PERIOD_MS = 500;
+
 		public static final CANBus CANIVORE = new CANBus("Deep Control");
 
 		public static final int PIGEON = 60;

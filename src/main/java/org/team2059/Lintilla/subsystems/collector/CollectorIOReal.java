@@ -17,6 +17,10 @@ import org.team2059.Lintilla.Constants.CollectorConstants;
 import org.team2059.Lintilla.util.LoggedTunableNumber;
 
 import static edu.wpi.first.units.Units.*;
+import static org.team2059.Lintilla.Constants.CANConstants.*;
+import static org.team2059.Lintilla.Constants.CANConstants.REV_MOTOR_FAULTS_PERIOD_MS;
+import static org.team2059.Lintilla.Constants.CANConstants.REV_MOTOR_TEMP_PERIOD_MS;
+import static org.team2059.Lintilla.Constants.CANConstants.REV_OUTPUT_CURRENT_PERIOD_MS;
 
 public class CollectorIOReal implements CollectorIO {
 
@@ -60,6 +64,14 @@ public class CollectorIOReal implements CollectorIO {
 		  .zeroCentered(true)
 		  .zeroOffset(CollectorConstants.THRUBORE_OFFSET);
 
+		tiltConfig.signals
+		  .primaryEncoderPositionPeriodMs(REV_POSITION_PERIOD_MS)
+		  .primaryEncoderVelocityPeriodMs(REV_VELOCITY_PERIOD_MS)
+		  .appliedOutputPeriodMs(REV_APPLIED_OUTPUT_PERIOD_MS)
+		  .outputCurrentPeriodMs(REV_OUTPUT_CURRENT_PERIOD_MS)
+		  .motorTemperaturePeriodMs(REV_MOTOR_TEMP_PERIOD_MS)
+		  .faultsPeriodMs(REV_MOTOR_FAULTS_PERIOD_MS);
+
 		// Push the config to the tilt motor
 		tiltMotor.configure(tiltConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 		tiltMotor.clearFaults();
@@ -70,6 +82,13 @@ public class CollectorIOReal implements CollectorIO {
 		intakeConfig
 		  .inverted(false)
 		  .idleMode(SparkFlexConfig.IdleMode.kBrake);
+		intakeConfig.signals
+		  .primaryEncoderPositionPeriodMs(REV_POSITION_PERIOD_MS)
+		  .primaryEncoderVelocityPeriodMs(REV_VELOCITY_PERIOD_MS)
+		  .appliedOutputPeriodMs(REV_APPLIED_OUTPUT_PERIOD_MS)
+		  .outputCurrentPeriodMs(REV_OUTPUT_CURRENT_PERIOD_MS)
+		  .motorTemperaturePeriodMs(REV_MOTOR_TEMP_PERIOD_MS)
+		  .faultsPeriodMs(REV_MOTOR_FAULTS_PERIOD_MS);
 		intakeMotor.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 		intakeMotor.clearFaults();
 
