@@ -306,16 +306,18 @@ public class LocalizationSystem extends SubsystemBase {
 	/**
 	 * Sets QuestNav pose to PhotonVision pose, if tags are viewable
 	 */
-	public void syncPoses() {
-		Pose3d p = getPvRobotPose();
+	public Command syncPoses() {
+		return Commands.runOnce(() -> {
+			Pose3d p = getPvRobotPose();
 
-		if (p != null) {
-			setQnavRobotPose(p);
-			qnavFaultCounter = 0;
-			System.out.println("[i] QuestNav pose reset successfully");
-		} else {
-			System.out.println("[!] QuestNav pose reset failed");
-		}
+			if (p != null) {
+				setQnavRobotPose(p);
+				qnavFaultCounter = 0;
+				System.out.println("[i] QuestNav pose reset successfully");
+			} else {
+				System.out.println("[!] QuestNav pose reset failed");
+			}
+		}).ignoringDisable(true);
 	}
 
 	/**

@@ -19,6 +19,8 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 import org.team2059.Lintilla.Constants.AutoConstants;
@@ -238,12 +240,14 @@ public class Drivetrain extends SubsystemBase {
 		return getEstimatedPose().transformBy(VisionConstants.SHOOTER_OFFSET);
 	}
 
-	public void resetGyroHeading() {
-		gyroIO.reset();
+	public Command resetGyroHeading() {
+		return Commands.runOnce(() -> gyroIO.reset()).ignoringDisable(true);
 	}
 
-	public void setFieldRelativity() {
-		isFieldRelativeTeleop = !isFieldRelativeTeleop;
+	public Command setFieldRelativity() {
+		return Commands.runOnce(() -> {
+			isFieldRelativeTeleop = !isFieldRelativeTeleop;
+		}).ignoringDisable(true);
 	}
 
 	/**

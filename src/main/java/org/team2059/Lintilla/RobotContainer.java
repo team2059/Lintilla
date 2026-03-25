@@ -47,16 +47,12 @@ public class RobotContainer {
 	 */
 	public RobotContainer() {
 
-		/* =========== */
-		/* CONTROLLERS */
-		/* =========== */
+		// Initialize all controllers and button boxes
 
 		logitech = new Joystick(OperatorConstants.LOGITECH_PORT);
 		buttonBox = new GenericHID(OperatorConstants.BUTTON_BOX_PORT);
 
-		/* ========== */
-		/* SUBSYSTEMS */
-		/* ========== */
+		// Initialize all instance objects for subsystems and default commands
 
 		Drivetrain.initialize(
 		  new Pigeon2Gyroscope(CANConstants.PIGEON, CANConstants.CANIVORE),
@@ -129,6 +125,7 @@ public class RobotContainer {
 		  )
 		);
 
+		// Set the drivetrain's default command as the actual teleop command
 		Drivetrain.getInstance().setDefaultCommand(
 		  new TeleopDriveCommand(
 			Drivetrain.getInstance(),
@@ -194,17 +191,11 @@ public class RobotContainer {
 
 		/* RESET GYRO HEADING */
 		new JoystickButton(logitech, OperatorConstants.RESET_HEADING)
-		  .whileTrue(
-			Commands.runOnce(() -> Drivetrain.getInstance().resetGyroHeading())
-			  .ignoringDisable(true)
-		  );
+		  .whileTrue(Drivetrain.getInstance().resetGyroHeading());
 
 		/* SWITCH FIELD/ROBOT RELATIVITY */
 		new JoystickButton(logitech, OperatorConstants.ROBOT_RELATIVE)
-		  .whileTrue(
-			Commands.runOnce(() -> Drivetrain.getInstance().setFieldRelativity())
-			  .ignoringDisable(true)
-		  );
+		  .whileTrue(Drivetrain.getInstance().setFieldRelativity());
 
 		/* ===================== */
 		/* OPERATOR'S CONTROLLER */
@@ -233,17 +224,7 @@ public class RobotContainer {
 
 		/* SHOOTER UNJAM */
 		new JoystickButton(buttonBox, OperatorConstants.SHOOTER_UNJAM)
-		  .whileTrue(
-			Commands.startEnd(
-			  () -> {
-				  ShooterBase.getInstance().leftShooter.setIndexerSpeed(-1);
-				  ShooterBase.getInstance().rightShooter.setIndexerSpeed(-1);
-			  },
-			  () -> {
-				  ShooterBase.getInstance().stopAllSubsystemMotors();
-			  }
-			)
-		  );
+		  .whileTrue(ShooterBase.getInstance().unjamShooters());
 
 		/* COLLECTOR OUT & INTAKE */
 		new JoystickButton(buttonBox, OperatorConstants.COLLECTOR_OUT_INTAKE)
@@ -271,6 +252,7 @@ public class RobotContainer {
 		  .onFalse(LocalizationSystem.getInstance().enablePVMeasurements())
 		  .onTrue(LocalizationSystem.getInstance().disablePVMeasurements());
 
+		/* ADD 5% TO ALL RPM OUTPUTS */
 		new JoystickButton(buttonBox, SHOOTER_ADD5PERCENT_SWITCH)
 		  .onFalse(Commands.runOnce(() -> {
 			    ShooterBase.getInstance().setAddFivePercent(true);
@@ -282,12 +264,9 @@ public class RobotContainer {
 			  .ignoringDisable(true)
 		  );
 
+		/* SYNC PHOTONVISION AND QUEST POSES */
 		new JoystickButton(buttonBox, OperatorConstants.LOCALIZATION_SYNC_POSES)
-		  .whileTrue(Commands.runOnce(() -> {
-				  LocalizationSystem.getInstance().syncPoses();
-			  })
-			  .ignoringDisable(true)
-		  );
+		  .whileTrue(LocalizationSystem.getInstance().syncPoses());
 	}
 
 	/**

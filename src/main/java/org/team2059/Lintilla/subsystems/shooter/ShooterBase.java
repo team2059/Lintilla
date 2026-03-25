@@ -223,6 +223,18 @@ public class ShooterBase extends SubsystemBase {
 		return rightIndexerRoutine.dynamic(SysIdRoutine.Direction.kReverse);
 	}
 
+	public Command unjamShooters() {
+		return Commands.startEnd(
+		  () -> {
+			  ShooterBase.getInstance().leftShooter.setIndexerSpeed(-1);
+			  ShooterBase.getInstance().rightShooter.setIndexerSpeed(-1);
+		  },
+		  () -> {
+			  ShooterBase.getInstance().stopAllSubsystemMotors();
+		  }
+		);
+	}
+
 	/**
 	 * Fetch the needed RPM of the flywheel to shoot fuel a given distance
 	 *
@@ -253,73 +265,8 @@ public class ShooterBase extends SubsystemBase {
 		rightShooter.stopIndexer();
 	}
 
-	public Command runIndexerSpeed() {
-		return Commands.startEnd(
-		  () -> {
-			  leftShooter.setIndexerSpeed(-0.65);
-			  rightShooter.setIndexerSpeed(0.65);
-		  },
-		  () -> {
-			  leftShooter.stopIndexer();
-			  rightShooter.stopIndexer();
-		  }
-		);
-	}
-
 	public void setAddFivePercent(boolean b) {
 		addFivePercent = b;
-	}
-
-	public Command setShooterRPM1500() {
-		return Commands.startEnd(
-		  () -> {
-			  leftShooter.setFlywheelRpm(1500);
-			  rightShooter.setFlywheelRpm(1500);
-		  },
-		  () -> {
-			  leftShooter.stopFlywheel();
-			  rightShooter.stopFlywheel();
-		  }
-		);
-	}
-
-	public Command setShooterRPM3000() {
-		return Commands.startEnd(
-		  () -> {
-			  leftShooter.setFlywheelRpm(3000);
-			  rightShooter.setFlywheelRpm(3000);
-		  },
-		  () -> {
-			  leftShooter.stopFlywheel();
-			  rightShooter.stopFlywheel();
-		  }
-		);
-	}
-
-	public Command setShooterRPM6000() {
-		return Commands.startEnd(
-		  () -> {
-			  leftShooter.setFlywheelRpm(6000);
-			  rightShooter.setFlywheelRpm(6000);
-		  },
-		  () -> {
-			  leftShooter.stopFlywheel();
-			  rightShooter.stopFlywheel();
-		  }
-		);
-	}
-
-	public Command runIndexer() {
-		return Commands.startEnd(
-		  () -> {
-			  leftShooter.setIndexerRpm(1000);
-			  rightShooter.setIndexerRpm(1000);
-		  },
-		  () -> {
-			  leftShooter.stopIndexer();
-			  rightShooter.stopIndexer();
-		  }
-		);
 	}
 
 	@Override
