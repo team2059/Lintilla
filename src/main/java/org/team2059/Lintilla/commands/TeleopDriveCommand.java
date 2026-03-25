@@ -129,59 +129,15 @@ public class TeleopDriveCommand extends Command {
 		rot = -MathUtil.applyDeadband(rot, 0.3, 0.75);
 
 		if (hubTracking.getAsBoolean()) {
-			// HUB TRACKING WITH VELOCITY COMPENSATION, PREPARES FOR SOTF
-			// This is inspired by Team 7028's ShootAtTargetCommand, and iteratively
-			// solves for the aim point that compensates for time-of-flight.
 
-			Pose2d currentPose = drivetrain.getEstimatedPose(); // Drivetrain positions
-			ChassisSpeeds currentSpeeds = drivetrain.getFieldRelativeSpeeds(); // Drivetrain speeds
-
-			Translation2d shooterTranslation = drivetrain.getShooterPose().getTranslation(); // Shooter position vector
-			Translation2d robotTranslation = currentPose.getTranslation(); // Robot position vector
-
-			Translation2d vRobot = // Robot velocity vector
-			  new Translation2d(
-				currentSpeeds.vxMetersPerSecond,
-				currentSpeeds.vyMetersPerSecond
-			  );
-
-			Translation2d vTan = new Translation2d( // Robot tangential velocity vector
-			  -currentSpeeds.omegaRadiansPerSecond * shooterOffset.getY(),
-			  currentSpeeds.omegaRadiansPerSecond * shooterOffset.getX()
-			);
-
-			Translation2d effectiveShooterVelocity = vRobot.plus(vTan); // Add the two vectors
-
-			// Circular dependency loop: convergence on the perfect ToF and distance
-			Translation2d virtualTarget = Constants.VisionConstants.getHubTranslation();
-			Translation2d predictedOffset;
-			for (int i = 0; i < 4; i++) {
-				// Measure distance to current virtual target guess
-				double predictedDistance = shooterTranslation.getDistance(virtualTarget);
-
-				// Total time of flight taking into account mechanical/system latency
-				double timeOfFlight = shooterBase.getToF(predictedDistance) + Constants.ShooterConstants.SYSTEM_LATENCY_SECONDS;
-
-				// Calculate how far the ball will drift across the field
-				predictedOffset = effectiveShooterVelocity.times(timeOfFlight);
-
-				// Shift the aim point in the opposite direction of the drift
-				virtualTarget = Constants.VisionConstants.getHubTranslation().minus(predictedOffset);
-
-				// Set the current distance for use in other commands
-				shooterBase.currentDistanceToTarget = predictedDistance;
-			}
-
-			// Calculate the angle needed to face the new target
-			double targetAngleRad = Math.atan2(
-			  virtualTarget.getY() - robotTranslation.getY(),
-			  virtualTarget.getX() - robotTranslation.getX()
-			);
-
-			double currentAngleRad = currentPose.getRotation().getRadians();
+			// Calculate the latest SOTF numbers
+			shooterBase.calculateSOTF(drivetrain.getEstimatedPose(), drivetrain.getFieldRelativeSpeeds());
 
 			// Apply PID to rotation
-			double angularSpeedRps = controller.calculate(currentAngleRad, targetAngleRad);
+			double angularSpeedRps = controller.calculate(
+			  drivetrain.getEstimatedPose().getRotation().getRadians(),
+			  shooterBase.targetAimAngleRad
+			);
 			shooterBase.isAimed = controller.atSetpoint(); // set for use in other commands
 
 			// Apply drive command

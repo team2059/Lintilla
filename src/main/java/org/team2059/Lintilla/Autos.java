@@ -2,8 +2,10 @@ package org.team2059.Lintilla;
 
 import com.pathplanner.lib.auto.NamedCommands;
 import org.team2059.Lintilla.commands.SpinupAndShootCommand;
-
-import static org.team2059.Lintilla.RobotContainer.*;
+import org.team2059.Lintilla.subsystems.collector.Collector;
+import org.team2059.Lintilla.subsystems.conveyor.Conveyor;
+import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
+import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
 
 /**
  * Class that holds all autonomous commands
@@ -12,32 +14,32 @@ public final class Autos {
 	public static void registerNamedCommands() {
 		NamedCommands.registerCommand(
 		  "ShootWithDistance",
-		  new SpinupAndShootCommand(drivetrain, shooterBase, conveyor).alongWith(collector.agitationCommand())
+		  new SpinupAndShootCommand(ShooterBase.getInstance(), Conveyor.getInstance()).alongWith(Collector.getInstance().agitationCommand())
 		);
 
 		NamedCommands.registerCommand(
 		  "CollectorOutInfinite",
-		  collector.tiltOutInfinite()
+		  Collector.getInstance().tiltOutInfinite()
 		);
 
 		NamedCommands.registerCommand(
 		  "CollectorInInfinite",
-		  collector.tiltInInfinite()
+		  Collector.getInstance().tiltInInfinite()
 		);
 
 		NamedCommands.registerCommand(
 		  "CollectorOut",
-		  collector.tiltOut()
+		  Collector.getInstance().tiltOut()
 		);
 
 		NamedCommands.registerCommand(
 		  "CollectorIn",
-		  collector.tiltIn()
+		  Collector.getInstance().tiltIn()
 		);
 
 		NamedCommands.registerCommand(
 		  "Intake",
-		  collector.intake()
+		  Collector.getInstance().intake()
 		);
 	}
 }

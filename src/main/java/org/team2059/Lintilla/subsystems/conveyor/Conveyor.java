@@ -7,12 +7,27 @@ import org.littletonrobotics.junction.Logger;
 import org.team2059.Lintilla.Constants.ConveyorConstants;
 
 public class Conveyor extends SubsystemBase {
+	private static Conveyor instance;
 	public final ConveyorIO io;
 	public final ConveyorIOInputsAutoLogged inputs;
 
-	public Conveyor(ConveyorIO io) {
+	private Conveyor(ConveyorIO io) {
 		this.io = io;
 		inputs = new ConveyorIOInputsAutoLogged();
+	}
+
+	public static Conveyor getInstance() {
+		if (instance == null) {
+			throw new RuntimeException("Conveyor is not initialized! Call initialize() first");
+		}
+
+		return instance;
+	}
+
+	public static void initialize(ConveyorIO io) {
+		if (instance == null) {
+			instance = new Conveyor(io);
+		}
 	}
 
 	public Command conveyorIn() {

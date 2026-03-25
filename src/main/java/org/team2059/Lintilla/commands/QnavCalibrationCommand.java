@@ -9,19 +9,31 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj2.command.Command;
-import org.team2059.Lintilla.RobotContainer;
+import org.team2059.Lintilla.subsystems.vision.LocalizationSystem;
 
 import java.util.function.Supplier;
 
+/**
+ * Command that calculates the QuestNav offset relative to robot center.
+ * <p>
+ * The goal is for the driver to rotate in a perfect circle while the operator
+ * holds a button that runs this command, and a Transform2d offset is output.
+ */
 public class QnavCalibrationCommand extends Command {
+
 	private final Supplier<Pose3d> getQnavRawPose;
 	private final Supplier<Pose2d> getEstimatedPose;
+
+	// Set this value in radians as to how much data we will accept.
+	// Generally, you want somewhere between 1 and 1.5 full rotations.
 	private final double targetRotationRads = 2 * Math.PI;
+
 	// Regression accumulators
 	private double sum_x = 0, sum_y = 0;
 	private double sum_x2, sum_y2 = 0, sum_xy = 0;
 	private double sum_xz = 0, sum_yz = 0, sum_z = 0;
 	private int n = 0;
+
 	// Rotation tracking
 	private Rotation2d lastRotation;
 	private double accumulatedRotationRads = 0;
@@ -37,7 +49,9 @@ public class QnavCalibrationCommand extends Command {
 	@Override
 	public void initialize() {
 
-		RobotContainer.localizationSystem.setQnavRawPose(Pose3d.kZero);
+		// Set the currently-reported Quest raw pose to zero
+		// This helps prevent the old offset from being added to the new offset
+		LocalizationSystem.getInstance().setQnavRawPose(Pose3d.kZero);
 
 		// Reset accumulators
 		sum_x = 0;
@@ -49,7 +63,6 @@ public class QnavCalibrationCommand extends Command {
 		sum_yz = 0;
 		sum_z = 0;
 		n = 0;
-
 		lastRotation = getEstimatedPose.get().getRotation();
 		accumulatedRotationRads = 0;
 
@@ -58,13 +71,13 @@ public class QnavCalibrationCommand extends Command {
 
 	@Override
 	public void execute() {
-		// Track how far we've spun
+		// Track how far we've spun, and add that to our accumulator
 		Rotation2d currentRotation = getEstimatedPose.get().getRotation();
 		double deltaRads = currentRotation.minus(lastRotation).getRadians();
 		accumulatedRotationRads += Math.abs(deltaRads);
 		lastRotation = currentRotation;
 
-		// Sample Quest position
+		// Sample Quest position for this loop run
 		Pose3d qnavPose = getQnavRawPose.get();
 		double x = qnavPose.getX();
 		double y = qnavPose.getY();
@@ -123,10 +136,9 @@ public class QnavCalibrationCommand extends Command {
 			double centerX = A / 2.0;
 			double centerY = B / 2.0;
 
-			/* * If the Quest traces a circle around the robot center, the robot center
-			 * is at (centerX, centerY) in the Quest's startup coordinate space.
-			 * Therefore, the Quest's position relative to the robot center is the inverse.
-			 */
+			// If the Quest traces a circle around the robot center, the robot center
+			// is at (centerX, centerY) in the Quest's startup coordinate space.
+			// Therefore, the Quest's position relative to the robot center is the inverse.
 			Translation2d questOffset = new Translation2d(centerY, -centerX);
 
 			System.out.println("=== QuestNav Calibration Complete ===");

@@ -19,6 +19,8 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 import org.team2059.Lintilla.Constants.AutoConstants;
@@ -35,6 +37,7 @@ public class Drivetrain extends SubsystemBase {
 	  "Drive/Module0", "Drive/Module1", "Drive/Module2", "Drive/Module3"
 	};
 	public static boolean isFieldRelativeTeleop = true;
+	private static Drivetrain instance;
 	public final DrivetrainRoutine routine;
 	private final GyroscopeIO gyroIO;
 	private final GyroscopeIOInputsAutoLogged gyroInputs = new GyroscopeIOInputsAutoLogged();
@@ -42,14 +45,12 @@ public class Drivetrain extends SubsystemBase {
 	private final SwerveModuleIOInputsAutoLogged[] swerveModuleInputs = new SwerveModuleIOInputsAutoLogged[4];
 	private final Field2d field = new Field2d();
 	private final SwerveDrivePoseEstimator poseEstimator;
-
 	private final SwerveModulePosition[] cachedModulePositions = new SwerveModulePosition[]{
 	  new SwerveModulePosition(),
 	  new SwerveModulePosition(),
 	  new SwerveModulePosition(),
 	  new SwerveModulePosition()
 	};
-
 	private final SwerveModuleState[] cachedModuleStates = new SwerveModuleState[]{
 	  new SwerveModuleState(),
 	  new SwerveModuleState(),
@@ -57,7 +58,7 @@ public class Drivetrain extends SubsystemBase {
 	  new SwerveModuleState()
 	};
 
-	public Drivetrain(
+	private Drivetrain(
 	  GyroscopeIO gyroIO,
 	  SwerveModuleIO frontLeftModuleIO,
 	  SwerveModuleIO frontRightModuleIO,
@@ -107,6 +108,32 @@ public class Drivetrain extends SubsystemBase {
 		});
 
 		SmartDashboard.putData(field);
+	}
+
+	public static Drivetrain getInstance() {
+		if (instance == null) {
+			throw new RuntimeException("Drivetrain is not initialized! Call initialize() first");
+		}
+
+		return instance;
+	}
+
+	public static void initialize(
+	  GyroscopeIO gyroIO,
+	  SwerveModuleIO frontLeftModuleIO,
+	  SwerveModuleIO frontRightModuleIO,
+	  SwerveModuleIO backLeftModuleIO,
+	  SwerveModuleIO backRightModuleIO
+	) {
+		if (instance == null) {
+			instance = new Drivetrain(
+			  gyroIO,
+			  frontLeftModuleIO,
+			  frontRightModuleIO,
+			  backLeftModuleIO,
+			  backRightModuleIO
+			);
+		}
 	}
 
 	/**
@@ -204,12 +231,14 @@ public class Drivetrain extends SubsystemBase {
 		return getEstimatedPose().transformBy(VisionConstants.SHOOTER_OFFSET);
 	}
 
-	public void resetGyroHeading() {
-		gyroIO.reset();
+	public Command resetGyroHeading() {
+		return Commands.runOnce(() -> gyroIO.reset()).ignoringDisable(true);
 	}
 
-	public void setFieldRelativity() {
-		isFieldRelativeTeleop = !isFieldRelativeTeleop;
+	public Command setFieldRelativity() {
+		return Commands.runOnce(() -> {
+			isFieldRelativeTeleop = !isFieldRelativeTeleop;
+		}).ignoringDisable(true);
 	}
 
 	/**

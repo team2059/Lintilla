@@ -19,6 +19,7 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.team2059.Lintilla.Constants;
 import org.team2059.Lintilla.RobotContainer;
+import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +37,8 @@ import static org.team2059.Lintilla.Constants.VisionConstants.*;
  * Vision measurements are fused from multiple sources and published for use by other subsystems.
  */
 public class LocalizationSystem extends SubsystemBase {
+
+	private static LocalizationSystem instance;
 	private final QuestNav questNav;
 	private final PhotonCamera pvCam;
 	private final PhotonPoseEstimator pvEstimator;
@@ -55,13 +58,12 @@ public class LocalizationSystem extends SubsystemBase {
 	private boolean pvConnected = false;
 	private boolean pvHasTarget = false;
 	private int pvBestTargetId = -1;
-
 	/**
 	 * Constructor for LocalizationSystem
 	 * <p>
 	 * Configures QuestNav and PhotonVision parts
 	 */
-	public LocalizationSystem() {
+	private LocalizationSystem() {
 		// Set up QuestNav
 		questNav = new QuestNav();
 		qnavUseMeasurements = !RobotContainer.buttonBox.getRawButton(QUEST_MEASUREMENT_SWITCH);
@@ -75,6 +77,20 @@ public class LocalizationSystem extends SubsystemBase {
 		pvUseMeasurements = !RobotContainer.buttonBox.getRawButton(PHOTONVISION_MEASUREMENT_SWITCH);
 
 		PhotonCamera.setVersionCheckEnabled(false);
+	}
+
+	public static LocalizationSystem getInstance() {
+		if (instance == null) {
+			throw new RuntimeException("LocalizationSystem is not initialized! Call initialize() first");
+		}
+
+		return instance;
+	}
+
+	public static void initialize() {
+		if (instance == null) {
+			instance = new LocalizationSystem();
+		}
 	}
 
 	/**
@@ -288,16 +304,18 @@ public class LocalizationSystem extends SubsystemBase {
 	/**
 	 * Sets QuestNav pose to PhotonVision pose, if tags are viewable
 	 */
-	public void syncPoses() {
-		Pose3d p = getPvRobotPose();
+	public Command syncPoses() {
+		return Commands.runOnce(() -> {
+			Pose3d p = getPvRobotPose();
 
-		if (p != null) {
-			setQnavRobotPose(p);
-			qnavFaultCounter = 0;
-			System.out.println("[i] QuestNav pose reset successfully");
-		} else {
-			System.out.println("[!] QuestNav pose reset failed");
-		}
+			if (p != null) {
+				setQnavRobotPose(p);
+				qnavFaultCounter = 0;
+				System.out.println("[i] QuestNav pose reset successfully");
+			} else {
+				System.out.println("[!] QuestNav pose reset failed");
+			}
+		}).ignoringDisable(true);
 	}
 
 	/**
@@ -358,7 +376,7 @@ public class LocalizationSystem extends SubsystemBase {
 				// Only use QuestNav measurements when fault counter is below threshold
 				// TODO: add field pose validation here
 				if (qnavHealthy && qnavUseMeasurements) {
-					RobotContainer.drivetrain.addVisionMeasurement(
+					Drivetrain.getInstance().addVisionMeasurement(
 					  qnavRobotPose.toPose2d(),
 					  frame.dataTimestamp(),
 					  QNAV_STD_DEVS
@@ -417,7 +435,7 @@ public class LocalizationSystem extends SubsystemBase {
 
 			// If QuestNav considered unhealthy, or not enabled, fall back to PhotonVision measurements
 			if (!qnavHealthy || !qnavUseMeasurements) {
-				RobotContainer.drivetrain.addVisionMeasurement(
+				Drivetrain.getInstance().addVisionMeasurement(
 				  pvRobotPose.toPose2d(),
 				  visionEst.get().timestampSeconds,
 				  pvStdDevs
