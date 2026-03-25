@@ -40,12 +40,6 @@ public class RobotContainer {
 	public static Joystick logitech;
 	public static GenericHID buttonBox;
 
-	public static Drivetrain drivetrain;
-	public static LocalizationSystem localizationSystem;
-	public static ShooterBase shooterBase;
-	public static Collector collector;
-	public static Conveyor conveyor;
-
 	SendableChooser<Command> autoChooser;
 
 	/**
@@ -64,7 +58,7 @@ public class RobotContainer {
 		/* SUBSYSTEMS */
 		/* ========== */
 
-		drivetrain = new Drivetrain(
+		Drivetrain.initialize(
 		  new Pigeon2Gyroscope(CANConstants.PIGEON, CANConstants.CANIVORE),
 		  new MK5nModule(
 			CANConstants.FL_DRIVE,
@@ -96,7 +90,7 @@ public class RobotContainer {
 		  )
 		);
 
-		shooterBase = new ShooterBase(
+		ShooterBase.initialize(
 		  new VortexShooter( // LEFT SHOOTER
 			CANConstants.LEFT_SHOOTER_FLYWHEEL,
 			CANConstants.LEFT_SHOOTER_INDEXER,
@@ -135,10 +129,10 @@ public class RobotContainer {
 		  )
 		);
 
-		drivetrain.setDefaultCommand(
+		Drivetrain.getInstance().setDefaultCommand(
 		  new TeleopDriveCommand(
-			drivetrain,
-			shooterBase,
+			Drivetrain.getInstance(),
+			ShooterBase.getInstance(),
 			() -> -logitech.getRawAxis(OperatorConstants.TRANSLATION_AXIS), // forwardX
 			() -> -logitech.getRawAxis(OperatorConstants.STRAFE_AXIS), // forwardY
 			() -> -logitech.getRawAxis(OperatorConstants.ROTATION_AXIS), // rotation
@@ -150,16 +144,16 @@ public class RobotContainer {
 		  )
 		);
 
-		localizationSystem = new LocalizationSystem();
+		LocalizationSystem.initialize();
 
-		collector = new Collector(
+		Collector.initialize(
 		  new CollectorIOReal(
 			CANConstants.COLLECTOR_TILT,
 			CANConstants.COLLECTOR_INTAKE
 		  )
 		);
 
-		conveyor = new Conveyor(
+		Conveyor.initialize(
 		  new ConveyorIOReal(
 			CANConstants.CONVEYOR
 		  )
@@ -201,14 +195,14 @@ public class RobotContainer {
 		/* RESET GYRO HEADING */
 		new JoystickButton(logitech, OperatorConstants.RESET_HEADING)
 		  .whileTrue(
-			Commands.runOnce(() -> drivetrain.resetGyroHeading())
+			Commands.runOnce(() -> Drivetrain.getInstance().resetGyroHeading())
 			  .ignoringDisable(true)
 		  );
 
 		/* SWITCH FIELD/ROBOT RELATIVITY */
 		new JoystickButton(logitech, OperatorConstants.ROBOT_RELATIVE)
 		  .whileTrue(
-			Commands.runOnce(() -> drivetrain.setFieldRelativity())
+			Commands.runOnce(() -> Drivetrain.getInstance().setFieldRelativity())
 			  .ignoringDisable(true)
 		  );
 
@@ -220,21 +214,21 @@ public class RobotContainer {
 		new JoystickButton(buttonBox, OperatorConstants.SPINUP_SHOOT_DISTANCE)
 		  .whileTrue(
 			new SpinupAndShootCommand(
-			  drivetrain,
-			  shooterBase,
-			  conveyor
-			).alongWith(collector.agitationCommand())
+			  Drivetrain.getInstance(),
+			  ShooterBase.getInstance(),
+			  Conveyor.getInstance()
+			).alongWith(Collector.getInstance().agitationCommand())
 		  );
 
 		/* SPINUP & SHOOT WITH FIXED RPM */
 		new JoystickButton(buttonBox, OperatorConstants.SPINUP_SHOOT_FIXED)
 		  .whileTrue(
 			new SpinupAndShootCommand(
-			  drivetrain,
-			  shooterBase,
-			  conveyor,
+			  Drivetrain.getInstance(),
+			  ShooterBase.getInstance(),
+			  Conveyor.getInstance(),
 			  2000
-			).alongWith(collector.agitationCommand())
+			).alongWith(Collector.getInstance().agitationCommand())
 		  );
 
 		/* SHOOTER UNJAM */
@@ -242,55 +236,55 @@ public class RobotContainer {
 		  .whileTrue(
 			Commands.startEnd(
 			  () -> {
-				  shooterBase.leftShooter.setIndexerSpeed(-1);
-				  shooterBase.rightShooter.setIndexerSpeed(-1);
+				  ShooterBase.getInstance().leftShooter.setIndexerSpeed(-1);
+				  ShooterBase.getInstance().rightShooter.setIndexerSpeed(-1);
 			  },
 			  () -> {
-				  shooterBase.stopAllSubsystemMotors();
+				  ShooterBase.getInstance().stopAllSubsystemMotors();
 			  }
 			)
 		  );
 
 		/* COLLECTOR OUT & INTAKE */
 		new JoystickButton(buttonBox, OperatorConstants.COLLECTOR_OUT_INTAKE)
-		  .whileTrue(collector.tiltOutAndIntake());
+		  .whileTrue(Collector.getInstance().tiltOutAndIntake());
 
 		/* COLLECTOR TILT IN */
 		new JoystickButton(buttonBox, OperatorConstants.COLLECTOR_IN)
-		  .whileTrue(collector.tiltIn());
+		  .whileTrue(Collector.getInstance().tiltIn());
 
 		/* COLLECTOR OUTTAKE/UNJAM */
 		new JoystickButton(buttonBox, OperatorConstants.COLLECTOR_UNJAM)
-		  .whileTrue(collector.outtake());
+		  .whileTrue(Collector.getInstance().outtake());
 
 		/* COLLECTOR ROLLERS IN/INTAKE */
 		new JoystickButton(buttonBox, OperatorConstants.COLLECTOR_INTAKE)
-		  .whileTrue(collector.intake());
+		  .whileTrue(Collector.getInstance().intake());
 
 		/* QUEST MEASUREMENTS SWITCH */
 		new JoystickButton(buttonBox, OperatorConstants.QUEST_MEASUREMENT_SWITCH)
-		  .onFalse(localizationSystem.enableQnavMeasurements())
-		  .onTrue(localizationSystem.disableQnavMeasurements());
+		  .onFalse(LocalizationSystem.getInstance().enableQnavMeasurements())
+		  .onTrue(LocalizationSystem.getInstance().disableQnavMeasurements());
 
 		/* PHOTONVISION MEASUREMENTS SWITCH */
 		new JoystickButton(buttonBox, OperatorConstants.PHOTONVISION_MEASUREMENT_SWITCH)
-		  .onFalse(localizationSystem.enablePVMeasurements())
-		  .onTrue(localizationSystem.disablePVMeasurements());
+		  .onFalse(LocalizationSystem.getInstance().enablePVMeasurements())
+		  .onTrue(LocalizationSystem.getInstance().disablePVMeasurements());
 
 		new JoystickButton(buttonBox, SHOOTER_ADD5PERCENT_SWITCH)
 		  .onFalse(Commands.runOnce(() -> {
-				  shooterBase.setAddFivePercent(true);
+			    ShooterBase.getInstance().setAddFivePercent(true);
 			  })
 			  .ignoringDisable(true)
 		  ).onTrue(Commands.runOnce(() -> {
-				  shooterBase.setAddFivePercent(false);
+				ShooterBase.getInstance().setAddFivePercent(false);
 			  })
 			  .ignoringDisable(true)
 		  );
 
 		new JoystickButton(buttonBox, OperatorConstants.LOCALIZATION_SYNC_POSES)
 		  .whileTrue(Commands.runOnce(() -> {
-				  localizationSystem.syncPoses();
+				  LocalizationSystem.getInstance().syncPoses();
 			  })
 			  .ignoringDisable(true)
 		  );

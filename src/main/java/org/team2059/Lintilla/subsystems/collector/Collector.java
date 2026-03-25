@@ -21,6 +21,22 @@ import static org.team2059.Lintilla.Constants.OperatorConstants.tuningMode;
 
 public class Collector extends SubsystemBase {
 
+	private static Collector instance;
+
+	public static Collector getInstance() {
+		if (instance == null) {
+			throw new RuntimeException("Collector is not initialized! Call initialize() first");
+		}
+
+		return instance;
+	}
+
+	public static void initialize(CollectorIO io) {
+		if (instance == null) {
+			instance = new Collector(io);
+		}
+	}
+
 	public final CollectorIO io;
 	public final CollectorIOInputsAutoLogged inputs;
 
@@ -33,7 +49,7 @@ public class Collector extends SubsystemBase {
 	/**
 	 * Creates a new Collector.
 	 */
-	public Collector(CollectorIO io) {
+	private Collector(CollectorIO io) {
 		this.io = io;
 		inputs = new CollectorIOInputsAutoLogged();
 

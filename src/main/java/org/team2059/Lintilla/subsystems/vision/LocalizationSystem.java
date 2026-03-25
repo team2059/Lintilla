@@ -19,6 +19,7 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.team2059.Lintilla.Constants;
 import org.team2059.Lintilla.RobotContainer;
+import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +37,23 @@ import static org.team2059.Lintilla.Constants.VisionConstants.*;
  * Vision measurements are fused from multiple sources and published for use by other subsystems.
  */
 public class LocalizationSystem extends SubsystemBase {
+
+	private static LocalizationSystem instance;
+
+	public static LocalizationSystem getInstance() {
+		if (instance == null) {
+			throw new RuntimeException("Drivetrain is not initialized! Call initialize() first");
+		}
+
+		return instance;
+	}
+
+	public static void initialize() {
+		if (instance == null) {
+			instance = new LocalizationSystem();
+		}
+	}
+
 	private final QuestNav questNav;
 	private final PhotonCamera pvCam;
 	private final PhotonPoseEstimator pvEstimator;
@@ -61,7 +79,7 @@ public class LocalizationSystem extends SubsystemBase {
 	 * <p>
 	 * Configures QuestNav and PhotonVision parts
 	 */
-	public LocalizationSystem() {
+	private LocalizationSystem() {
 		// Set up QuestNav
 		questNav = new QuestNav();
 		qnavUseMeasurements = !RobotContainer.buttonBox.getRawButton(QUEST_MEASUREMENT_SWITCH);
@@ -358,7 +376,7 @@ public class LocalizationSystem extends SubsystemBase {
 				// Only use QuestNav measurements when fault counter is below threshold
 				// TODO: add field pose validation here
 				if (qnavHealthy && qnavUseMeasurements) {
-					RobotContainer.drivetrain.addVisionMeasurement(
+					Drivetrain.getInstance().addVisionMeasurement(
 					  qnavRobotPose.toPose2d(),
 					  frame.dataTimestamp(),
 					  QNAV_STD_DEVS
@@ -417,7 +435,7 @@ public class LocalizationSystem extends SubsystemBase {
 
 			// If QuestNav considered unhealthy, or not enabled, fall back to PhotonVision measurements
 			if (!qnavHealthy || !qnavUseMeasurements) {
-				RobotContainer.drivetrain.addVisionMeasurement(
+				Drivetrain.getInstance().addVisionMeasurement(
 				  pvRobotPose.toPose2d(),
 				  visionEst.get().timestampSeconds,
 				  pvStdDevs

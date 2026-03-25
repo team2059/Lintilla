@@ -17,6 +17,28 @@ import static org.team2059.Lintilla.Constants.ShooterConstants;
 
 public class ShooterBase extends SubsystemBase {
 
+	private static ShooterBase instance;
+
+	public static ShooterBase getInstance() {
+		if (instance == null) {
+			throw new RuntimeException("ShooterBase is not initialized! Call initialize() first");
+		}
+
+		return instance;
+	}
+
+	public static void initialize(
+	  ShooterIO leftShooter,
+	  ShooterIO rightShooter
+	) {
+		if (instance == null) {
+			instance = new ShooterBase(
+			  leftShooter,
+			  rightShooter
+			);
+		}
+	}
+
 	public final ShooterIO leftShooter;
 	public final ShooterIO rightShooter;
 
@@ -35,7 +57,7 @@ public class ShooterBase extends SubsystemBase {
 	public boolean addFivePercent;
 	public double currentDistanceToTarget = 0.0;
 
-	public ShooterBase(
+	private ShooterBase(
 	  ShooterIO leftShooter,
 	  ShooterIO rightShooter
 	) {

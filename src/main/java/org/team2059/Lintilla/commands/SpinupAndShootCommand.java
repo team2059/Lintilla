@@ -86,7 +86,7 @@ public class SpinupAndShootCommand extends Command {
 				  : shooterBase.getTargetRpm(distanceMeters);
 			} else {
 				// In auto, calculate the distance ourselves
-				double distanceMeters = getHubTranslation().getDistance(RobotContainer.drivetrain.getEstimatedPose().getTranslation());
+				double distanceMeters = getHubTranslation().getDistance(Drivetrain.getInstance().getEstimatedPose().getTranslation());
 				desiredRPM = (shooterBase.addFivePercent)
 				  ? shooterBase.getTargetRpm(distanceMeters * 1.05)
 				  : shooterBase.getTargetRpm(distanceMeters);
