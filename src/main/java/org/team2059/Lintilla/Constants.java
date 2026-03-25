@@ -156,7 +156,9 @@ public final class Constants {
 
 		public static final SimpleMotorFeedforward DRIVE_FEEDFORWARD = new SimpleMotorFeedforward(0.17821, 1.9047, 0.14686);
 
-		public static double ROTATION_P = 0.5;
+		public static double ROTATION_P = 25.0;
+		public static double ROTATION_I = 0.0;
+		public static double ROTATION_D = 0.0;
 	}
 
 	/**

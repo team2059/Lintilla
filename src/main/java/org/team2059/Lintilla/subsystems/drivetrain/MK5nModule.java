@@ -2,6 +2,7 @@ package org.team2059.Lintilla.subsystems.drivetrain;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
@@ -23,7 +24,7 @@ import org.team2059.Lintilla.util.SwerveUtilities;
 
 import static edu.wpi.first.units.Units.*;
 import static org.team2059.Lintilla.Constants.CANConstants.*;
-import static org.team2059.Lintilla.Constants.DrivetrainConstants.DRIVE_FEEDFORWARD;
+import static org.team2059.Lintilla.Constants.DrivetrainConstants.*;
 
 public class MK5nModule implements SwerveModuleIO {
 	private final SparkFlex driveMotor;
@@ -34,8 +35,7 @@ public class MK5nModule implements SwerveModuleIO {
 	private final TalonFXConfiguration azimuthMotorConfig = new TalonFXConfiguration();
 	private final CANcoder canCoder;
 	private final CANcoderConfiguration canCoderConfig = new CANcoderConfiguration();
-
-	private final PIDController azimuthController;
+	private final PositionVoltage azimuthPositionReq = new PositionVoltage(0).withSlot(0);
 
 	private final SwerveModuleState currentState = new SwerveModuleState();
 
@@ -46,10 +46,6 @@ public class MK5nModule implements SwerveModuleIO {
 	  double cancoderOffset,
 	  boolean driveInverted
 	) {
-		// Configure PID controller
-		azimuthController = new PIDController(Constants.DrivetrainConstants.ROTATION_P, 0, 0);
-		azimuthController.enableContinuousInput(-Math.PI, Math.PI);
-		azimuthController.setTolerance(Units.degreesToRadians(1));
 
 		// Configure drive motor
 		driveMotor = new SparkFlex(driveMotorCanId, SparkLowLevel.MotorType.kBrushless);
@@ -92,6 +88,12 @@ public class MK5nModule implements SwerveModuleIO {
 		azimuthMotorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
 		azimuthMotorConfig.Feedback.SensorToMechanismRatio = 1.0;
 		azimuthMotorConfig.Feedback.RotorToSensorRatio = Constants.DrivetrainConstants.ROTATION_GEAR_RATIO;
+
+		azimuthMotorConfig.Slot0.kP = ROTATION_P;
+		azimuthMotorConfig.Slot0.kI = ROTATION_I;
+		azimuthMotorConfig.Slot0.kD = ROTATION_D;
+
+		azimuthMotorConfig.ClosedLoopGeneral.ContinuousWrap = true;
 
 		azimuthMotor.getConfigurator().apply(azimuthMotorConfig);
 
@@ -142,7 +144,7 @@ public class MK5nModule implements SwerveModuleIO {
 		targetState = SwerveUtilities.optimize(targetState, cancoderAbsPos);
 
 		// PID-controlled rotation - temporary
-		azimuthMotor.set(azimuthController.calculate(cancoderAbsPos.getRadians(), targetState.angle.getRadians()));
+		azimuthMotor.setControl(azimuthPositionReq.withPosition(targetState.angle.getRotations()));
 
 		driveMotor.setVoltage(DRIVE_FEEDFORWARD.calculate(targetState.speedMetersPerSecond));
 	}
