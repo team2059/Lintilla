@@ -262,6 +262,28 @@ public class RobotContainer {
 			  .ignoringDisable(true)
 		  );
 
+		new JoystickButton(buttonBox, 11)
+		  .whileTrue(Commands.startEnd(
+		    () -> {
+				ShooterBase.getInstance().leftShooter.setFlywheelRpm(2000);
+			    ShooterBase.getInstance().rightShooter.setFlywheelRpm(2000);
+		    },
+		    () -> {
+				ShooterBase.getInstance().stopAllSubsystemMotors();
+		    }
+		  ));
+
+		new JoystickButton(buttonBox, 10)
+		  .whileTrue(Commands.startEnd(
+			() -> {
+				ShooterBase.getInstance().leftShooter.setFlywheelRpm(1000);
+				ShooterBase.getInstance().rightShooter.setFlywheelRpm(1000);
+			},
+			() -> {
+				ShooterBase.getInstance().stopAllSubsystemMotors();
+			}
+		  ));
+
 		/* SYNC PHOTONVISION AND QUEST POSES */
 		new JoystickButton(buttonBox, OperatorConstants.LOCALIZATION_SYNC_POSES)
 		  .whileTrue(LocalizationSystem.getInstance().syncPoses());

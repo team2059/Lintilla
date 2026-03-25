@@ -305,9 +305,9 @@ public final class Constants {
 		public static final double LEFT_INDEXER_S = 0.079892;
 		public static final double LEFT_INDEXER_V = 0.10559 / 60;
 		public static final double LEFT_INDEXER_A = 0.0073533 / 60;
-		public static final double LEFT_FLYWHEEL_P = 0.001;
+		public static final double LEFT_FLYWHEEL_P = 0.000052093;
 		public static final double LEFT_FLYWHEEL_I = 0.0;
-		public static final double LEFT_FLYWHEEL_D = 0.01;
+		public static final double LEFT_FLYWHEEL_D = 0.0;
 		public static final double LEFT_FLYWHEEL_S = 0.089332;
 		public static final double LEFT_FLYWHEEL_V = 0.10669 / 60;
 		public static final double LEFT_FLYWHEEL_A = 0.020699 / 60;
@@ -319,9 +319,9 @@ public final class Constants {
 		public static final double RIGHT_INDEXER_S = 0.080536;
 		public static final double RIGHT_INDEXER_V = 0.10572 / 60;
 		public static final double RIGHT_INDEXER_A = 0.008408 / 60;
-		public static final double RIGHT_FLYWHEEL_P = 0.001;
+		public static final double RIGHT_FLYWHEEL_P = 0.000053313;
 		public static final double RIGHT_FLYWHEEL_I = 0.0;
-		public static final double RIGHT_FLYWHEEL_D = 0.01;
+		public static final double RIGHT_FLYWHEEL_D = 0.0;
 		public static final double RIGHT_FLYWHEEL_S = 0.04773;
 		public static final double RIGHT_FLYWHEEL_V = 0.10424 / 60;
 		public static final double RIGHT_FLYWHEEL_A = 0.020809 / 60;
