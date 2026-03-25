@@ -2,7 +2,6 @@ package org.team2059.Lintilla.commands;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
-import org.team2059.Lintilla.RobotContainer;
 import org.team2059.Lintilla.subsystems.conveyor.Conveyor;
 import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
 import org.team2059.Lintilla.subsystems.shooter.ShooterBase;

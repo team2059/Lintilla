@@ -8,6 +8,13 @@ import org.team2059.Lintilla.Constants.ConveyorConstants;
 
 public class Conveyor extends SubsystemBase {
 	private static Conveyor instance;
+	public final ConveyorIO io;
+	public final ConveyorIOInputsAutoLogged inputs;
+
+	private Conveyor(ConveyorIO io) {
+		this.io = io;
+		inputs = new ConveyorIOInputsAutoLogged();
+	}
 
 	public static Conveyor getInstance() {
 		if (instance == null) {
@@ -21,14 +28,6 @@ public class Conveyor extends SubsystemBase {
 		if (instance == null) {
 			instance = new Conveyor(io);
 		}
-	}
-
-	public final ConveyorIO io;
-	public final ConveyorIOInputsAutoLogged inputs;
-
-	private Conveyor(ConveyorIO io) {
-		this.io = io;
-		inputs = new ConveyorIOInputsAutoLogged();
 	}
 
 	public Command conveyorIn() {

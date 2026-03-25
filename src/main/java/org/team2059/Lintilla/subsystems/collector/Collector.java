@@ -22,30 +22,13 @@ import static org.team2059.Lintilla.Constants.OperatorConstants.tuningMode;
 public class Collector extends SubsystemBase {
 
 	private static Collector instance;
-
-	public static Collector getInstance() {
-		if (instance == null) {
-			throw new RuntimeException("Collector is not initialized! Call initialize() first");
-		}
-
-		return instance;
-	}
-
-	public static void initialize(CollectorIO io) {
-		if (instance == null) {
-			instance = new Collector(io);
-		}
-	}
-
 	public final CollectorIO io;
 	public final CollectorIOInputsAutoLogged inputs;
-
 	// Declare all stuff for a SysID routine
 	private final SysIdRoutine routine;
 	private final MutVoltage appliedVoltageRoutine;
 	private final MutAngle angleRoutine;
 	private final MutAngularVelocity angularVelocityRoutine;
-
 	/**
 	 * Creates a new Collector.
 	 */
@@ -83,6 +66,20 @@ public class Collector extends SubsystemBase {
 			angleRoutine = null;
 			angularVelocityRoutine = null;
 			routine = null;
+		}
+	}
+
+	public static Collector getInstance() {
+		if (instance == null) {
+			throw new RuntimeException("Collector is not initialized! Call initialize() first");
+		}
+
+		return instance;
+	}
+
+	public static void initialize(CollectorIO io) {
+		if (instance == null) {
+			instance = new Collector(io);
 		}
 	}
 

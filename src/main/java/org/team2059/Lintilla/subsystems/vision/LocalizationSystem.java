@@ -39,21 +39,6 @@ import static org.team2059.Lintilla.Constants.VisionConstants.*;
 public class LocalizationSystem extends SubsystemBase {
 
 	private static LocalizationSystem instance;
-
-	public static LocalizationSystem getInstance() {
-		if (instance == null) {
-			throw new RuntimeException("Drivetrain is not initialized! Call initialize() first");
-		}
-
-		return instance;
-	}
-
-	public static void initialize() {
-		if (instance == null) {
-			instance = new LocalizationSystem();
-		}
-	}
-
 	private final QuestNav questNav;
 	private final PhotonCamera pvCam;
 	private final PhotonPoseEstimator pvEstimator;
@@ -73,7 +58,6 @@ public class LocalizationSystem extends SubsystemBase {
 	private boolean pvConnected = false;
 	private boolean pvHasTarget = false;
 	private int pvBestTargetId = -1;
-
 	/**
 	 * Constructor for LocalizationSystem
 	 * <p>
@@ -93,6 +77,20 @@ public class LocalizationSystem extends SubsystemBase {
 		pvUseMeasurements = !RobotContainer.buttonBox.getRawButton(PHOTONVISION_MEASUREMENT_SWITCH);
 
 		PhotonCamera.setVersionCheckEnabled(false);
+	}
+
+	public static LocalizationSystem getInstance() {
+		if (instance == null) {
+			throw new RuntimeException("Drivetrain is not initialized! Call initialize() first");
+		}
+
+		return instance;
+	}
+
+	public static void initialize() {
+		if (instance == null) {
+			instance = new LocalizationSystem();
+		}
 	}
 
 	/**

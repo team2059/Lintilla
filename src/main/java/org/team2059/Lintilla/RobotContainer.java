@@ -255,11 +255,11 @@ public class RobotContainer {
 		/* ADD 5% TO ALL RPM OUTPUTS */
 		new JoystickButton(buttonBox, SHOOTER_ADD5PERCENT_SWITCH)
 		  .onFalse(Commands.runOnce(() -> {
-			    ShooterBase.getInstance().setAddFivePercent(true);
+				  ShooterBase.getInstance().setAddFivePercent(true);
 			  })
 			  .ignoringDisable(true)
 		  ).onTrue(Commands.runOnce(() -> {
-				ShooterBase.getInstance().setAddFivePercent(false);
+				  ShooterBase.getInstance().setAddFivePercent(false);
 			  })
 			  .ignoringDisable(true)
 		  );

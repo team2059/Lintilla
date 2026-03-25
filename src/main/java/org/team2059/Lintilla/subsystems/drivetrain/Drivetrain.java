@@ -33,59 +33,24 @@ import static edu.wpi.first.units.Units.Radians;
 
 public class Drivetrain extends SubsystemBase {
 
-	private static Drivetrain instance;
-
-	public static Drivetrain getInstance() {
-		if (instance == null) {
-			throw new RuntimeException("Drivetrain is not initialized! Call initialize() first");
-		}
-
-		return instance;
-	}
-
-	public static void initialize(
-	  GyroscopeIO gyroIO,
-	  SwerveModuleIO frontLeftModuleIO,
-	  SwerveModuleIO frontRightModuleIO,
-	  SwerveModuleIO backLeftModuleIO,
-	  SwerveModuleIO backRightModuleIO
-	) {
-		if (instance == null) {
-			instance = new Drivetrain(
-			  gyroIO,
-			  frontLeftModuleIO,
-			  frontRightModuleIO,
-			  backLeftModuleIO,
-			  backRightModuleIO
-			);
-		}
-	}
-
 	private static final String[] MODULE_LOG_KEYS = {
 	  "Drive/Module0", "Drive/Module1", "Drive/Module2", "Drive/Module3"
 	};
-
 	public static boolean isFieldRelativeTeleop = true;
-
+	private static Drivetrain instance;
 	public final DrivetrainRoutine routine;
-
 	private final GyroscopeIO gyroIO;
 	private final GyroscopeIOInputsAutoLogged gyroInputs = new GyroscopeIOInputsAutoLogged();
-
 	private final SwerveModuleIO[] modules;
 	private final SwerveModuleIOInputsAutoLogged[] swerveModuleInputs = new SwerveModuleIOInputsAutoLogged[4];
-
 	private final Field2d field = new Field2d();
-
 	private final SwerveDrivePoseEstimator poseEstimator;
-
 	private final SwerveModulePosition[] cachedModulePositions = new SwerveModulePosition[]{
 	  new SwerveModulePosition(),
 	  new SwerveModulePosition(),
 	  new SwerveModulePosition(),
 	  new SwerveModulePosition()
 	};
-
 	private final SwerveModuleState[] cachedModuleStates = new SwerveModuleState[]{
 	  new SwerveModuleState(),
 	  new SwerveModuleState(),
@@ -143,6 +108,32 @@ public class Drivetrain extends SubsystemBase {
 		});
 
 		SmartDashboard.putData(field);
+	}
+
+	public static Drivetrain getInstance() {
+		if (instance == null) {
+			throw new RuntimeException("Drivetrain is not initialized! Call initialize() first");
+		}
+
+		return instance;
+	}
+
+	public static void initialize(
+	  GyroscopeIO gyroIO,
+	  SwerveModuleIO frontLeftModuleIO,
+	  SwerveModuleIO frontRightModuleIO,
+	  SwerveModuleIO backLeftModuleIO,
+	  SwerveModuleIO backRightModuleIO
+	) {
+		if (instance == null) {
+			instance = new Drivetrain(
+			  gyroIO,
+			  frontLeftModuleIO,
+			  frontRightModuleIO,
+			  backLeftModuleIO,
+			  backRightModuleIO
+			);
+		}
 	}
 
 	/**

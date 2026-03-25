@@ -7,8 +7,6 @@ import org.team2059.Lintilla.subsystems.conveyor.Conveyor;
 import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
 import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
 
-import static org.team2059.Lintilla.RobotContainer.*;
-
 /**
  * Class that holds all autonomous commands
  */
