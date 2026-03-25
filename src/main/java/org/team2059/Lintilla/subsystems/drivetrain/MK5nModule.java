@@ -23,9 +23,6 @@ import org.team2059.Lintilla.util.SwerveUtilities;
 
 import static edu.wpi.first.units.Units.*;
 import static org.team2059.Lintilla.Constants.CANConstants.*;
-import static org.team2059.Lintilla.Constants.CANConstants.REV_MOTOR_FAULTS_PERIOD_MS;
-import static org.team2059.Lintilla.Constants.CANConstants.REV_MOTOR_TEMP_PERIOD_MS;
-import static org.team2059.Lintilla.Constants.CANConstants.REV_OUTPUT_CURRENT_PERIOD_MS;
 import static org.team2059.Lintilla.Constants.DrivetrainConstants.DRIVE_FEEDFORWARD;
 
 public class MK5nModule implements SwerveModuleIO {
