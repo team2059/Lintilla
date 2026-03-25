@@ -21,7 +21,6 @@ import static org.team2059.Lintilla.Constants.VisionConstants.getHubTranslation;
  * Makes the collector angled 45 degrees as well as running the rollers so we have a consistent stream of balls.
  */
 public class SpinupAndShootCommand extends Command {
-	private static final LoggedTunableNumber tunableRPM = new LoggedTunableNumber("fixedRpm", 2525);
 	// We depend on these subsystems for certain methods & calculations
 	private final ShooterBase shooterBase;
 	private final Conveyor conveyor;
@@ -106,14 +105,6 @@ public class SpinupAndShootCommand extends Command {
 		// If we're using hardcoded RPM, we don't need to check whether or not we're aimed.
 		// Otherwise, we must check our aiming so we don't deliberately miss shots.
 		if (desiredRPMHardcoded) {
-			LoggedTunableNumber.ifChanged(
-			  hashCode(),
-			  () -> {
-				  desiredRPM = tunableRPM.get();
-			  },
-			  tunableRPM
-			);
-
 			if (Math.abs(leftCurrentVelocityRPM - desiredRPM) <= SPINUP_TOLERANCE_RPM) {
 				// Left shooter is within tolerance. Spin indexer
 				shooterBase.leftShooter.setIndexerSpeed(INDEXER_SPEED_WHILE_SHOOTING);

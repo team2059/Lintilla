@@ -233,12 +233,9 @@ public class RobotContainer {
 			  drivetrain,
 			  shooterBase,
 			  conveyor,
-			  1200
+			  2000
 			).alongWith(collector.agitationCommand())
 		  );
-
-		// new JoystickButton(buttonBox, OperatorConstants.SPINUP_SHOOT_FIXED)
-		// 	.whileTrue(collector.agitationCommand());
 
 		/* SHOOTER UNJAM */
 		new JoystickButton(buttonBox, OperatorConstants.SHOOTER_UNJAM)
@@ -257,9 +254,6 @@ public class RobotContainer {
 		/* COLLECTOR OUT & INTAKE */
 		new JoystickButton(buttonBox, OperatorConstants.COLLECTOR_OUT_INTAKE)
 		  .whileTrue(collector.tiltOutAndIntake());
-
-		// new JoystickButton(buttonBox, OperatorConstants.COLLECTOR_OUT_INTAKE)
-		// 	.whileTrue(collector.intake());
 
 		/* COLLECTOR TILT IN */
 		new JoystickButton(buttonBox, OperatorConstants.COLLECTOR_IN)

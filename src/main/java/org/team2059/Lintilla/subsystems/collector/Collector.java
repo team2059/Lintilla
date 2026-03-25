@@ -144,13 +144,16 @@ public class Collector extends SubsystemBase {
 	// Agitation command to help prevent jams, runs intake up and down repeatedly
 	// From Team 5667: https://github.com/NAHSRobotics-Team5667/FRC-2026/blob/main/src/main/java/frc/robot/subsystems/IntakeSubsystem.java
 	public Command agitationCommand() {
-		return Commands.sequence(
-			Commands.waitSeconds(0.5),
-			tiltIn(),
-			Commands.waitSeconds(0.12),
-			tiltOut(),
-			Commands.waitSeconds(0.12))
-		  .repeatedly().alongWith(intake());
+		return
+		  Commands.waitSeconds(1).andThen(
+			  Commands.sequence(
+				Commands.waitSeconds(0.5),
+				tiltIn().withTimeout(1),
+				Commands.waitSeconds(0.12),
+				tiltOut().withTimeout(1),
+				Commands.waitSeconds(0.12))
+			  .repeatedly().alongWith(intake())
+		  );
 	}
 
 	public Command sysIdQuasiForward() {
