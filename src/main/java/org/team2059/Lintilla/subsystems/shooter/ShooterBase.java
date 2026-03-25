@@ -1,5 +1,8 @@
 package org.team2059.Lintilla.subsystems.shooter;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
@@ -14,14 +17,19 @@ import static edu.wpi.first.units.Units.*;
 import static org.team2059.Lintilla.Constants.OperatorConstants.SHOOTER_ADD5PERCENT_SWITCH;
 import static org.team2059.Lintilla.Constants.OperatorConstants.tuningMode;
 import static org.team2059.Lintilla.Constants.ShooterConstants;
+import static org.team2059.Lintilla.Constants.VisionConstants.SHOOTER_OFFSET;
+import static org.team2059.Lintilla.Constants.VisionConstants.getHubTranslation;
 
 public class ShooterBase extends SubsystemBase {
 
 	private static ShooterBase instance;
+
 	public final ShooterIO leftShooter;
 	public final ShooterIO rightShooter;
+
 	public final ShooterIOInputsAutoLogged leftShooterInputs = new ShooterIOInputsAutoLogged();
 	public final ShooterIOInputsAutoLogged rightShooterInputs = new ShooterIOInputsAutoLogged();
+
 	private final SysIdRoutine leftFlywheelRoutine;
 	private final SysIdRoutine leftIndexerRoutine;
 	private final SysIdRoutine rightFlywheelRoutine;
@@ -29,9 +37,15 @@ public class ShooterBase extends SubsystemBase {
 	private final MutVoltage appliedVoltsRoutine;
 	private final MutAngle angleRoutine;
 	private final MutAngularVelocity angularVelocityRoutine;
+
 	public boolean isAimed = false;
+
 	public boolean addFivePercent;
+
 	public double currentDistanceToTarget = 0.0;
+
+	public double targetAimAngleRad = 0.0;
+
 	private ShooterBase(
 	  ShooterIO leftShooter,
 	  ShooterIO rightShooter
@@ -137,6 +151,54 @@ public class ShooterBase extends SubsystemBase {
 		}
 	}
 
+	/**
+	 * This method is calculates the current distance to the Hub, as well as
+	 * calculate the required heading angle.
+	 *
+	 * @param robotPose Current field-relative robot pose
+	 * @param fieldSpeeds Current field-relative ChassisSpeeds
+	 */
+	public void calculateSOTF(Pose2d robotPose, ChassisSpeeds fieldSpeeds) {
+
+		// Check if robot is actually moving
+		boolean isMoving =
+		  Math.hypot(fieldSpeeds.vxMetersPerSecond, fieldSpeeds.vyMetersPerSecond) > 0.1
+		  || Math.abs(fieldSpeeds.omegaRadiansPerSecond) > 0.1;
+
+		Translation2d virtualTarget = getHubTranslation();
+
+		if (!isMoving) {
+			// ROBOT IS STATIONARY: Skip SOTF and do standard static aiming
+			this.currentDistanceToTarget = robotPose.getTranslation().getDistance(virtualTarget);
+			this.targetAimAngleRad = Math.atan2(
+			  virtualTarget.getY() - robotPose.getTranslation().getY(),
+			  virtualTarget.getX() - robotPose.getTranslation().getX()
+			);
+			return; // Exit method early
+		}
+
+		Translation2d vRobot = new Translation2d(fieldSpeeds.vxMetersPerSecond, fieldSpeeds.vyMetersPerSecond);
+		Translation2d vTan = new Translation2d(
+		  -fieldSpeeds.omegaRadiansPerSecond * SHOOTER_OFFSET.getY(),
+		  fieldSpeeds.omegaRadiansPerSecond * SHOOTER_OFFSET.getX()
+		);
+		Translation2d effectiveVelocity = vRobot.plus(vTan);
+
+		// 4 Iterations for convergence
+		for (int i = 0; i < 4; i++) {
+			double distance = robotPose.getTranslation().getDistance(virtualTarget);
+			double tof = getToF(distance) + ShooterConstants.SYSTEM_LATENCY_SECONDS;
+			Translation2d offset = effectiveVelocity.times(tof);
+			virtualTarget = getHubTranslation().minus(offset);
+			this.currentDistanceToTarget = distance;
+		}
+
+		this.targetAimAngleRad = Math.atan2(
+		  virtualTarget.getY() - robotPose.getTranslation().getY(),
+		  virtualTarget.getX() - robotPose.getTranslation().getX()
+		);
+	}
+
 	// SysID getters
 	public Command leftShooterQuasiForward() {
 		if (leftFlywheelRoutine == null) return Commands.none();
@@ -221,11 +283,11 @@ public class ShooterBase extends SubsystemBase {
 	public Command unjamShooters() {
 		return Commands.startEnd(
 		  () -> {
-			  ShooterBase.getInstance().leftShooter.setIndexerSpeed(-1);
-			  ShooterBase.getInstance().rightShooter.setIndexerSpeed(-1);
+			  leftShooter.setIndexerSpeed(-1);
+			  rightShooter.setIndexerSpeed(-1);
 		  },
 		  () -> {
-			  ShooterBase.getInstance().stopAllSubsystemMotors();
+			  stopAllSubsystemMotors();
 		  }
 		);
 	}
@@ -272,7 +334,9 @@ public class ShooterBase extends SubsystemBase {
 		Logger.processInputs("ShooterBase/Left", leftShooterInputs);
 		Logger.processInputs("ShooterBase/Right", rightShooterInputs);
 
-		Logger.recordOutput("IsAimed", isAimed);
-		Logger.recordOutput("AddFivePercent", addFivePercent);
+		Logger.recordOutput("AimedAtHub", isAimed);
+		Logger.recordOutput("AddFivePercentRPM", addFivePercent);
+		Logger.recordOutput("CurrentDistanceToHub", currentDistanceToTarget);
+		Logger.recordOutput("TargetAngleToHub", targetAimAngleRad);
 	}
 }

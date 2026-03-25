@@ -23,6 +23,9 @@ public class QnavCalibrationCommand extends Command {
 
 	private final Supplier<Pose3d> getQnavRawPose;
 	private final Supplier<Pose2d> getEstimatedPose;
+
+	// Set this value in radians as to how much data we will accept.
+	// Generally, you want somewhere between 1 and 1.5 full rotations.
 	private final double targetRotationRads = 2 * Math.PI;
 
 	// Regression accumulators
@@ -46,6 +49,8 @@ public class QnavCalibrationCommand extends Command {
 	@Override
 	public void initialize() {
 
+		// Set the currently-reported Quest raw pose to zero
+		// This helps prevent the old offset from being added to the new offset
 		LocalizationSystem.getInstance().setQnavRawPose(Pose3d.kZero);
 
 		// Reset accumulators
@@ -58,7 +63,6 @@ public class QnavCalibrationCommand extends Command {
 		sum_yz = 0;
 		sum_z = 0;
 		n = 0;
-
 		lastRotation = getEstimatedPose.get().getRotation();
 		accumulatedRotationRads = 0;
 
@@ -67,13 +71,13 @@ public class QnavCalibrationCommand extends Command {
 
 	@Override
 	public void execute() {
-		// Track how far we've spun
+		// Track how far we've spun, and add that to our accumulator
 		Rotation2d currentRotation = getEstimatedPose.get().getRotation();
 		double deltaRads = currentRotation.minus(lastRotation).getRadians();
 		accumulatedRotationRads += Math.abs(deltaRads);
 		lastRotation = currentRotation;
 
-		// Sample Quest position
+		// Sample Quest position for this loop run
 		Pose3d qnavPose = getQnavRawPose.get();
 		double x = qnavPose.getX();
 		double y = qnavPose.getY();
@@ -132,10 +136,9 @@ public class QnavCalibrationCommand extends Command {
 			double centerX = A / 2.0;
 			double centerY = B / 2.0;
 
-			/* * If the Quest traces a circle around the robot center, the robot center
-			 * is at (centerX, centerY) in the Quest's startup coordinate space.
-			 * Therefore, the Quest's position relative to the robot center is the inverse.
-			 */
+			// If the Quest traces a circle around the robot center, the robot center
+			// is at (centerX, centerY) in the Quest's startup coordinate space.
+			// Therefore, the Quest's position relative to the robot center is the inverse.
 			Translation2d questOffset = new Translation2d(centerY, -centerX);
 
 			System.out.println("=== QuestNav Calibration Complete ===");

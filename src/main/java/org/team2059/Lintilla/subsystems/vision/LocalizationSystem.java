@@ -81,7 +81,7 @@ public class LocalizationSystem extends SubsystemBase {
 
 	public static LocalizationSystem getInstance() {
 		if (instance == null) {
-			throw new RuntimeException("Drivetrain is not initialized! Call initialize() first");
+			throw new RuntimeException("LocalizationSystem is not initialized! Call initialize() first");
 		}
 
 		return instance;

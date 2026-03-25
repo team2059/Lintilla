@@ -205,7 +205,6 @@ public class RobotContainer {
 		new JoystickButton(buttonBox, OperatorConstants.SPINUP_SHOOT_DISTANCE)
 		  .whileTrue(
 			new SpinupAndShootCommand(
-			  Drivetrain.getInstance(),
 			  ShooterBase.getInstance(),
 			  Conveyor.getInstance()
 			).alongWith(Collector.getInstance().agitationCommand())
@@ -215,7 +214,6 @@ public class RobotContainer {
 		new JoystickButton(buttonBox, OperatorConstants.SPINUP_SHOOT_FIXED)
 		  .whileTrue(
 			new SpinupAndShootCommand(
-			  Drivetrain.getInstance(),
 			  ShooterBase.getInstance(),
 			  Conveyor.getInstance(),
 			  2000

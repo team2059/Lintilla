@@ -14,7 +14,7 @@ public final class Autos {
 	public static void registerNamedCommands() {
 		NamedCommands.registerCommand(
 		  "ShootWithDistance",
-		  new SpinupAndShootCommand(Drivetrain.getInstance(), ShooterBase.getInstance(), Conveyor.getInstance()).alongWith(Collector.getInstance().agitationCommand())
+		  new SpinupAndShootCommand(ShooterBase.getInstance(), Conveyor.getInstance()).alongWith(Collector.getInstance().agitationCommand())
 		);
 
 		NamedCommands.registerCommand(
