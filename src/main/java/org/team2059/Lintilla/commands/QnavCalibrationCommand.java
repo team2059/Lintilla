@@ -13,15 +13,24 @@ import org.team2059.Lintilla.subsystems.vision.LocalizationSystem;
 
 import java.util.function.Supplier;
 
+/**
+ * Command that calculates the QuestNav offset relative to robot center.
+ * <p>
+ * The goal is for the driver to rotate in a perfect circle while the operator
+ * holds a button that runs this command, and a Transform2d offset is output.
+ */
 public class QnavCalibrationCommand extends Command {
+
 	private final Supplier<Pose3d> getQnavRawPose;
 	private final Supplier<Pose2d> getEstimatedPose;
 	private final double targetRotationRads = 2 * Math.PI;
+
 	// Regression accumulators
 	private double sum_x = 0, sum_y = 0;
 	private double sum_x2, sum_y2 = 0, sum_xy = 0;
 	private double sum_xz = 0, sum_yz = 0, sum_z = 0;
 	private int n = 0;
+
 	// Rotation tracking
 	private Rotation2d lastRotation;
 	private double accumulatedRotationRads = 0;

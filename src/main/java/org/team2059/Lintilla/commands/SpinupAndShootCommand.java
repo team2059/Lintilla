@@ -15,14 +15,13 @@ import static org.team2059.Lintilla.Constants.VisionConstants.getHubTranslation;
 /**
  * Command to spin the shooters up at a specific velocity (or calculate velocity based on distance to hub) and shoot
  * when a certain tolerance is reached.
- * <p>
- * Makes the collector angled 45 degrees as well as running the rollers so we have a consistent stream of balls.
  */
 public class SpinupAndShootCommand extends Command {
 	// We depend on these subsystems for certain methods & calculations
 	private final ShooterBase shooterBase;
 	private final Conveyor conveyor;
 	private final Drivetrain drivetrain;
+
 	// Holds our desired speeds
 	private double desiredRPM;
 	private boolean desiredRPMHardcoded;
@@ -66,10 +65,7 @@ public class SpinupAndShootCommand extends Command {
 	}
 
 	@Override
-	public void initialize() {
-//		collector.io.setIntakeSpeed(SHOOTING_ROLLER_SPEED);
-//		collector.io.setTiltPosition(THRUBORE_SHOOTING);
-	}
+	public void initialize() {}
 
 	@Override
 	public void execute() {
