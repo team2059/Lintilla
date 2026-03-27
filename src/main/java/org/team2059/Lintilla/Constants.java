@@ -172,8 +172,8 @@ public final class Constants {
 		public static final Transform2d SHOOTER_OFFSET = new Transform2d(-Units.inchesToMeters(10), 0, Rotation2d.kZero);
 
 		public static final Transform3d ROBOT_TO_QUEST = new Transform3d(
-		  -0.292160,
-		  0.233879,
+		  -0.245356,
+		  0.258158,
 		  0,
 		  new Rotation3d(
 			0,
@@ -379,7 +379,7 @@ public final class Constants {
 		public static final double THRUBORE_SHOOTING = 0.125;
 		public static final double THRUBORE_IN = 0.3;
 
-		public static final double INTAKING_ROLLER_SPEED = 1;
+		public static final double INTAKING_ROLLER_SPEED = 0.60;
 		public static final double OUTTAKING_ROLLER_SPEED = -0.75;
 	}
 

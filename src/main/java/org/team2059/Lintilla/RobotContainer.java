@@ -17,6 +17,7 @@ import org.team2059.Lintilla.Constants.CANConstants;
 import org.team2059.Lintilla.Constants.DrivetrainConstants;
 import org.team2059.Lintilla.Constants.OperatorConstants;
 import org.team2059.Lintilla.Constants.ShooterConstants;
+import org.team2059.Lintilla.commands.QnavCalibrationCommand;
 import org.team2059.Lintilla.commands.SpinupAndShootCommand;
 import org.team2059.Lintilla.commands.TeleopDriveCommand;
 import org.team2059.Lintilla.subsystems.collector.Collector;
