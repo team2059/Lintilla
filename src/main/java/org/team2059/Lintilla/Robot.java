@@ -8,10 +8,17 @@ package org.team2059.Lintilla;
 import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.pathfinding.Pathfinding;
+
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+
+import java.util.Optional;
+
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedPowerDistribution;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -35,6 +42,10 @@ public class Robot extends LoggedRobot {
 	private double lastLoopTime = 0.0;
 	private int loopOverrunCount = 0;
 
+	private boolean gameDataParsed = false;
+	private boolean shift1Active = false;
+	private double timeUntilHubActive = 0.0;
+
 	/**
 	 * This method is run when the robot is first started up and should be used for any
 	 * initialization code.
@@ -51,6 +62,7 @@ public class Robot extends LoggedRobot {
 			LoggedPowerDistribution.getInstance(Constants.CANConstants.PDH, PowerDistribution.ModuleType.kRev);
 		} else {
 			setUseTiming(false); // Run as fast as possible
+			Logger.addDataReceiver(new NT4Publisher());
 			String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
 			Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
 			Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
@@ -87,6 +99,12 @@ public class Robot extends LoggedRobot {
 
 		lastLoopTime = currentTime;
 
+		boolean hubActive = isHubActive();
+		Logger.recordOutput("HubActive", hubActive);
+		Logger.recordOutput("TimeUntilHubActive", timeUntilHubActive);
+		Logger.recordOutput("Time", DriverStation.getMatchTime());
+		Logger.recordOutput("Game Data Parsed", gameDataParsed);
+
 		// Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
 		// commands, running already-scheduled commands, removing finished or interrupted commands,
 		// and running subsystem periodic() methods.  This must be called from the robot's periodic
@@ -101,6 +119,65 @@ public class Robot extends LoggedRobot {
 	@Override
 	public void disabledInit() {
 	}
+
+	public boolean isHubActive() {
+		Optional<Alliance> alliance = DriverStation.getAlliance();
+    
+		// 1. Handle Game Data Parsing once
+		if (!gameDataParsed) {
+			String gameData = DriverStation.getGameSpecificMessage();
+			if (alliance.isPresent() && !gameData.isEmpty()) {
+				boolean redInactiveFirst = (gameData.charAt(0) == 'R');
+				
+				shift1Active = switch (alliance.get()) {
+					case Red -> !redInactiveFirst;
+					case Blue -> redInactiveFirst;
+				};
+				gameDataParsed = true;
+			} else {
+				timeUntilHubActive = 0;
+				return true; // Default to active if no data yet
+			}
+		}
+
+		// 2. Hub Logic with Countdown calculation
+		if (DriverStation.isAutonomousEnabled()) {
+			timeUntilHubActive = 0;
+			return true;
+		}
+
+		if (!DriverStation.isTeleopEnabled()) {
+			timeUntilHubActive = 0;
+			return false;
+		}
+
+		double matchTime = DriverStation.getMatchTime();
+
+		if (matchTime > 130) {
+			timeUntilHubActive = 0;
+			return true;
+		} else if (matchTime > 105) {
+			// Shift 1
+			timeUntilHubActive = shift1Active ? 0 : matchTime - 105;
+			return shift1Active;
+		} else if (matchTime > 80) {
+			// Shift 2
+			timeUntilHubActive = !shift1Active ? 0 : matchTime - 80;
+			return !shift1Active;
+		} else if (matchTime > 55) {
+			// Shift 3
+			timeUntilHubActive = shift1Active ? 0 : matchTime - 55;
+			return shift1Active;
+		} else if (matchTime > 30) {
+			// Shift 4
+			timeUntilHubActive = !shift1Active ? 0 : matchTime - 30;
+			return !shift1Active;
+		} else {
+			// End game
+			timeUntilHubActive = 0;
+			return true;
+		}
+}
 
 
 	@Override
@@ -132,6 +209,8 @@ public class Robot extends LoggedRobot {
 
 	@Override
 	public void teleopInit() {
+		gameDataParsed = false;
+
 		// This makes sure that the autonomous stops running when
 		// teleop starts running. If you want the autonomous to
 		// continue until interrupted by another command, remove
