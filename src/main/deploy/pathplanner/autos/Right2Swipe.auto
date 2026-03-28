@@ -36,12 +36,6 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "CollectorOutInfinite"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
                   "name": "Intake"
                 }
               },
@@ -80,13 +74,32 @@
           }
         },
         {
-          "type": "sequential",
+          "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
                   "pathName": "RightCenterToSwipe"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.5
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "CollectorOut"
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -96,12 +109,6 @@
           "type": "race",
           "data": {
             "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "CollectorOutInfinite"
-                }
-              },
               {
                 "type": "named",
                 "data": {
