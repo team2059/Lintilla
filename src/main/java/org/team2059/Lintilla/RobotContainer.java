@@ -218,7 +218,7 @@ public class RobotContainer {
 			  ShooterBase.getInstance(),
 			  Conveyor.getInstance(),
 			  2000
-			).alongWith(Collector.getInstance().agitationCommand())
+			)
 		  );
 
 		/* SHOOTER UNJAM */
@@ -262,7 +262,7 @@ public class RobotContainer {
 			  })
 			  .ignoringDisable(true)
 		  );
-
+		
 		/* SYNC PHOTONVISION AND QUEST POSES */
 		new JoystickButton(buttonBox, OperatorConstants.LOCALIZATION_SYNC_POSES)
 		  .whileTrue(LocalizationSystem.getInstance().syncPoses());

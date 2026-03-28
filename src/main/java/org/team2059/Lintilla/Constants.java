@@ -34,7 +34,7 @@ public final class Constants {
 	public static final class OperatorConstants {
 
 		// If true, tunable numbers can be modified, and SysID routines will be instantiated (memory heavy!)
-		public static final boolean tuningMode = false;
+		public static final boolean tuningMode = true;
 
 		/* ===== */
 		/* PORTS */
@@ -172,8 +172,8 @@ public final class Constants {
 		public static final Transform2d SHOOTER_OFFSET = new Transform2d(-Units.inchesToMeters(10), 0, Rotation2d.kZero);
 
 		public static final Transform3d ROBOT_TO_QUEST = new Transform3d(
-		  -0.245356,
-		  0.258158,
+		  -0.254912,
+		  0.230101,
 		  0,
 		  new Rotation3d(
 			0,
@@ -283,7 +283,7 @@ public final class Constants {
 		// Error to tolerate when spinning up to shoot (in RPMs)
 		public static final double SPINUP_TOLERANCE_RPM = 50;
 		// Speed [-1,1] to run the indexer at while shooting
-		public static final double INDEXER_SPEED_WHILE_SHOOTING = 0.9;
+		public static final double INDEXER_SPEED_WHILE_SHOOTING = 0.8;
 		public static final double HUB_HEIGHT_METERS = 1.83; // End height of trajectory
 		public static final double SHOOTER_HEIGHT_METERS = 0.5; // Start height of trajectory
 		public static final double FUEL_EXIT_ANGLE_RADIANS = 0.983936078; // RADIANS At what angle does fuel leave the shooter
@@ -307,7 +307,7 @@ public final class Constants {
 		public static final double LEFT_INDEXER_S = 0.079892;
 		public static final double LEFT_INDEXER_V = 0.10559 / 60;
 		public static final double LEFT_INDEXER_A = 0.0073533 / 60;
-		public static final double LEFT_FLYWHEEL_P = 0.000052093;
+		public static final double LEFT_FLYWHEEL_P = 0.000011674;
 		public static final double LEFT_FLYWHEEL_I = 0.0;
 		public static final double LEFT_FLYWHEEL_D = 0.0;
 		public static final double LEFT_FLYWHEEL_S = 0.089332;
@@ -321,7 +321,7 @@ public final class Constants {
 		public static final double RIGHT_INDEXER_S = 0.080536;
 		public static final double RIGHT_INDEXER_V = 0.10572 / 60;
 		public static final double RIGHT_INDEXER_A = 0.008408 / 60;
-		public static final double RIGHT_FLYWHEEL_P = 0.000053313;
+		public static final double RIGHT_FLYWHEEL_P = 0.0000126504;
 		public static final double RIGHT_FLYWHEEL_I = 0.0;
 		public static final double RIGHT_FLYWHEEL_D = 0.0;
 		public static final double RIGHT_FLYWHEEL_S = 0.04773;
@@ -377,7 +377,7 @@ public final class Constants {
 
 		public static final double THRUBORE_OUT = 0.0;
 		public static final double THRUBORE_SHOOTING = 0.125;
-		public static final double THRUBORE_IN = 0.3;
+		public static final double THRUBORE_IN = 0.34;
 
 		public static final double INTAKING_ROLLER_SPEED = 0.60;
 		public static final double OUTTAKING_ROLLER_SPEED = -0.75;

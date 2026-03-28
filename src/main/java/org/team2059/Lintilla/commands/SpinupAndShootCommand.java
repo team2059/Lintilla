@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import org.team2059.Lintilla.subsystems.conveyor.Conveyor;
 import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
 import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
+import org.team2059.Lintilla.util.LoggedTunableNumber;
 
 import static edu.wpi.first.units.Units.RPM;
 import static org.team2059.Lintilla.Constants.ConveyorConstants.SHOOTING_CONVEYOR_SPEED;
@@ -23,6 +24,8 @@ public class SpinupAndShootCommand extends Command {
 	private double desiredRPM; // The actual RPM to push to the shooters
 
 	private boolean desiredRPMHardcoded; // Whether or not we're using distance-calculated RPM
+
+	private static final LoggedTunableNumber tunableRPM = new LoggedTunableNumber("Tuning/fixedRpm", 2000);
 
 	/**
 	 * Constructor for distance-based shots (shoots on the fly)
@@ -73,6 +76,15 @@ public class SpinupAndShootCommand extends Command {
 		if (!desiredRPMHardcoded) {
 			// We're not hardcoded. Fetch the latest distance.
 			desiredRPM = shooterBase.getTargetRpm(shooterBase.currentDistanceToTarget);
+		} else {
+			// We are hardcoded. Fetch the latest tunable value.
+			LoggedTunableNumber.ifChanged(
+				hashCode(),
+				() -> {
+					desiredRPM = tunableRPM.get();
+				},
+				tunableRPM
+			);
 		}
 
 		// Check the switch for +5%
