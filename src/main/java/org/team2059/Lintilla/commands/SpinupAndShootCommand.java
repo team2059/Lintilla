@@ -1,10 +1,14 @@
 package org.team2059.Lintilla.commands;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+
 import org.team2059.Lintilla.subsystems.conveyor.Conveyor;
 import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
 import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
+import org.team2059.Lintilla.subsystems.vision.LocalizationSystem;
 import org.team2059.Lintilla.util.LoggedTunableNumber;
 
 import static edu.wpi.first.units.Units.RPM;
@@ -25,7 +29,11 @@ public class SpinupAndShootCommand extends Command {
 
 	private boolean desiredRPMHardcoded; // Whether or not we're using distance-calculated RPM
 
-	private static final LoggedTunableNumber tunableRPM = new LoggedTunableNumber("Tuning/fixedRpm", 2000);
+	private Timer spinUpTimer = new Timer();
+
+	private static final double SPINUP_TIME_SECONDS = 1.5; 
+  
+	// private static final LoggedTunableNumber tunableRPM = new LoggedTunableNumber("Tuning/fixedRpm", 500);
 
 	/**
 	 * Constructor for distance-based shots (shoots on the fly)
@@ -68,23 +76,34 @@ public class SpinupAndShootCommand extends Command {
 	}
 
 	@Override
-	public void initialize() {}
+	public void initialize() {
+		if (
+			LocalizationSystem.getInstance().isPvConnected() && LocalizationSystem.getInstance().getPvHasTarget()
+		)  {
+			CommandScheduler.getInstance().schedule(LocalizationSystem.getInstance().syncPoses());
+		}
+
+		spinUpTimer.reset();
+	}
 
 	@Override
 	public void execute() {
+
+		// Calculate the latest SOTF numbers
+		shooterBase.calculateSOTF(Drivetrain.getInstance().getEstimatedPose(), Drivetrain.getInstance().getFieldRelativeSpeeds());
 
 		if (!desiredRPMHardcoded) {
 			// We're not hardcoded. Fetch the latest distance.
 			desiredRPM = shooterBase.getTargetRpm(shooterBase.currentDistanceToTarget);
 		} else {
 			// We are hardcoded. Fetch the latest tunable value.
-			LoggedTunableNumber.ifChanged(
-				hashCode(),
-				() -> {
-					desiredRPM = tunableRPM.get();
-				},
-				tunableRPM
-			);
+			// LoggedTunableNumber.ifChanged(
+			// 	hashCode(),
+			// 	() -> {
+			// 		desiredRPM = tunableRPM.get();
+			// 	},
+			// 	tunableRPM
+			// );
 		}
 
 		// Check the switch for +5%
@@ -101,8 +120,8 @@ public class SpinupAndShootCommand extends Command {
 		double rightRPM = shooterBase.rightShooterInputs.flywheelVelocity.in(RPM);
 
 		if (
-		  Math.abs(leftRPM - desiredRPM) <= SPINUP_TOLERANCE_RPM
-		  && Math.abs(rightRPM - desiredRPM) <= SPINUP_TOLERANCE_RPM
+		  (Math.abs(leftRPM - desiredRPM) <= SPINUP_TOLERANCE_RPM
+		  && Math.abs(rightRPM - desiredRPM) <= SPINUP_TOLERANCE_RPM) || spinUpTimer.hasElapsed(SPINUP_TIME_SECONDS)
 		) {
 			// Both shooters are within tolerance. Spin indexers
 			shooterBase.leftShooter.setIndexerSpeed(INDEXER_SPEED_WHILE_SHOOTING);

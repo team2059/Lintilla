@@ -198,6 +198,9 @@ public class RobotContainer {
 		new JoystickButton(logitech, OperatorConstants.ROBOT_RELATIVE)
 		  .whileTrue(Drivetrain.getInstance().setFieldRelativity());
 
+		new JoystickButton(logitech, 12)
+		  .whileTrue(ShooterBase.getInstance().indexerTest());
+
 		/* ===================== */
 		/* OPERATOR'S CONTROLLER */
 		/* ===================== */
@@ -217,13 +220,31 @@ public class RobotContainer {
 			new SpinupAndShootCommand(
 			  ShooterBase.getInstance(),
 			  Conveyor.getInstance(),
-			  2000
-			)
+			  2800
+			).alongWith(Collector.getInstance().agitationCommand())
 		  );
 
 		/* SHOOTER UNJAM */
 		new JoystickButton(buttonBox, OperatorConstants.SHOOTER_UNJAM)
 		  .whileTrue(ShooterBase.getInstance().unjamShooters());
+		
+		new JoystickButton(buttonBox, OperatorConstants.TOWER_RPM)
+		  .whileTrue(
+			new SpinupAndShootCommand(
+			  ShooterBase.getInstance(),
+			  Conveyor.getInstance(),
+			  3125
+			).alongWith(Collector.getInstance().agitationCommand())
+		  );
+		
+		new JoystickButton(buttonBox, OperatorConstants.SHUTTLE_RPM)
+		  .whileTrue(
+			new SpinupAndShootCommand(
+			  ShooterBase.getInstance(),
+			  Conveyor.getInstance(),
+			  4000
+			).alongWith(Collector.getInstance().agitationCommand())
+		  );
 
 		/* COLLECTOR OUT & INTAKE */
 		new JoystickButton(buttonBox, OperatorConstants.COLLECTOR_OUT_INTAKE)
@@ -262,6 +283,9 @@ public class RobotContainer {
 			  })
 			  .ignoringDisable(true)
 		  );
+		
+		new JoystickButton(logitech, 11)
+		  .whileTrue(new QnavCalibrationCommand(() -> LocalizationSystem.getInstance().getQnavRawPose(), () -> Drivetrain.getInstance().getEstimatedPose()));
 		
 		/* SYNC PHOTONVISION AND QUEST POSES */
 		new JoystickButton(buttonBox, OperatorConstants.LOCALIZATION_SYNC_POSES)

@@ -34,7 +34,7 @@ public final class Constants {
 	public static final class OperatorConstants {
 
 		// If true, tunable numbers can be modified, and SysID routines will be instantiated (memory heavy!)
-		public static final boolean tuningMode = true;
+		public static final boolean tuningMode = false;
 
 		/* ===== */
 		/* PORTS */
@@ -65,11 +65,14 @@ public final class Constants {
 		public static final int SPINUP_SHOOT_DISTANCE = 1;
 		public static final int SPINUP_SHOOT_FIXED = 2;
 		public static final int SHOOTER_UNJAM = 3;
+		public static final int SPIN_INDEXER = 4;
 		public static final int COLLECTOR_OUT_INTAKE = 5;
 		public static final int COLLECTOR_IN = 6;
 		public static final int COLLECTOR_UNJAM = 7;
 		public static final int COLLECTOR_INTAKE = 8;
 		public static final int LOCALIZATION_SYNC_POSES = 12;
+		public static final int SHUTTLE_RPM = 9;
+		public static final int TOWER_RPM = 10;
 
 		/* ======== */
 		/* SWITCHES */
@@ -104,8 +107,8 @@ public final class Constants {
 		public static final double MAX_ANGULAR_VELOCITY = 2 * Math.PI; // rad/sec
 		public static final double MAX_ANGULAR_ACCELERATION = 4 * Math.PI; // rad/sec^2
 		// Teleop max speeds
-		public static final double TELE_DRIVE_MAX_SPEED = 4;
-		public static final double TELE_DRIVE_MAX_ANGULAR_SPEED = Math.PI;
+		public static final double TELE_DRIVE_MAX_SPEED = 8	;
+		public static final double TELE_DRIVE_MAX_ANGULAR_SPEED = (3 * Math.PI)/2;
 
 		/*
 		 * MK5n Gear Ratios
@@ -172,8 +175,8 @@ public final class Constants {
 		public static final Transform2d SHOOTER_OFFSET = new Transform2d(-Units.inchesToMeters(10), 0, Rotation2d.kZero);
 
 		public static final Transform3d ROBOT_TO_QUEST = new Transform3d(
-		  -0.254912,
-		  0.230101,
+		  -0.253244,
+		  0.216562,
 		  0,
 		  new Rotation3d(
 			0,
@@ -271,7 +274,7 @@ public final class Constants {
 		public static final int RIGHT_SHOOTER_FLYWHEEL = 56;
 
 		public static final int COLLECTOR_TILT = 57;
-		public static final int COLLECTOR_INTAKE = 58; // 2 hour superglue
+		public static final int COLLECTOR_INTAKE = 58; 
 		// public static final int COLLECTOR_INTAKE = 60;
 		public static final int CONVEYOR = 59;
 	}
@@ -307,7 +310,7 @@ public final class Constants {
 		public static final double LEFT_INDEXER_S = 0.079892;
 		public static final double LEFT_INDEXER_V = 0.10559 / 60;
 		public static final double LEFT_INDEXER_A = 0.0073533 / 60;
-		public static final double LEFT_FLYWHEEL_P = 0.000011674;
+		public static final double LEFT_FLYWHEEL_P = 0.000052093;
 		public static final double LEFT_FLYWHEEL_I = 0.0;
 		public static final double LEFT_FLYWHEEL_D = 0.0;
 		public static final double LEFT_FLYWHEEL_S = 0.089332;
@@ -321,7 +324,7 @@ public final class Constants {
 		public static final double RIGHT_INDEXER_S = 0.080536;
 		public static final double RIGHT_INDEXER_V = 0.10572 / 60;
 		public static final double RIGHT_INDEXER_A = 0.008408 / 60;
-		public static final double RIGHT_FLYWHEEL_P = 0.0000126504;
+		public static final double RIGHT_FLYWHEEL_P = 0.000053313;
 		public static final double RIGHT_FLYWHEEL_I = 0.0;
 		public static final double RIGHT_FLYWHEEL_D = 0.0;
 		public static final double RIGHT_FLYWHEEL_S = 0.04773;
