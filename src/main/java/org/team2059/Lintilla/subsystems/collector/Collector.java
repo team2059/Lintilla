@@ -98,6 +98,7 @@ public class Collector extends SubsystemBase {
 	public Command tiltOut() {
 		return this.run(() -> io.setTiltPosition(THRUBORE_OUT))
 		  .until(() -> Math.abs(inputs.tiltPosition.in(Rotations) - THRUBORE_OUT) <= TILT_TOLERANCE_ROTATIONS)
+		  .andThen(runEnd(() -> io.setTiltSpeed(-0.3), () -> io.stopTilt()).withTimeout(0.1))
 		  .finallyDo(io::stopTilt);
 	}
 

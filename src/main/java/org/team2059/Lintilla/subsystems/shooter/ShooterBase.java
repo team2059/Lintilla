@@ -280,6 +280,10 @@ public class ShooterBase extends SubsystemBase {
 		return rightIndexerRoutine.dynamic(SysIdRoutine.Direction.kReverse);
 	}
 
+	public Command indexerTest() {
+		return Commands.startEnd(() -> rightShooter.setIndexerSpeed(0.5), () -> rightShooter.setIndexerSpeed(0));
+	}
+
 	public Command unjamShooters() {
 		return Commands.startEnd(
 		  () -> {

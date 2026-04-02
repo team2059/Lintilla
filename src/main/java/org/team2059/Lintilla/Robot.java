@@ -21,7 +21,7 @@ import java.util.Optional;
 
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedPowerDistribution;
-import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.LoggedRobot;	
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
@@ -45,6 +45,7 @@ public class Robot extends LoggedRobot {
 	private boolean gameDataParsed = false;
 	private boolean shift1Active = false;
 	private double timeUntilHubActive = 0.0;
+	private double timeUntilHubInactive = 0.0;
 
 	/**
 	 * This method is run when the robot is first started up and should be used for any
@@ -103,6 +104,7 @@ public class Robot extends LoggedRobot {
 		Logger.recordOutput("HubActive", hubActive);
 		Logger.recordOutput("TimeUntilHubActive", timeUntilHubActive);
 		Logger.recordOutput("Time", DriverStation.getMatchTime());
+		Logger.recordOutput("TimeUntilHubInactive", timeUntilHubInactive);
 		Logger.recordOutput("Game Data Parsed", gameDataParsed);
 
 		// Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
@@ -121,63 +123,65 @@ public class Robot extends LoggedRobot {
 	}
 
 	public boolean isHubActive() {
-		Optional<Alliance> alliance = DriverStation.getAlliance();
+        Optional<Alliance> alliance = DriverStation.getAlliance();
     
-		// 1. Handle Game Data Parsing once
-		if (!gameDataParsed) {
-			String gameData = DriverStation.getGameSpecificMessage();
-			if (alliance.isPresent() && !gameData.isEmpty()) {
-				boolean redInactiveFirst = (gameData.charAt(0) == 'R');
-				
-				shift1Active = switch (alliance.get()) {
-					case Red -> !redInactiveFirst;
-					case Blue -> redInactiveFirst;
-				};
-				gameDataParsed = true;
-			} else {
-				timeUntilHubActive = 0;
-				return true; // Default to active if no data yet
-			}
-		}
+        if (!gameDataParsed) {
+            String gameData = DriverStation.getGameSpecificMessage();
+            if (alliance.isPresent() && !gameData.isEmpty()) {
+                boolean redInactiveFirst = (gameData.charAt(0) == 'R');
+                
+                shift1Active = switch (alliance.get()) {
+                    case Red -> !redInactiveFirst;
+                    case Blue -> redInactiveFirst;
+                };
+                gameDataParsed = true;
+            } else {
+                timeUntilHubActive = 0;
+                timeUntilHubInactive = 0;
+                return true; 
+            }
+        }
 
-		// 2. Hub Logic with Countdown calculation
-		if (DriverStation.isAutonomousEnabled()) {
-			timeUntilHubActive = 0;
-			return true;
-		}
+        if (DriverStation.isAutonomousEnabled()) {
+            timeUntilHubActive = 0;
+            timeUntilHubInactive = 0;
+            return true;
+        }
 
-		if (!DriverStation.isTeleopEnabled()) {
-			timeUntilHubActive = 0;
-			return false;
-		}
+        if (!DriverStation.isTeleopEnabled()) {
+            timeUntilHubActive = 0;
+            timeUntilHubInactive = 0;
+            return false;
+        }
 
-		double matchTime = DriverStation.getMatchTime();
+        double matchTime = DriverStation.getMatchTime();
 
-		if (matchTime > 130) {
-			timeUntilHubActive = 0;
-			return true;
-		} else if (matchTime > 105) {
-			// Shift 1
-			timeUntilHubActive = shift1Active ? 0 : matchTime - 105;
-			return shift1Active;
-		} else if (matchTime > 80) {
-			// Shift 2
-			timeUntilHubActive = !shift1Active ? 0 : matchTime - 80;
-			return !shift1Active;
-		} else if (matchTime > 55) {
-			// Shift 3
-			timeUntilHubActive = shift1Active ? 0 : matchTime - 55;
-			return shift1Active;
-		} else if (matchTime > 30) {
-			// Shift 4
-			timeUntilHubActive = !shift1Active ? 0 : matchTime - 30;
-			return !shift1Active;
-		} else {
-			// End game
-			timeUntilHubActive = 0;
-			return true;
-		}
-}
+        if (matchTime > 130) {
+            timeUntilHubActive = 0;
+            timeUntilHubInactive = shift1Active ? matchTime - 105 : matchTime - 130;
+            return true;
+        } else if (matchTime > 105) {
+            timeUntilHubActive = shift1Active ? 0 : matchTime - 105;
+            timeUntilHubInactive = shift1Active ? matchTime - 105 : 0;
+            return shift1Active;
+        } else if (matchTime > 80) {
+            timeUntilHubActive = !shift1Active ? 0 : matchTime - 80;
+            timeUntilHubInactive = !shift1Active ? matchTime - 80 : 0;
+            return !shift1Active;
+        } else if (matchTime > 55) {
+            timeUntilHubActive = shift1Active ? 0 : matchTime - 55;
+            timeUntilHubInactive = shift1Active ? matchTime - 55 : 0;
+            return shift1Active;
+        } else if (matchTime > 30) {
+            timeUntilHubActive = !shift1Active ? 0 : matchTime - 30;
+            timeUntilHubInactive = !shift1Active ? matchTime - 30 : 0;
+            return !shift1Active;
+        } else {
+            timeUntilHubActive = 0;
+            timeUntilHubInactive = 0;
+            return true;
+        }
+    }
 
 
 	@Override

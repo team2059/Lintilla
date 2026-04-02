@@ -65,11 +65,14 @@ public final class Constants {
 		public static final int SPINUP_SHOOT_DISTANCE = 1;
 		public static final int SPINUP_SHOOT_FIXED = 2;
 		public static final int SHOOTER_UNJAM = 3;
+		public static final int SPIN_INDEXER = 4;
 		public static final int COLLECTOR_OUT_INTAKE = 5;
 		public static final int COLLECTOR_IN = 6;
 		public static final int COLLECTOR_UNJAM = 7;
 		public static final int COLLECTOR_INTAKE = 8;
 		public static final int LOCALIZATION_SYNC_POSES = 12;
+		public static final int SHUTTLE_RPM = 9;
+		public static final int TOWER_RPM = 10;
 
 		/* ======== */
 		/* SWITCHES */
@@ -104,8 +107,8 @@ public final class Constants {
 		public static final double MAX_ANGULAR_VELOCITY = 2 * Math.PI; // rad/sec
 		public static final double MAX_ANGULAR_ACCELERATION = 4 * Math.PI; // rad/sec^2
 		// Teleop max speeds
-		public static final double TELE_DRIVE_MAX_SPEED = 4;
-		public static final double TELE_DRIVE_MAX_ANGULAR_SPEED = Math.PI;
+		public static final double TELE_DRIVE_MAX_SPEED = 8	;
+		public static final double TELE_DRIVE_MAX_ANGULAR_SPEED = (3 * Math.PI)/2;
 
 		/*
 		 * MK5n Gear Ratios
@@ -172,8 +175,8 @@ public final class Constants {
 		public static final Transform2d SHOOTER_OFFSET = new Transform2d(-Units.inchesToMeters(10), 0, Rotation2d.kZero);
 
 		public static final Transform3d ROBOT_TO_QUEST = new Transform3d(
-		  -0.245356,
-		  0.258158,
+		  -0.253244,
+		  0.216562,
 		  0,
 		  new Rotation3d(
 			0,
@@ -271,7 +274,7 @@ public final class Constants {
 		public static final int RIGHT_SHOOTER_FLYWHEEL = 56;
 
 		public static final int COLLECTOR_TILT = 57;
-		public static final int COLLECTOR_INTAKE = 58; // 2 hour superglue
+		public static final int COLLECTOR_INTAKE = 58; 
 		// public static final int COLLECTOR_INTAKE = 60;
 		public static final int CONVEYOR = 59;
 	}
@@ -283,7 +286,7 @@ public final class Constants {
 		// Error to tolerate when spinning up to shoot (in RPMs)
 		public static final double SPINUP_TOLERANCE_RPM = 50;
 		// Speed [-1,1] to run the indexer at while shooting
-		public static final double INDEXER_SPEED_WHILE_SHOOTING = 0.9;
+		public static final double INDEXER_SPEED_WHILE_SHOOTING = 0.8;
 		public static final double HUB_HEIGHT_METERS = 1.83; // End height of trajectory
 		public static final double SHOOTER_HEIGHT_METERS = 0.5; // Start height of trajectory
 		public static final double FUEL_EXIT_ANGLE_RADIANS = 0.983936078; // RADIANS At what angle does fuel leave the shooter
@@ -377,7 +380,7 @@ public final class Constants {
 
 		public static final double THRUBORE_OUT = 0.0;
 		public static final double THRUBORE_SHOOTING = 0.125;
-		public static final double THRUBORE_IN = 0.3;
+		public static final double THRUBORE_IN = 0.34;
 
 		public static final double INTAKING_ROLLER_SPEED = 0.60;
 		public static final double OUTTAKING_ROLLER_SPEED = -0.75;

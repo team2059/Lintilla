@@ -375,12 +375,18 @@ public class LocalizationSystem extends SubsystemBase {
 
 				// Only use QuestNav measurements when fault counter is below threshold
 				// TODO: add field pose validation here
-				if (qnavHealthy && qnavUseMeasurements) {
-					Drivetrain.getInstance().addVisionMeasurement(
-					  qnavRobotPose.toPose2d(),
-					  frame.dataTimestamp(),
-					  QNAV_STD_DEVS
+				if (pvConnected) {
+					if (qnavHealthy && qnavUseMeasurements)
+						Drivetrain.getInstance().addVisionMeasurement(
+						qnavRobotPose.toPose2d(),
+						frame.dataTimestamp(),
+						QNAV_STD_DEVS
 					);
+				} else {
+					Drivetrain.getInstance().addVisionMeasurement(
+						qnavRobotPose.toPose2d(),
+						frame.dataTimestamp(),
+						QNAV_STD_DEVS);
 				}
 
 				break; // found the most recent tracking frame, exit loop

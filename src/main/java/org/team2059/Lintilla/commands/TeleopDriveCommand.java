@@ -107,10 +107,12 @@ public class TeleopDriveCommand extends Command {
 		double ySpeed = -forwardY.getAsDouble();
 		double rot = -rotation.getAsDouble();
 
+
 		// Apply deadband
 		xSpeed = Math.abs(xSpeed) > 0.25 ? xSpeed : 0.0;
-		ySpeed = Math.abs(ySpeed) > 0.35 ? ySpeed : 0.0;
-		rot = Math.abs(rot) > 0.4 ? rot : 0.0;
+		ySpeed = Math.abs(ySpeed) > 0.25 ? ySpeed : 0.0;
+		rot = Math.abs(rot) > 0.15 ? rot : 0.0;
+
 
 		// Make the driving smoother
 		xSpeed = xLimiter.calculate(xSpeed) * DrivetrainConstants.TELE_DRIVE_MAX_SPEED;
@@ -130,8 +132,7 @@ public class TeleopDriveCommand extends Command {
 
 		if (hubTracking.getAsBoolean()) {
 
-			// Calculate the latest SOTF numbers
-			shooterBase.calculateSOTF(drivetrain.getEstimatedPose(), drivetrain.getFieldRelativeSpeeds());
+			shooterBase.calculateSOTF(Drivetrain.getInstance().getEstimatedPose(), Drivetrain.getInstance().getFieldRelativeSpeeds());
 
 			// Apply PID to rotation
 			double angularSpeedRps = controller.calculate(
@@ -162,7 +163,7 @@ public class TeleopDriveCommand extends Command {
 			double snakeRotSpeed = 0;
 			if (Math.abs(Math.hypot(xSpeed, ySpeed)) > 0.05) {
 				Pose2d currentPose = drivetrain.getEstimatedPose();
-				snakeRotSpeed = MathUtil.clamp(controller.calculate(currentPose.getRotation().getRadians(), snakeAngle.getRadians() - (Math.PI / 2)), -1, 1);
+				snakeRotSpeed = MathUtil.clamp(controller.calculate(currentPose.getRotation().getRadians(), snakeAngle.getRadians() - (-Math.PI / 2)), -1, 1);
 				snakeRotSpeed *= DrivetrainConstants.MAX_ANGULAR_VELOCITY;
 
 				drivetrain.drive(
