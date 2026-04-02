@@ -75,6 +75,7 @@ public class Robot extends LoggedRobot {
 		// autonomous chooser on the dashboard.
 		robotContainer = new RobotContainer();
 
+		// Schedule warmup commands for PathPlanner path finding and following
 		CommandScheduler.getInstance().schedule(FollowPathCommand.warmupCommand());
 		CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
 	}

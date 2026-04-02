@@ -130,7 +130,6 @@ public class RobotContainer {
 		Drivetrain.getInstance().setDefaultCommand(
 		  new TeleopDriveCommand(
 			Drivetrain.getInstance(),
-			ShooterBase.getInstance(),
 			() -> -logitech.getRawAxis(OperatorConstants.TRANSLATION_AXIS), // forwardX
 			() -> -logitech.getRawAxis(OperatorConstants.STRAFE_AXIS), // forwardY
 			() -> -logitech.getRawAxis(OperatorConstants.ROTATION_AXIS), // rotation
@@ -283,10 +282,7 @@ public class RobotContainer {
 			  })
 			  .ignoringDisable(true)
 		  );
-		
-		new JoystickButton(logitech, 11)
-		  .whileTrue(new QnavCalibrationCommand(() -> LocalizationSystem.getInstance().getQnavRawPose(), () -> Drivetrain.getInstance().getEstimatedPose()));
-		
+
 		/* SYNC PHOTONVISION AND QUEST POSES */
 		new JoystickButton(buttonBox, OperatorConstants.LOCALIZATION_SYNC_POSES)
 		  .whileTrue(LocalizationSystem.getInstance().syncPoses());

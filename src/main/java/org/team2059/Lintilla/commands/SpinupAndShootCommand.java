@@ -32,8 +32,6 @@ public class SpinupAndShootCommand extends Command {
 	private Timer spinUpTimer = new Timer();
 
 	private static final double SPINUP_TIME_SECONDS = 1.5; 
-  
-	// private static final LoggedTunableNumber tunableRPM = new LoggedTunableNumber("Tuning/fixedRpm", 500);
 
 	/**
 	 * Constructor for distance-based shots (shoots on the fly)
@@ -95,15 +93,6 @@ public class SpinupAndShootCommand extends Command {
 		if (!desiredRPMHardcoded) {
 			// We're not hardcoded. Fetch the latest distance.
 			desiredRPM = shooterBase.getTargetRpm(shooterBase.currentDistanceToTarget);
-		} else {
-			// We are hardcoded. Fetch the latest tunable value.
-			// LoggedTunableNumber.ifChanged(
-			// 	hashCode(),
-			// 	() -> {
-			// 		desiredRPM = tunableRPM.get();
-			// 	},
-			// 	tunableRPM
-			// );
 		}
 
 		// Check the switch for +5%
@@ -120,8 +109,8 @@ public class SpinupAndShootCommand extends Command {
 		double rightRPM = shooterBase.rightShooterInputs.flywheelVelocity.in(RPM);
 
 		if (
-		  (Math.abs(leftRPM - desiredRPM) <= SPINUP_TOLERANCE_RPM
-		  && Math.abs(rightRPM - desiredRPM) <= SPINUP_TOLERANCE_RPM) || spinUpTimer.hasElapsed(SPINUP_TIME_SECONDS)
+		  (Math.abs(leftRPM - desiredRPM) <= SPINUP_TOLERANCE_RPM && Math.abs(rightRPM - desiredRPM) <= SPINUP_TOLERANCE_RPM)
+		    || spinUpTimer.hasElapsed(SPINUP_TIME_SECONDS)
 		) {
 			// Both shooters are within tolerance. Spin indexers
 			shooterBase.leftShooter.setIndexerSpeed(INDEXER_SPEED_WHILE_SHOOTING);

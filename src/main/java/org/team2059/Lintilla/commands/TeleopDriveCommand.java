@@ -23,7 +23,6 @@ import java.util.function.DoubleSupplier;
  */
 public class TeleopDriveCommand extends Command {
 	private final Drivetrain drivetrain;
-	private final ShooterBase shooterBase;
 
 	private final DoubleSupplier forwardX, forwardY, rotation, slider;
 	private final BooleanSupplier strafeOnly, inverted, hubTracking, snakeMode;
@@ -48,7 +47,6 @@ public class TeleopDriveCommand extends Command {
 	 */
 	public TeleopDriveCommand(
 	  Drivetrain drivetrain,
-	  ShooterBase shooterBase,
 	  DoubleSupplier forwardX,
 	  DoubleSupplier forwardY,
 	  DoubleSupplier rotation,
@@ -60,8 +58,6 @@ public class TeleopDriveCommand extends Command {
 	) {
 
 		this.drivetrain = drivetrain;
-		this.shooterBase = shooterBase;
-
 		this.forwardX = forwardX;
 		this.forwardY = forwardY;
 		this.rotation = rotation;
@@ -132,14 +128,18 @@ public class TeleopDriveCommand extends Command {
 
 		if (hubTracking.getAsBoolean()) {
 
-			shooterBase.calculateSOTF(Drivetrain.getInstance().getEstimatedPose(), Drivetrain.getInstance().getFieldRelativeSpeeds());
+			ShooterBase.getInstance()
+			  .calculateSOTF(
+				Drivetrain.getInstance().getEstimatedPose(),
+			    Drivetrain.getInstance().getFieldRelativeSpeeds()
+			  );
 
 			// Apply PID to rotation
 			double angularSpeedRps = controller.calculate(
 			  drivetrain.getEstimatedPose().getRotation().getRadians(),
-			  shooterBase.targetAimAngleRad
+			  ShooterBase.getInstance().targetAimAngleRad
 			);
-			shooterBase.isAimed = controller.atSetpoint(); // set for use in other commands
+			ShooterBase.getInstance().isAimed = controller.atSetpoint(); // set for use in other commands
 
 			// Apply drive command
 			drivetrain.drive(xSpeed, ySpeed, angularSpeedRps, Drivetrain.isFieldRelativeTeleop);
