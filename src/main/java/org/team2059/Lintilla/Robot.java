@@ -8,25 +8,22 @@ package org.team2059.Lintilla;
 import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.pathfinding.Pathfinding;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-
-import java.util.Optional;
-
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedPowerDistribution;
-import org.littletonrobotics.junction.LoggedRobot;	
+import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import org.team2059.Lintilla.util.LocalADStarAK;
+
+import java.util.Optional;
 
 
 /**
@@ -124,65 +121,65 @@ public class Robot extends LoggedRobot {
 	}
 
 	public boolean isHubActive() {
-        Optional<Alliance> alliance = DriverStation.getAlliance();
-    
-        if (!gameDataParsed) {
-            String gameData = DriverStation.getGameSpecificMessage();
-            if (alliance.isPresent() && !gameData.isEmpty()) {
-                boolean redInactiveFirst = (gameData.charAt(0) == 'R');
-                
-                shift1Active = switch (alliance.get()) {
-                    case Red -> !redInactiveFirst;
-                    case Blue -> redInactiveFirst;
-                };
-                gameDataParsed = true;
-            } else {
-                timeUntilHubActive = 0;
-                timeUntilHubInactive = 0;
-                return true; 
-            }
-        }
+		Optional<Alliance> alliance = DriverStation.getAlliance();
 
-        if (DriverStation.isAutonomousEnabled()) {
-            timeUntilHubActive = 0;
-            timeUntilHubInactive = 0;
-            return true;
-        }
+		if (!gameDataParsed) {
+			String gameData = DriverStation.getGameSpecificMessage();
+			if (alliance.isPresent() && !gameData.isEmpty()) {
+				boolean redInactiveFirst = (gameData.charAt(0) == 'R');
 
-        if (!DriverStation.isTeleopEnabled()) {
-            timeUntilHubActive = 0;
-            timeUntilHubInactive = 0;
-            return false;
-        }
+				shift1Active = switch (alliance.get()) {
+					case Red -> !redInactiveFirst;
+					case Blue -> redInactiveFirst;
+				};
+				gameDataParsed = true;
+			} else {
+				timeUntilHubActive = 0;
+				timeUntilHubInactive = 0;
+				return true;
+			}
+		}
 
-        double matchTime = DriverStation.getMatchTime();
+		if (DriverStation.isAutonomousEnabled()) {
+			timeUntilHubActive = 0;
+			timeUntilHubInactive = 0;
+			return true;
+		}
 
-        if (matchTime > 130) {
-            timeUntilHubActive = 0;
-            timeUntilHubInactive = shift1Active ? matchTime - 105 : matchTime - 130;
-            return true;
-        } else if (matchTime > 105) {
-            timeUntilHubActive = shift1Active ? 0 : matchTime - 105;
-            timeUntilHubInactive = shift1Active ? matchTime - 105 : 0;
-            return shift1Active;
-        } else if (matchTime > 80) {
-            timeUntilHubActive = !shift1Active ? 0 : matchTime - 80;
-            timeUntilHubInactive = !shift1Active ? matchTime - 80 : 0;
-            return !shift1Active;
-        } else if (matchTime > 55) {
-            timeUntilHubActive = shift1Active ? 0 : matchTime - 55;
-            timeUntilHubInactive = shift1Active ? matchTime - 55 : 0;
-            return shift1Active;
-        } else if (matchTime > 30) {
-            timeUntilHubActive = !shift1Active ? 0 : matchTime - 30;
-            timeUntilHubInactive = !shift1Active ? matchTime - 30 : 0;
-            return !shift1Active;
-        } else {
-            timeUntilHubActive = 0;
-            timeUntilHubInactive = 0;
-            return true;
-        }
-    }
+		if (!DriverStation.isTeleopEnabled()) {
+			timeUntilHubActive = 0;
+			timeUntilHubInactive = 0;
+			return false;
+		}
+
+		double matchTime = DriverStation.getMatchTime();
+
+		if (matchTime > 130) {
+			timeUntilHubActive = 0;
+			timeUntilHubInactive = shift1Active ? matchTime - 105 : matchTime - 130;
+			return true;
+		} else if (matchTime > 105) {
+			timeUntilHubActive = shift1Active ? 0 : matchTime - 105;
+			timeUntilHubInactive = shift1Active ? matchTime - 105 : 0;
+			return shift1Active;
+		} else if (matchTime > 80) {
+			timeUntilHubActive = !shift1Active ? 0 : matchTime - 80;
+			timeUntilHubInactive = !shift1Active ? matchTime - 80 : 0;
+			return !shift1Active;
+		} else if (matchTime > 55) {
+			timeUntilHubActive = shift1Active ? 0 : matchTime - 55;
+			timeUntilHubInactive = shift1Active ? matchTime - 55 : 0;
+			return shift1Active;
+		} else if (matchTime > 30) {
+			timeUntilHubActive = !shift1Active ? 0 : matchTime - 30;
+			timeUntilHubInactive = !shift1Active ? matchTime - 30 : 0;
+			return !shift1Active;
+		} else {
+			timeUntilHubActive = 0;
+			timeUntilHubInactive = 0;
+			return true;
+		}
+	}
 
 
 	@Override

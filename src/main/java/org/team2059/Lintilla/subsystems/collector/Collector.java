@@ -29,6 +29,7 @@ public class Collector extends SubsystemBase {
 	private final MutVoltage appliedVoltageRoutine;
 	private final MutAngle angleRoutine;
 	private final MutAngularVelocity angularVelocityRoutine;
+
 	/**
 	 * Creates a new Collector.
 	 */

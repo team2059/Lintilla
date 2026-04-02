@@ -155,7 +155,7 @@ public class ShooterBase extends SubsystemBase {
 	 * This method is calculates the current distance to the Hub, as well as
 	 * calculate the required heading angle.
 	 *
-	 * @param robotPose Current field-relative robot pose
+	 * @param robotPose   Current field-relative robot pose
 	 * @param fieldSpeeds Current field-relative ChassisSpeeds
 	 */
 	public void calculateSOTF(Pose2d robotPose, ChassisSpeeds fieldSpeeds) {
@@ -163,7 +163,7 @@ public class ShooterBase extends SubsystemBase {
 		// Check if robot is actually moving
 		boolean isMoving =
 		  Math.hypot(fieldSpeeds.vxMetersPerSecond, fieldSpeeds.vyMetersPerSecond) > 0.1
-		  || Math.abs(fieldSpeeds.omegaRadiansPerSecond) > 0.1;
+			|| Math.abs(fieldSpeeds.omegaRadiansPerSecond) > 0.1;
 
 		Translation2d virtualTarget = getHubTranslation();
 

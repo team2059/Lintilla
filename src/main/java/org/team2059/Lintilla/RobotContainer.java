@@ -17,7 +17,6 @@ import org.team2059.Lintilla.Constants.CANConstants;
 import org.team2059.Lintilla.Constants.DrivetrainConstants;
 import org.team2059.Lintilla.Constants.OperatorConstants;
 import org.team2059.Lintilla.Constants.ShooterConstants;
-import org.team2059.Lintilla.commands.QnavCalibrationCommand;
 import org.team2059.Lintilla.commands.SpinupAndShootCommand;
 import org.team2059.Lintilla.commands.TeleopDriveCommand;
 import org.team2059.Lintilla.subsystems.collector.Collector;
@@ -226,7 +225,7 @@ public class RobotContainer {
 		/* SHOOTER UNJAM */
 		new JoystickButton(buttonBox, OperatorConstants.SHOOTER_UNJAM)
 		  .whileTrue(ShooterBase.getInstance().unjamShooters());
-		
+
 		new JoystickButton(buttonBox, OperatorConstants.TOWER_RPM)
 		  .whileTrue(
 			new SpinupAndShootCommand(
@@ -235,7 +234,7 @@ public class RobotContainer {
 			  3125
 			).alongWith(Collector.getInstance().agitationCommand())
 		  );
-		
+
 		new JoystickButton(buttonBox, OperatorConstants.SHUTTLE_RPM)
 		  .whileTrue(
 			new SpinupAndShootCommand(

@@ -58,6 +58,7 @@ public class LocalizationSystem extends SubsystemBase {
 	private boolean pvConnected = false;
 	private boolean pvHasTarget = false;
 	private int pvBestTargetId = -1;
+
 	/**
 	 * Constructor for LocalizationSystem
 	 * <p>

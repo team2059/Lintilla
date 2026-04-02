@@ -107,8 +107,8 @@ public final class Constants {
 		public static final double MAX_ANGULAR_VELOCITY = 2 * Math.PI; // rad/sec
 		public static final double MAX_ANGULAR_ACCELERATION = 4 * Math.PI; // rad/sec^2
 		// Teleop max speeds
-		public static final double TELE_DRIVE_MAX_SPEED = 8	;
-		public static final double TELE_DRIVE_MAX_ANGULAR_SPEED = (3 * Math.PI)/2;
+		public static final double TELE_DRIVE_MAX_SPEED = 8;
+		public static final double TELE_DRIVE_MAX_ANGULAR_SPEED = (3 * Math.PI) / 2;
 
 		/*
 		 * MK5n Gear Ratios
@@ -274,7 +274,7 @@ public final class Constants {
 		public static final int RIGHT_SHOOTER_FLYWHEEL = 56;
 
 		public static final int COLLECTOR_TILT = 57;
-		public static final int COLLECTOR_INTAKE = 58; 
+		public static final int COLLECTOR_INTAKE = 58;
 		// public static final int COLLECTOR_INTAKE = 60;
 		public static final int CONVEYOR = 59;
 	}
