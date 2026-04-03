@@ -56,6 +56,12 @@ public class VortexShooter implements ShooterIO {
 		  .feedForward
 		  .kS(kSIndexer).kV(kVIndexer).kA(kAIndexer);
 
+		// https://www.chiefdelphi.com/t/psa-rev-spark-default-velocity-filtering-is-still-really-bad-for-flywheels/514567/5
+		flywheelMotorConfig.encoder
+		  .uvwMeasurementPeriod(8)
+		  .uvwAverageDepth(2)
+		  .quadratureAverageDepth(8);
+
 		// Configure signal update rates
 		flywheelMotorConfig.signals
 		  .primaryEncoderPositionPeriodMs(REV_POSITION_PERIOD_MS)

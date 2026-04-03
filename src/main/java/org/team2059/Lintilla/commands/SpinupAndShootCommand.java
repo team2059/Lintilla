@@ -92,6 +92,11 @@ public class SpinupAndShootCommand extends Command {
 		  ? desiredRPM * 1.05
 		  : desiredRPM;
 
+		// Check the switch for -5%
+		desiredRPM = (shooterBase.subFivePercent)
+		  ? desiredRPM * 0.95
+		  : desiredRPM;
+
 		// Set the two flywheels to the desired RPM, whether it's hardcoded or
 		// not, it doesn't matter at this point in execution.
 		shooterBase.leftShooter.setFlywheelRpm(desiredRPM);

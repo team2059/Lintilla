@@ -14,8 +14,7 @@ import org.littletonrobotics.junction.Logger;
 import org.team2059.Lintilla.RobotContainer;
 
 import static edu.wpi.first.units.Units.*;
-import static org.team2059.Lintilla.Constants.OperatorConstants.SHOOTER_ADD5PERCENT_SWITCH;
-import static org.team2059.Lintilla.Constants.OperatorConstants.tuningMode;
+import static org.team2059.Lintilla.Constants.OperatorConstants.*;
 import static org.team2059.Lintilla.Constants.ShooterConstants;
 import static org.team2059.Lintilla.Constants.VisionConstants.SHOOTER_OFFSET;
 import static org.team2059.Lintilla.Constants.VisionConstants.getHubTranslation;
@@ -41,6 +40,7 @@ public class ShooterBase extends SubsystemBase {
 	public boolean isAimed = false;
 
 	public boolean addFivePercent;
+	public boolean subFivePercent;
 
 	public double currentDistanceToTarget = 0.0;
 
@@ -54,6 +54,7 @@ public class ShooterBase extends SubsystemBase {
 		this.rightShooter = rightShooter;
 
 		addFivePercent = !RobotContainer.buttonBox.getRawButton(SHOOTER_ADD5PERCENT_SWITCH);
+		subFivePercent = !RobotContainer.buttonBox.getRawButton(SHOOTER_SUB5PERCENT_SWITCH);
 
 		if (tuningMode) {
 			// Declare SysID routines
@@ -330,6 +331,10 @@ public class ShooterBase extends SubsystemBase {
 		addFivePercent = b;
 	}
 
+	public void setSubFivePercent(boolean b) {
+		subFivePercent = b;
+	}
+
 	@Override
 	public void periodic() {
 		leftShooter.updateInputs(leftShooterInputs);
@@ -339,7 +344,8 @@ public class ShooterBase extends SubsystemBase {
 		Logger.processInputs("ShooterBase/Right", rightShooterInputs);
 
 		Logger.recordOutput("AimedAtHub", isAimed);
-		Logger.recordOutput("AddFivePercentRPM", addFivePercent);
+		Logger.recordOutput("+5%", addFivePercent);
+		Logger.recordOutput("-5%", subFivePercent);
 		Logger.recordOutput("CurrentDistanceToHub", currentDistanceToTarget);
 		Logger.recordOutput("TargetAngleToHub", targetAimAngleRad);
 	}

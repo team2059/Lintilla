@@ -36,9 +36,6 @@ public class Robot extends LoggedRobot {
 	private final RobotContainer robotContainer;
 	private Command autonomousCommand;
 
-	private double lastLoopTime = 0.0;
-	private int loopOverrunCount = 0;
-
 	private boolean gameDataParsed = false;
 	private boolean shift1Active = false;
 	private double timeUntilHubActive = 0.0;
@@ -75,8 +72,9 @@ public class Robot extends LoggedRobot {
 		// Schedule warmup commands for PathPlanner path finding and following
 		CommandScheduler.getInstance().schedule(FollowPathCommand.warmupCommand());
 		CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
-	}
 
+		System.out.println(Constants.getAscii());
+	}
 
 	/**
 	 * This method is called every 20 ms, no matter the mode. Use this for items like diagnostics
@@ -87,17 +85,6 @@ public class Robot extends LoggedRobot {
 	 */
 	@Override
 	public void robotPeriodic() {
-
-		double currentTime = Timer.getFPGATimestamp();
-		double loopDurationSeconds = currentTime - lastLoopTime;
-
-		if (lastLoopTime != 0.0 && loopDurationSeconds > 0.03) loopOverrunCount++;
-
-		Logger.recordOutput("LoopDurationMs", loopDurationSeconds * 1000.0);
-		Logger.recordOutput("LoopOverrunCount", loopOverrunCount);
-
-		lastLoopTime = currentTime;
-
 		boolean hubActive = isHubActive();
 		Logger.recordOutput("HubActive", hubActive);
 		Logger.recordOutput("TimeUntilHubActive", timeUntilHubActive);

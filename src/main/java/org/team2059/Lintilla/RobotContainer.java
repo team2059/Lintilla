@@ -31,6 +31,7 @@ import org.team2059.Lintilla.subsystems.shooter.VortexShooter;
 import org.team2059.Lintilla.subsystems.vision.LocalizationSystem;
 
 import static org.team2059.Lintilla.Constants.OperatorConstants.SHOOTER_ADD5PERCENT_SWITCH;
+import static org.team2059.Lintilla.Constants.OperatorConstants.SHOOTER_SUB5PERCENT_SWITCH;
 
 /**
  * Central initialization class
@@ -196,9 +197,6 @@ public class RobotContainer {
 		new JoystickButton(logitech, OperatorConstants.ROBOT_RELATIVE)
 		  .whileTrue(Drivetrain.getInstance().setFieldRelativity());
 
-		new JoystickButton(logitech, 12)
-		  .whileTrue(ShooterBase.getInstance().indexerTest());
-
 		/* ===================== */
 		/* OPERATOR'S CONTROLLER */
 		/* ===================== */
@@ -278,6 +276,18 @@ public class RobotContainer {
 			  .ignoringDisable(true)
 		  ).onTrue(Commands.runOnce(() -> {
 				  ShooterBase.getInstance().setAddFivePercent(false);
+			  })
+			  .ignoringDisable(true)
+		  );
+
+		/* SUBTRACT 5% FROM ALL RPM OUTPUTS */
+		new JoystickButton(buttonBox, SHOOTER_SUB5PERCENT_SWITCH)
+		  .onFalse(Commands.runOnce(() -> {
+				  ShooterBase.getInstance().setSubFivePercent(true);
+			  })
+			  .ignoringDisable(true)
+		  ).onTrue(Commands.runOnce(() -> {
+				  ShooterBase.getInstance().setSubFivePercent(false);
 			  })
 			  .ignoringDisable(true)
 		  );
