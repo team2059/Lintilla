@@ -322,6 +322,17 @@ public class LocalizationSystem extends SubsystemBase {
 	}
 
 	/**
+	 * @param pose the Pose3d to check
+	 * @return whether or not the pose is within field dimensions
+	 */
+	private boolean validFieldPose(Pose3d pose) {
+		return pose.getX() < 0.0
+		  || pose.getX() > APRIL_TAG_FIELD_LAYOUT.getFieldLength()
+		  || pose.getY() < 0.0
+		  || pose.getY() > APRIL_TAG_FIELD_LAYOUT.getFieldWidth();
+	}
+
+	/**
 	 * Handles periodic updates for QuestNav pose estimation.
 	 * <p>
 	 * Processes unread QuestNav pose frames, validates poses against AprilTag estimates,
@@ -380,13 +391,15 @@ public class LocalizationSystem extends SubsystemBase {
 				// -> in Autonomous and switch is on
 				// Or
 				// -> healthy, camera connected, and switch is on
-				// TODO: add field pose validation here
 				if ((DriverStation.isAutonomous() && qnavUseMeasurements) || (qnavHealthy && qnavUseMeasurements && pvConnected)) {
-					Drivetrain.getInstance().addVisionMeasurement(
-					  qnavRobotPose.toPose2d(),
-					  frame.dataTimestamp(),
-					  QNAV_STD_DEVS
-					);
+					// Check whether or not the pose is within field bounds
+					if (validFieldPose(qnavRobotPose)) {
+						Drivetrain.getInstance().addVisionMeasurement(
+						  qnavRobotPose.toPose2d(),
+						  frame.dataTimestamp(),
+						  QNAV_STD_DEVS
+						);
+					}
 				}
 
 				break; // found the most recent tracking frame, exit loop
