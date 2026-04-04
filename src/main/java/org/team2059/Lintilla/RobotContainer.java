@@ -146,7 +146,8 @@ public class RobotContainer {
 		Collector.initialize(
 		  new CollectorIOReal(
 			CANConstants.COLLECTOR_TILT,
-			CANConstants.COLLECTOR_INTAKE
+			CANConstants.COLLECTOR_INTAKE_LEFT,
+		    CANConstants.COLLECTOR_INTAKE_RIGHT
 		  )
 		);
 

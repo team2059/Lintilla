@@ -31,9 +31,12 @@ public interface CollectorIO {
 
 	@AutoLog
 	class CollectorIOInputs {
-		public MutTemperature intakeTemp = Celsius.mutable(0);
-		public MutVoltage intakeAppliedVolts = Volts.mutable(0);
-		public MutCurrent intakeCurrent = Amps.mutable(0);
+		public MutTemperature leftIntakeTemp = Celsius.mutable(0);
+		public MutVoltage leftIntakeAppliedVolts = Volts.mutable(0);
+		public MutCurrent leftIntakeCurrent = Amps.mutable(0);
+		public MutTemperature rightIntakeTemp = Celsius.mutable(0);
+		public MutVoltage rightIntakeAppliedVolts = Volts.mutable(0);
+		public MutCurrent rightIntakeCurrent = Amps.mutable(0);
 
 		public MutTemperature conveyorTemp = Celsius.mutable(0);
 		public MutVoltage conveyorAppliedVolts = Volts.mutable(0);

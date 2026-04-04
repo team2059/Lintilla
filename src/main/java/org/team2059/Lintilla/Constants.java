@@ -324,8 +324,8 @@ public final class Constants {
 		public static final int RIGHT_SHOOTER_FLYWHEEL = 56;
 
 		public static final int COLLECTOR_TILT = 57;
-		public static final int COLLECTOR_INTAKE = 58;
-		// public static final int COLLECTOR_INTAKE = 60;
+		public static final int COLLECTOR_INTAKE_LEFT = 60;
+		public static final int COLLECTOR_INTAKE_RIGHT = 61;
 		public static final int CONVEYOR = 59;
 	}
 
@@ -429,8 +429,7 @@ public final class Constants {
 		public static final double THRUBORE_OFFSET = 0.086;
 
 		public static final double THRUBORE_OUT = 0.0;
-		public static final double THRUBORE_SHOOTING = 0.125;
-		public static final double THRUBORE_IN = 0.34;
+		public static final double THRUBORE_IN = 0.25;
 
 		public static final double INTAKING_ROLLER_SPEED = 0.60;
 		public static final double OUTTAKING_ROLLER_SPEED = -0.75;

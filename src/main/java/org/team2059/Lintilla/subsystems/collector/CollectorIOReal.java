@@ -22,20 +22,23 @@ import static org.team2059.Lintilla.Constants.CANConstants.*;
 public class CollectorIOReal implements CollectorIO {
 
 	private final SparkFlex tiltMotor;
-	private final SparkFlex intakeMotor;
+	private final SparkFlex leftIntakeMotor;
+	private final SparkFlex rightIntakeMotor;
 
 	private final SparkClosedLoopController tiltController;
 
 	private final SparkFlexConfig tiltConfig = new SparkFlexConfig();
-	private final SparkFlexConfig intakeConfig = new SparkFlexConfig();
+	private final SparkFlexConfig leftIntakeConfig = new SparkFlexConfig();
+	private final SparkFlexConfig rightIntakeConfig = new SparkFlexConfig();
 
 	private final AbsoluteEncoder thruBoreEnc;
 
 	private final LoggedTunableNumber kPTilt = new LoggedTunableNumber("TILT_P", CollectorConstants.TILT_P);
 
-	public CollectorIOReal(int tiltMotorCanId, int intakeMotorCanId) {
+	public CollectorIOReal(int tiltMotorCanId, int leftIntakeMotorCanId, int rightIntakeMotorCanId) {
 		// Initialize motors
-		intakeMotor = new SparkFlex(intakeMotorCanId, SparkLowLevel.MotorType.kBrushless);
+		leftIntakeMotor = new SparkFlex(leftIntakeMotorCanId, SparkLowLevel.MotorType.kBrushless);
+		rightIntakeMotor = new SparkFlex(rightIntakeMotorCanId, SparkLowLevel.MotorType.kBrushless);
 		tiltMotor = new SparkFlex(tiltMotorCanId, SparkLowLevel.MotorType.kBrushless);
 
 		// Configure tilt motor - this is the most complicated part of this entire subsystem
@@ -76,30 +79,44 @@ public class CollectorIOReal implements CollectorIO {
 		thruBoreEnc = tiltMotor.getAbsoluteEncoder();
 
 		// Configure intake, simple bang-bang
-		intakeConfig
+		leftIntakeConfig
 		  .inverted(false)
 		  .idleMode(SparkFlexConfig.IdleMode.kBrake);
-		intakeConfig.signals
+		leftIntakeConfig.signals
 		  .primaryEncoderPositionPeriodMs(REV_POSITION_PERIOD_MS)
 		  .primaryEncoderVelocityPeriodMs(REV_VELOCITY_PERIOD_MS)
 		  .appliedOutputPeriodMs(REV_APPLIED_OUTPUT_PERIOD_MS)
 		  .outputCurrentPeriodMs(REV_OUTPUT_CURRENT_PERIOD_MS)
 		  .motorTemperaturePeriodMs(REV_MOTOR_TEMP_PERIOD_MS)
 		  .faultsPeriodMs(REV_MOTOR_FAULTS_PERIOD_MS);
-		intakeMotor.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-		intakeMotor.clearFaults();
+		leftIntakeMotor.configure(leftIntakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+		leftIntakeMotor.clearFaults();
+
+		rightIntakeConfig
+		  .follow(leftIntakeMotor, true) // follow the left motor, and invert
+		  .idleMode(SparkFlexConfig.IdleMode.kBrake);
+		rightIntakeConfig.signals
+		  .primaryEncoderPositionPeriodMs(REV_POSITION_PERIOD_MS)
+		  .primaryEncoderVelocityPeriodMs(REV_VELOCITY_PERIOD_MS)
+		  .appliedOutputPeriodMs(REV_APPLIED_OUTPUT_PERIOD_MS)
+		  .outputCurrentPeriodMs(REV_OUTPUT_CURRENT_PERIOD_MS)
+		  .motorTemperaturePeriodMs(REV_MOTOR_TEMP_PERIOD_MS)
+		  .faultsPeriodMs(REV_MOTOR_FAULTS_PERIOD_MS);
+
+		rightIntakeMotor.configure(rightIntakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+		rightIntakeMotor.clearFaults();
 
 		tiltController = tiltMotor.getClosedLoopController();
 	}
 
 	@Override
 	public void setIntakeSpeed(double speed) {
-		intakeMotor.set(speed);
+		leftIntakeMotor.set(speed);
 	}
 
 	@Override
 	public void stopIntake() {
-		intakeMotor.setVoltage(0);
+		leftIntakeMotor.setVoltage(0);
 	}
 
 	@Override
@@ -134,9 +151,12 @@ public class CollectorIOReal implements CollectorIO {
 		  kPTilt
 		);
 
-		inputs.intakeAppliedVolts.mut_replace(intakeMotor.getAppliedOutput() * intakeMotor.getBusVoltage(), Volts);
-		inputs.intakeCurrent.mut_replace(intakeMotor.getOutputCurrent(), Amps);
-		inputs.intakeTemp.mut_replace(intakeMotor.getMotorTemperature(), Celsius);
+		inputs.leftIntakeAppliedVolts.mut_replace(leftIntakeMotor.getAppliedOutput() * leftIntakeMotor.getBusVoltage(), Volts);
+		inputs.leftIntakeCurrent.mut_replace(leftIntakeMotor.getOutputCurrent(), Amps);
+		inputs.leftIntakeTemp.mut_replace(leftIntakeMotor.getMotorTemperature(), Celsius);
+		inputs.rightIntakeAppliedVolts.mut_replace(rightIntakeMotor.getAppliedOutput() * rightIntakeMotor.getBusVoltage(), Volts);
+		inputs.rightIntakeCurrent.mut_replace(rightIntakeMotor.getOutputCurrent(), Amps);
+		inputs.rightIntakeTemp.mut_replace(rightIntakeMotor.getMotorTemperature(), Celsius);
 
 		inputs.tiltAppliedVolts.mut_replace(tiltMotor.getAppliedOutput() * tiltMotor.getBusVoltage(), Volts);
 		inputs.tiltCurrent.mut_replace(tiltMotor.getOutputCurrent(), Amps);
