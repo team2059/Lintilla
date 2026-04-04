@@ -2,11 +2,9 @@ package org.team2059.Lintilla.commands;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.team2059.Lintilla.subsystems.conveyor.Conveyor;
 import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
 import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
-import org.team2059.Lintilla.subsystems.vision.LocalizationSystem;
 
 import static edu.wpi.first.units.Units.RPM;
 import static org.team2059.Lintilla.Constants.ConveyorConstants.SHOOTING_CONVEYOR_SPEED;
@@ -67,12 +65,6 @@ public class SpinupAndShootCommand extends Command {
 
 	@Override
 	public void initialize() {
-		if (
-		  LocalizationSystem.getInstance().isPvConnected() && LocalizationSystem.getInstance().getPvHasTarget()
-		) {
-			CommandScheduler.getInstance().schedule(LocalizationSystem.getInstance().syncPoses());
-		}
-
 		spinUpTimer.reset();
 	}
 
@@ -106,10 +98,11 @@ public class SpinupAndShootCommand extends Command {
 		double rightRPM = shooterBase.rightShooterInputs.flywheelVelocity.in(RPM);
 
 		if (
+		  // Shooters within tolerance, or timer has run out
 		  (Math.abs(leftRPM - desiredRPM) <= SPINUP_TOLERANCE_RPM && Math.abs(rightRPM - desiredRPM) <= SPINUP_TOLERANCE_RPM)
 			|| spinUpTimer.hasElapsed(SPINUP_TIME_SECONDS)
 		) {
-			// Both shooters are within tolerance. Spin indexers
+			// Spin indexers and conveyor
 			shooterBase.leftShooter.setIndexerSpeed(INDEXER_SPEED_WHILE_SHOOTING);
 			shooterBase.rightShooter.setIndexerSpeed(INDEXER_SPEED_WHILE_SHOOTING);
 			conveyor.io.setConveyorSpeed(SHOOTING_CONVEYOR_SPEED);

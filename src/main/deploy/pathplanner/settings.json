@@ -13,7 +13,7 @@
     "Shoot Only",
     "Tests"
   ],
-  "defaultMaxVel": 4.5,
+  "defaultMaxVel": 2.5,
   "defaultMaxAccel": 2.75,
   "defaultMaxAngVel": 180.0,
   "defaultMaxAngAccel": 180.0,

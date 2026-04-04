@@ -28,59 +28,11 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 
 public final class Constants {
-	public static String getAscii() {
-		return """
-		  
-		  
-		                                       0111111111111111111110                                       
-		                                  iW11111111110immmmmmmmmmmmd0111i                                  
-		              v                W16dmmd6        W0immmmmmmmmmmmmmmd61W                v              
-		                            W10immmmm0  RW111W   1immmmmmmmmmmmmmmmmi01W                            
-		                          W0immmmmmmm0   1immi1   1immmmmmmmmmmmmmmmmmmi0W                          
-		                        W0immmmmmmmmmi6   0mmmi1   0mmmmmmmmmmmmmmmmmmmmmi0W                        
-		                      W0immmmmmmmmmmmmiW  1mmmmiW  Wimmmmmmmmmmmmmmmmmmmmmmi0W                      
-		                    W0immmmmmmmmmmmmmmm1  1mmmmmdm  0mmmmmmmmmmmddimmmmmmmmmmi0W                    
-		                   1immmmmmmmmmmmmmmmmm1  1mmmmmmW  1mmmmmmmi01Wr 11110immmmmmmi1                   
-		                  1immmmmmmmmmmmmmmmmmm1  1mmmmmm1  1mmmmd01W          W0immmmmmi1                  
-		                 1immmmmmmmmmmmmmmmmmmiW  6mmmmmm1  W00116    W11111Wm   0mmmmmmmi1                 
-		                1immmmmmmmmmmmmmmmmmmm0   0mmmmmm0   R     W10immmmd1Rd  R0immmmmmi1                
-		   v           1immmmmmmmmmmmmmmmmmmmiW  Wimmmmmmi1    iW10immmmi0Wi       1immmmmmi1               
-		              Wimmmmmmmmmmmmmmmmmmmmm0   1mmmmmmmmi0116dmmmmmmi0W     W1W   1immmmmmiW              
-		              0mmmmmmmmmmmmmmmmmmmmmm6   1mmmmmmmmmmmmmmmmmmmmi   mW10imdR   immmmmmm0              
-		             Wimmmmmmmmmmmmmmmmmmmmmm6   1mmmmmmmmmmmmmmmmmmmmi016dmmmi0Wd  R6mmmmmmmiW             
-		             1mmmmmmmmmmmmmmmmmmmmmmm6   1mmmmmmmmmmmmmmmmmmmmmmmmmi01W      00immmmmm1             
-		             6mmmmmmmmmmmmmmmmmmmmmmm0   1mmmmmmmmmmmmmmmmmmmmmmmmi1     W1W   1immmmm6             
-		            0dmmmmmmmmmmmmmmmmmmmmmmm0   1mmmmmmmmmmmmmmmmmmmmmmmmi   W10imiW   immmmmdd            
-		            1mmmmmmmmmmmmmmmmmmmmmmmm6   6mmmmmmmmmmmmmmmmmmmmmmmmi060immmmiW  Wimmmmmm1            
-		            1mmmmmmmmmmmmmmmmmmmi06ddW  idmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmi01Wr  1mmmmmmm1            
-		            0dmmmmmmmmmmmmmmmi01W   1   Wdmmmmmmmmmmmmmmmmmmmmmmmmmmmmd6W      Wimmmmmd0            
-		             6mmmmmmmmmmmi061W       N   6mmmmmmmmmmmmmmmmmmmmmmmmmmmm     6Ri  0mmmmm6             
-		             1mmmmmmmmi01W     vW1W   N  r0mmmmmmmmmmmmmmmmmmmmmmmmmmmd6110d6   0mmmmm1             
-		             Wimmmmmmmi     W16dimi1   N  mdmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmi0R  6immmmiW             
-		              0mmmmmmmi1   R0mmmmmmi1   N  0dmmmmmmmmmmmmmmmmmmmmmmmmmmi01W   6immmmm0              
-		              Wimmmmmmmi1   1immmmmmi1   N  6immmmmmmmmmmmmmmmmmmmmmi01W     1immmmmiW              
-		               1immmmmmmi1   1immmmmmi1   N  1immmmmmmmmmmmmmmmmi011W     W10immmmmi1           v   
-		                1immmmmmmi1   1immmmmmi1   N  1immmmmmmmmmmmmd01W     W110immmmmmmi1                
-		                 1immmmmmmi1   1immmmmmi1   N  1immmmmd6111116     W10immmmmmmmmmi1                 
-		                  1immmmmmmi1   1immmmmmi1   N  1di01Wr        W110immmmmmmmmmmmi1                  
-		                   1immmmmmmi1   1immmmmmi1   N  WW     W111110immmmmmmmmmmmmmmi1                   
-		                    W0immmmmmi1   1immmmmmi1   N    W110immmmmmmmmmmmmmmmmmmmi0W                    
-		                      W0immmmmi6   1immmmmm0R   RW10immmmmmmmmmmmmmmmmmmmmmi0W                      
-		                        W0immmmi6   1imid61W     immmmmmmmmmmmmmmmmmmmmmmi0W                        
-		                          W0immmi6v  W1W      W10immmmmmmmmmmmmmmmmmmmmi0W                          
-		                            W10imi0m      W160immmmmmmmmmmmmmmmmmmmmi01W                            
-		              v                W1600d  W10immmmmmmmmmmmmmmmmmmmmmd61W                v              
-		                                  dWRRR6mmmmmmmmmmmmmmmmmmmmd0111d                                  
-		                                       0111111111111111111116                                       
-		  
-		  """;
-	}
 
 	/**
 	 * Constants class for operator buttons and joystick axes
 	 */
 	public static final class OperatorConstants {
-
 
 		// If true, tunable numbers can be modified, and SysID routines will be instantiated (memory heavy!)
 		public static final boolean tuningMode = false;
@@ -114,14 +66,11 @@ public final class Constants {
 		public static final int SPINUP_SHOOT_DISTANCE = 1;
 		public static final int SPINUP_SHOOT_FIXED = 2;
 		public static final int SHOOTER_UNJAM = 3;
-		public static final int SPIN_INDEXER = 4;
 		public static final int COLLECTOR_OUT_INTAKE = 5;
 		public static final int COLLECTOR_IN = 6;
 		public static final int COLLECTOR_UNJAM = 7;
 		public static final int COLLECTOR_INTAKE = 8;
 		public static final int LOCALIZATION_SYNC_POSES = 12;
-		public static final int SHUTTLE_RPM = 9;
-		public static final int TOWER_RPM = 10;
 
 		/* ======== */
 		/* SWITCHES */
@@ -152,12 +101,12 @@ public final class Constants {
 	 */
 	public static final class DrivetrainConstants {
 		// Global maximums
-		public static final double MAX_VELOCITY = 3; // meters/sec
+		public static final double MAX_VELOCITY = 5; // meters/sec
 		public static final double MAX_ACCELERATION = 3; // meters/sec^2
 		public static final double MAX_ANGULAR_VELOCITY = 2 * Math.PI; // rad/sec
 		public static final double MAX_ANGULAR_ACCELERATION = 4 * Math.PI; // rad/sec^2
 		// Teleop max speeds
-		public static final double TELE_DRIVE_MAX_SPEED = 8;
+		public static final double TELE_DRIVE_MAX_SPEED = 10;
 		public static final double TELE_DRIVE_MAX_ANGULAR_SPEED = (3 * Math.PI) / 2;
 
 		/*
@@ -241,7 +190,7 @@ public final class Constants {
 		  Units.inchesToMeters(20),
 		  new Rotation3d(
 			0,
-			Units.degreesToRadians(-47.3),
+			Units.degreesToRadians(-48),
 			0
 		  )
 		);
@@ -336,10 +285,9 @@ public final class Constants {
 		// Error to tolerate when spinning up to shoot (in RPMs)
 		public static final double SPINUP_TOLERANCE_RPM = 50;
 		// Speed [-1,1] to run the indexer at while shooting
-		public static final double INDEXER_SPEED_WHILE_SHOOTING = 0.8;
+		public static final double INDEXER_SPEED_WHILE_SHOOTING = 0.9;
 		public static final double HUB_HEIGHT_METERS = 1.83; // End height of trajectory
 		public static final double SHOOTER_HEIGHT_METERS = 0.5; // Start height of trajectory
-		public static final double FUEL_EXIT_ANGLE_RADIANS = 0.983936078; // RADIANS At what angle does fuel leave the shooter
 
 		/*
 		 * Units of Flywheel Constants (Thanks Rev for good docs this year)
@@ -431,7 +379,7 @@ public final class Constants {
 		public static final double THRUBORE_OUT = 0.0;
 		public static final double THRUBORE_IN = 0.25;
 
-		public static final double INTAKING_ROLLER_SPEED = 0.60;
+		public static final double INTAKING_ROLLER_SPEED = 0.50;
 		public static final double OUTTAKING_ROLLER_SPEED = -0.75;
 	}
 

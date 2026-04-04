@@ -173,22 +173,6 @@ public class Drivetrain extends SubsystemBase {
 		return cachedModulePositions;
 	}
 
-	public SwerveModuleIO getFrontLeft() {
-		return modules[0];
-	}
-
-	public SwerveModuleIO getFrontRight() {
-		return modules[1];
-	}
-
-	public SwerveModuleIO getBackLeft() {
-		return modules[2];
-	}
-
-	public SwerveModuleIO getBackRight() {
-		return modules[3];
-	}
-
 	public SwerveModuleIOInputsAutoLogged[] getSwerveInputs() {
 		return swerveModuleInputs;
 	}
@@ -232,13 +216,12 @@ public class Drivetrain extends SubsystemBase {
 	}
 
 	public Command resetGyroHeading() {
-		return Commands.runOnce(() -> gyroIO.reset()).ignoringDisable(true);
+		return Commands.runOnce(gyroIO::reset).ignoringDisable(true);
 	}
 
 	public Command setFieldRelativity() {
-		return Commands.runOnce(() -> {
-			isFieldRelativeTeleop = !isFieldRelativeTeleop;
-		}).ignoringDisable(true);
+		return Commands.runOnce(() -> isFieldRelativeTeleop = !isFieldRelativeTeleop)
+		  .ignoringDisable(true);
 	}
 
 	/**
@@ -247,8 +230,11 @@ public class Drivetrain extends SubsystemBase {
 	 * @param desiredStates SwerveModuleState[] desired states
 	 */
 	public void setModuleStates(SwerveModuleState[] desiredStates) {
+
 		// makes it never go above specified max velocity
 		SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, DrivetrainConstants.MAX_VELOCITY);
+
+		Logger.recordOutput("Desired States", desiredStates);
 
 		// Sets the speed and rotation of each module
 		for (int i = 0; i < 4; i++) {
@@ -352,6 +338,16 @@ public class Drivetrain extends SubsystemBase {
 	}
 
 	/**
+	 * Method for SysID routines that runs the characterization method for each module.
+	 * @param volts voltage parameter to pass
+	 */
+	public void runCharacterization(double volts) {
+		for (int i = 0; i < 4; i++) {
+			modules[i].runCharacterization(volts);
+		}
+	}
+
+	/**
 	 * AutoBuilder configuration method, must be run after all other configuration
 	 */
 	public void configureAutoBuilder() {
@@ -389,24 +385,17 @@ public class Drivetrain extends SubsystemBase {
 		}
 	}
 
-	/**
-	 * Calculate the direct horizontal distance from the shooter to the Alliance Hub.
-	 *
-	 * @return distance, in METERS
-	 */
-	public double calculateDistanceShooterToHubMeters() {
-		return VisionConstants.getHubTranslation().getDistance(getShooterPose().getTranslation());
-	}
-
 	@Override
 	public void periodic() {
 
 		Logger.recordOutput("Estimated Pose", getEstimatedPose());
 		Logger.recordOutput("Field Relative", isFieldRelativeTeleop);
 
+		// Process Gyroscope logging
 		gyroIO.updateInputs(gyroInputs);
 		Logger.processInputs("Gyroscope", gyroInputs);
 
+		// Process SwerveModule logging
 		for (int i = 0; i < 4; i++) {
 			modules[i].updateInputs(swerveModuleInputs[i]);
 			Logger.processInputs(MODULE_LOG_KEYS[i], swerveModuleInputs[i]);
@@ -416,5 +405,7 @@ public class Drivetrain extends SubsystemBase {
 		poseEstimator.update(getHeading(), getModulePositions());
 
 		field.setRobotPose(getEstimatedPose());
+
+		Logger.recordOutput("Current States", getStates());
 	}
 }

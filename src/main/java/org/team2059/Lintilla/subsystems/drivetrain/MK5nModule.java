@@ -99,6 +99,15 @@ public class MK5nModule implements SwerveModuleIO {
 	}
 
 	@Override
+	public void runCharacterization(double volts) {
+		// Lock the azimuth straight forward (0 rotations) using your hardware PID request
+		azimuthMotor.setControl(azimuthPositionReq.withPosition(0));
+
+		// Apply raw, unadulterated voltage to the SparkFlex
+		driveMotor.setVoltage(volts);
+	}
+
+	@Override
 	public void resetEncoders() {
 		// No longer resets rotation encoder (there's no need, it's absolute)
 		driveEncoder.setPosition(0);

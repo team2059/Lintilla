@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -77,6 +78,7 @@ public class LocalizationSystem extends SubsystemBase {
 		);
 		pvUseMeasurements = !RobotContainer.buttonBox.getRawButton(PHOTONVISION_MEASUREMENT_SWITCH);
 
+		// Don't flood the console with "camera not detected" messages
 		PhotonCamera.setVersionCheckEnabled(false);
 	}
 
@@ -309,12 +311,12 @@ public class LocalizationSystem extends SubsystemBase {
 		return Commands.runOnce(() -> {
 			Pose3d p = getPvRobotPose();
 
-			if (p != null) {
+			if (p != null && pvHasTarget && pvConnected) {
 				setQnavRobotPose(p);
 				qnavFaultCounter = 0;
 				System.out.println("[i] QuestNav pose reset successfully");
 			} else {
-				System.out.println("[!] QuestNav pose reset failed");
+				System.out.println("[!] QuestNav pose reset failed: no targets or not connected");
 			}
 		}).ignoringDisable(true);
 	}
@@ -374,10 +376,12 @@ public class LocalizationSystem extends SubsystemBase {
 
 				qnavHealthy = qnavFaultCounter < QUESTNAV_FAILURE_THRESHOLD;
 
-				// Only use QuestNav measurements when fault counter is below threshold, and PV is still giving
-				// valid measurements
+				// Only use QuestNav measurements when:
+				// -> in Autonomous and switch is on
+				// Or
+				// -> healthy, camera connected, and switch is on
 				// TODO: add field pose validation here
-				if (qnavHealthy && qnavUseMeasurements && pvConnected) {
+				if ((DriverStation.isAutonomous() && qnavUseMeasurements) || (qnavHealthy && qnavUseMeasurements && pvConnected)) {
 					Drivetrain.getInstance().addVisionMeasurement(
 					  qnavRobotPose.toPose2d(),
 					  frame.dataTimestamp(),

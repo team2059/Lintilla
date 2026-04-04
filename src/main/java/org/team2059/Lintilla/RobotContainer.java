@@ -225,24 +225,6 @@ public class RobotContainer {
 		new JoystickButton(buttonBox, OperatorConstants.SHOOTER_UNJAM)
 		  .whileTrue(ShooterBase.getInstance().unjamShooters());
 
-		new JoystickButton(buttonBox, OperatorConstants.TOWER_RPM)
-		  .whileTrue(
-			new SpinupAndShootCommand(
-			  ShooterBase.getInstance(),
-			  Conveyor.getInstance(),
-			  3125
-			).alongWith(Collector.getInstance().agitationCommand())
-		  );
-
-		new JoystickButton(buttonBox, OperatorConstants.SHUTTLE_RPM)
-		  .whileTrue(
-			new SpinupAndShootCommand(
-			  ShooterBase.getInstance(),
-			  Conveyor.getInstance(),
-			  4000
-			).alongWith(Collector.getInstance().agitationCommand())
-		  );
-
 		/* COLLECTOR OUT & INTAKE */
 		new JoystickButton(buttonBox, OperatorConstants.COLLECTOR_OUT_INTAKE)
 		  .whileTrue(Collector.getInstance().tiltOutAndIntake());

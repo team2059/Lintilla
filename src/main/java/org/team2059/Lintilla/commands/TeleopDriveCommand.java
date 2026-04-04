@@ -5,9 +5,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import org.team2059.Lintilla.Constants;
 import org.team2059.Lintilla.Constants.DrivetrainConstants;
 import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
 import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
@@ -32,7 +30,6 @@ public class TeleopDriveCommand extends Command {
 	private final LoggedTunableNumber kP = new LoggedTunableNumber("HubTurnKp", 8.0);
 	private final LoggedTunableNumber kI = new LoggedTunableNumber("HubTurnKi", 0);
 	private final LoggedTunableNumber kD = new LoggedTunableNumber("HubTurnKd", 0);
-	private final Translation2d shooterOffset = Constants.VisionConstants.SHOOTER_OFFSET.getTranslation();
 
 	/**
 	 * @param drivetrain  the Drivetrain subsystem to interface with
@@ -91,28 +88,29 @@ public class TeleopDriveCommand extends Command {
 		// Check for updated TunableNumbers for rotation controller and take action if needed
 		LoggedTunableNumber.ifChanged(
 		  hashCode(),
-		  () -> {
-			  controller.setPID(kP.get(), kI.get(), kD.get());
-		  },
+		  () -> controller.setPID(kP.get(), kI.get(), kD.get()),
 		  kP, kI, kD
 		);
 
-		// Get joystick input as x, y, and rotation
-		double xSpeed = -forwardX.getAsDouble();
-		double ySpeed = -forwardY.getAsDouble();
-		double rot = -rotation.getAsDouble();
-
+		// Get raw joystick input as x, y, and rotation
+		double xSpeed = forwardX.getAsDouble();
+		double ySpeed = forwardY.getAsDouble();
+		double rot = rotation.getAsDouble();
 
 		// Apply deadband
-		xSpeed = Math.abs(xSpeed) > 0.25 ? xSpeed : 0.0;
-		ySpeed = Math.abs(ySpeed) > 0.25 ? ySpeed : 0.0;
-		rot = Math.abs(rot) > 0.15 ? rot : 0.0;
+		xSpeed = MathUtil.applyDeadband(xSpeed, 0.25);
+		ySpeed = MathUtil.applyDeadband(ySpeed, 0.25);
+		rot = MathUtil.applyDeadband(rot, 0.2);
 
+		// Make the driving smoother with rate limiter
+		xSpeed = xLimiter.calculate(xSpeed);
+		ySpeed = yLimiter.calculate(ySpeed);
+		rot = rotLimiter.calculate(rot);
 
-		// Make the driving smoother
-		xSpeed = xLimiter.calculate(xSpeed) * DrivetrainConstants.TELE_DRIVE_MAX_SPEED;
-		ySpeed = yLimiter.calculate(ySpeed) * DrivetrainConstants.TELE_DRIVE_MAX_SPEED;
-		rot = rotLimiter.calculate(rot) * DrivetrainConstants.TELE_DRIVE_MAX_ANGULAR_SPEED;
+		// Multiply by max speeds
+		xSpeed *= DrivetrainConstants.TELE_DRIVE_MAX_SPEED;
+		ySpeed *= DrivetrainConstants.TELE_DRIVE_MAX_SPEED;
+		rot *= DrivetrainConstants.TELE_DRIVE_MAX_ANGULAR_SPEED;
 
 		// Apply slider limit
 		double sliderVal = (-slider.getAsDouble() + 1) / 2;
@@ -121,12 +119,9 @@ public class TeleopDriveCommand extends Command {
 		ySpeed *= sliderVal;
 		rot *= sliderVal;
 
-		xSpeed = -MathUtil.applyDeadband(xSpeed, 0.1, 1);
-		ySpeed = -MathUtil.applyDeadband(ySpeed, 0.1, 1);
-		rot = -MathUtil.applyDeadband(rot, 0.3, 0.75);
-
 		if (hubTracking.getAsBoolean()) {
 
+			// Calculate latest SOTF numbers
 			ShooterBase.getInstance()
 			  .calculateSOTF(
 				Drivetrain.getInstance().getEstimatedPose(),
@@ -138,7 +133,15 @@ public class TeleopDriveCommand extends Command {
 			  drivetrain.getEstimatedPose().getRotation().getRadians(),
 			  ShooterBase.getInstance().targetAimAngleRad
 			);
+
 			ShooterBase.getInstance().isAimed = controller.atSetpoint(); // set for use in other commands
+
+			// Clamp angular speed between realistic maximums
+			angularSpeedRps = MathUtil.clamp(
+			  angularSpeedRps,
+			  -DrivetrainConstants.TELE_DRIVE_MAX_ANGULAR_SPEED,
+			  DrivetrainConstants.TELE_DRIVE_MAX_ANGULAR_SPEED
+			);
 
 			// Apply drive command
 			drivetrain.drive(xSpeed, ySpeed, angularSpeedRps, Drivetrain.isFieldRelativeTeleop);

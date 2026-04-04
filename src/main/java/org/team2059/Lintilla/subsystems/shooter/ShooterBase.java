@@ -44,6 +44,8 @@ public class ShooterBase extends SubsystemBase {
 
 	public double currentDistanceToTarget = 0.0;
 
+	public double desiredRPM = 0.0;
+
 	public double targetAimAngleRad = 0.0;
 
 	private ShooterBase(
@@ -281,19 +283,13 @@ public class ShooterBase extends SubsystemBase {
 		return rightIndexerRoutine.dynamic(SysIdRoutine.Direction.kReverse);
 	}
 
-	public Command indexerTest() {
-		return Commands.startEnd(() -> rightShooter.setIndexerSpeed(0.5), () -> rightShooter.setIndexerSpeed(0));
-	}
-
 	public Command unjamShooters() {
 		return Commands.startEnd(
 		  () -> {
 			  leftShooter.setIndexerSpeed(-1);
 			  rightShooter.setIndexerSpeed(-1);
 		  },
-		  () -> {
-			  stopAllSubsystemMotors();
-		  }
+		  this::stopAllSubsystemMotors
 		);
 	}
 
@@ -304,16 +300,15 @@ public class ShooterBase extends SubsystemBase {
 	 * @return RPM to set the shooter at
 	 */
 	public double getTargetRpm(double distanceMeters) {
-		Logger.recordOutput("distanceMeters", distanceMeters);
-		double rpm = ShooterConstants.SHOOTER_MAP.get(distanceMeters).rpm();
-		Logger.recordOutput("desiredRPM", rpm);
-		return rpm;
+		desiredRPM = ShooterConstants.SHOOTER_MAP.get(distanceMeters).rpm();
+
+		return desiredRPM;
 	}
 
 	/**
 	 * Fetch the estimated Time of Flight for shooting from a certain distance
 	 *
-	 * @param distanceMeters
+	 * @param distanceMeters distance from shooter to hub in meters
 	 * @return time in seconds
 	 */
 	public double getToF(double distanceMeters) {
@@ -347,6 +342,7 @@ public class ShooterBase extends SubsystemBase {
 		Logger.recordOutput("+5%", addFivePercent);
 		Logger.recordOutput("-5%", subFivePercent);
 		Logger.recordOutput("CurrentDistanceToHub", currentDistanceToTarget);
+		Logger.recordOutput("desiredRPM", desiredRPM);
 		Logger.recordOutput("TargetAngleToHub", targetAimAngleRad);
 	}
 }
