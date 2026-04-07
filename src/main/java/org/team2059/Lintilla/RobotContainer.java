@@ -217,7 +217,7 @@ public class RobotContainer {
 			new SpinupAndShootCommand(
 			  ShooterBase.getInstance(),
 			  Conveyor.getInstance(),
-			  2800
+			  2000
 			).alongWith(Collector.getInstance().agitationCommand())
 		  );
 

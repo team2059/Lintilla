@@ -342,7 +342,6 @@ public class ShooterBase extends SubsystemBase {
 		Logger.recordOutput("+5%", addFivePercent);
 		Logger.recordOutput("-5%", subFivePercent);
 		Logger.recordOutput("CurrentDistanceToHub", currentDistanceToTarget);
-		Logger.recordOutput("desiredRPM", desiredRPM);
 		Logger.recordOutput("TargetAngleToHub", targetAimAngleRad);
 	}
 }

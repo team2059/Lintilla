@@ -2,6 +2,7 @@ package org.team2059.Lintilla.commands;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import org.littletonrobotics.junction.Logger;
 import org.team2059.Lintilla.subsystems.conveyor.Conveyor;
 import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
 import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
@@ -71,11 +72,13 @@ public class SpinupAndShootCommand extends Command {
 	@Override
 	public void execute() {
 
-		// Calculate the latest SOTF numbers
-		shooterBase.calculateSOTF(Drivetrain.getInstance().getEstimatedPose(), Drivetrain.getInstance().getFieldRelativeSpeeds());
-
 		if (!desiredRPMHardcoded) {
-			// We're not hardcoded. Fetch the latest distance.
+			// We're not hardcoded.
+
+			// Calculate the latest SOTF numbers
+			shooterBase.calculateSOTF(Drivetrain.getInstance().getEstimatedPose(), Drivetrain.getInstance().getFieldRelativeSpeeds());
+
+			// Fetch the latest distance.
 			desiredRPM = shooterBase.getTargetRpm(shooterBase.currentDistanceToTarget);
 		}
 
@@ -88,6 +91,10 @@ public class SpinupAndShootCommand extends Command {
 		desiredRPM = (shooterBase.subFivePercent)
 		  ? desiredRPM * 0.95
 		  : desiredRPM;
+
+		Logger.recordOutput("desiredRPM", desiredRPM);
+
+		if (desiredRPM < 100) this.cancel();
 
 		// Set the two flywheels to the desired RPM, whether it's hardcoded or
 		// not, it doesn't matter at this point in execution.
@@ -116,6 +123,10 @@ public class SpinupAndShootCommand extends Command {
 
 	@Override
 	public void end(boolean interrupted) {
+		if (interrupted) {
+			System.out.println("RPM was " + desiredRPM);
+		}
+
 		// Stop everything that we used
 		shooterBase.leftShooter.stopIndexer();
 		shooterBase.leftShooter.stopFlywheel();
