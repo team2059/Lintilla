@@ -1,0 +1,130 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 8.009898518592951,
+        "y": 6.611941872083671
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 8.199731119791666,
+        "y": 5.902144531250001
+      },
+      "isLocked": false,
+      "linkedName": "Left Fuel Starting Point"
+    },
+    {
+      "anchor": {
+        "x": 8.244215060763889,
+        "y": 5.177673032407409
+      },
+      "prevControl": {
+        "x": 8.186270402308041,
+        "y": 5.72099827143496
+      },
+      "nextControl": {
+        "x": 8.284631148726852,
+        "y": 4.798706597222222
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 8.009898518592951,
+        "y": 4.268245442708333
+      },
+      "prevControl": {
+        "x": 8.239228660300927,
+        "y": 4.502737485532408
+      },
+      "nextControl": {
+        "x": 7.755268183581734,
+        "y": 4.007883734574081
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.105347439236112,
+        "y": 4.039002242476852
+      },
+      "prevControl": {
+        "x": 7.45719776292537,
+        "y": 4.012769775645011
+      },
+      "nextControl": {
+        "x": 6.856039376030548,
+        "y": 4.057589593570854
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.1661982783564815,
+        "y": 4.714659505208333
+      },
+      "prevControl": {
+        "x": 6.455806764294558,
+        "y": 4.230326100296774
+      },
+      "nextControl": {
+        "x": 5.917420255258657,
+        "y": 5.130709147551683
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.01903687459838,
+        "y": 6.0752878736383344
+      },
+      "prevControl": {
+        "x": 5.908035935499916,
+        "y": 5.165805077122989
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Left Fuel Rotational Ending Point"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 3.0438368055555545,
+      "rotationDegrees": 160.0
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Intake",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 2.0,
+    "maxAcceleration": 4.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 90.0
+  },
+  "reversed": false,
+  "folder": "UNTESTED Left",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -90.0
+  },
+  "useDefaultConstraints": false
+}

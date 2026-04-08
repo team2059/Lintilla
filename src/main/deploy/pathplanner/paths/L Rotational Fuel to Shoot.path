@@ -3,67 +3,71 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.8476474247685188,
-        "y": 4.061703486689815
+        "x": 6.01903687459838,
+        "y": 6.0752878736383344
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.885588435102302,
-        "y": 4.9774206261988505
+        "x": 6.393766983695651,
+        "y": 7.927236602861253
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Left Fuel Rotational Ending Point"
     },
     {
       "anchor": {
-        "x": 2.199789052509591,
-        "y": 6.7729174492487205
+        "x": 4.743368272569445,
+        "y": 7.3906506799768525
       },
       "prevControl": {
-        "x": 1.7541995684143226,
-        "y": 6.316952775335677
+        "x": 5.1797262124329855,
+        "y": 7.389842894213251
       },
       "nextControl": {
-        "x": 2.7567269662918017,
-        "y": 7.3428232107438065
+        "x": 4.307010332705904,
+        "y": 7.391458465740454
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Left Trench Passthru"
     },
     {
       "anchor": {
-        "x": 4.606969009750639,
-        "y": 7.517303338794756
+        "x": 3.090424342631074,
+        "y": 7.3906506799768525
       },
       "prevControl": {
-        "x": 3.8499879116048596,
-        "y": 7.503892613091432
+        "x": 4.286769750194404,
+        "y": 7.3880657655333275
       },
       "nextControl": {
-        "x": 5.394466754443174,
-        "y": 7.531254699366277
+        "x": 1.8940789350677432,
+        "y": 7.393235594420378
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.69311226222826,
-        "y": 6.8841449208759595
+        "x": 2.378108579282408,
+        "y": 5.504872757523149
       },
       "prevControl": {
-        "x": 7.3302076612054226,
-        "y": 7.002487078085414
+        "x": 2.518837466032609,
+        "y": 6.2792124560422
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Left Shooting Position"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1.9983778625954203,
-      "rotationDegrees": -90.0
+      "waypointRelativePos": 0.35203993055555527,
+      "rotationDegrees": 0.0
+    },
+    {
+      "waypointRelativePos": 1.6512369791666672,
+      "rotationDegrees": 0.0
     }
   ],
   "constraintZones": [],
@@ -79,13 +83,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": -34.05857930537961
   },
   "reversed": false,
-  "folder": "Center",
+  "folder": "UNTESTED Left",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 90.0
   },
   "useDefaultConstraints": true
 }

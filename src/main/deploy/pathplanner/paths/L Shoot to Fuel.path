@@ -1,0 +1,86 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.378108579282408,
+        "y": 5.504872757523149
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.4484430700231483,
+        "y": 7.609199363425926
+      },
+      "isLocked": false,
+      "linkedName": "Left Shooting Position"
+    },
+    {
+      "anchor": {
+        "x": 4.743368272569445,
+        "y": 7.3906506799768525
+      },
+      "prevControl": {
+        "x": 3.3164704137731484,
+        "y": 7.413811197916666
+      },
+      "nextControl": {
+        "x": 5.60461131548143,
+        "y": 7.37667151894375
+      },
+      "isLocked": false,
+      "linkedName": "Left Trench Passthru"
+    },
+    {
+      "anchor": {
+        "x": 8.009898518592951,
+        "y": 6.611941872083671
+      },
+      "prevControl": {
+        "x": 6.97655396412037,
+        "y": 7.568127170138888
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Left Fuel Starting Point"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.505736019736842,
+      "rotationDegrees": 0.0
+    },
+    {
+      "waypointRelativePos": 1.24658717105263,
+      "rotationDegrees": 0.0
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "CollectorOut",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 4.0,
+    "maxAcceleration": 4.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -90.0
+  },
+  "reversed": false,
+  "folder": "UNTESTED Left",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -34.05857930537961
+  },
+  "useDefaultConstraints": true
+}

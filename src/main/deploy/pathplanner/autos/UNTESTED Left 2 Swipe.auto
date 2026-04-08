@@ -1,0 +1,87 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L Trench to Fuel"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L Fuel Straight Swipe"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L Fuel to Shoot"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootWithDistance"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 3.0
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L Shoot to Fuel"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L Fuel Rotational Swipe"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L Rotational Fuel to Shoot"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootWithDistance"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 3.0
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": false,
+  "folder": null,
+  "choreoAuto": false
+}
