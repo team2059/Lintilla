@@ -30,6 +30,9 @@ public class Conveyor extends SubsystemBase {
 		}
 	}
 
+	/**
+	 * @return Command that runs the conveyor in the inward (towards shooter) direction with intaking constant speed.
+	 */
 	public Command conveyorIn() {
 		return Commands.startEnd(
 		  () -> io.setConveyorSpeed(ConveyorConstants.INTAKING_CONVEYOR_SPEED),
@@ -37,9 +40,12 @@ public class Conveyor extends SubsystemBase {
 		);
 	}
 
+	/**
+	 * @return Command that runs the conveyor in the reverse (unjam) direction with unjam constant speed.
+	 */
 	public Command conveyorOut() {
 		return Commands.startEnd(
-		  () -> io.setConveyorSpeed(-ConveyorConstants.INTAKING_CONVEYOR_SPEED),
+		  () -> io.setConveyorSpeed(ConveyorConstants.UNJAM_CONVEYOR_SPEED),
 		  io::stopConveyor
 		);
 	}

@@ -374,17 +374,18 @@ public final class Constants {
 		// Error in rotations at which to stop tilting commands
 		public static final double TILT_TOLERANCE_ROTATIONS = 0.05;
 
-		public static final double THRUBORE_OFFSET = 0.086;
+		public static final double THRUBORE_OFFSET = 0.93555465;
 
 		public static final double THRUBORE_OUT = 0.0;
 		public static final double THRUBORE_IN = 0.33;
 
-		public static final double INTAKING_ROLLER_SPEED = 0.90;
+		public static final double INTAKING_ROLLER_SPEED = 0.5;
 		public static final double OUTTAKING_ROLLER_SPEED = -0.75;
 	}
 
 	public static final class ConveyorConstants {
 		public static final double INTAKING_CONVEYOR_SPEED = 0.25;
 		public static final double SHOOTING_CONVEYOR_SPEED = 0.9;
+		public static final double UNJAM_CONVEYOR_SPEED = -0.5;
 	}
 }

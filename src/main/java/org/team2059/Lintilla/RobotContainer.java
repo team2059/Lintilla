@@ -221,9 +221,14 @@ public class RobotContainer {
 			).alongWith(Collector.getInstance().agitationCommand())
 		  );
 
-		/* SHOOTER UNJAM */
+		/* SHOOTER & HOPPER UNJAM */
+		/* Runs both the shooter indexers and the conveyor in the reverse direction. */
+		/* Intention is for this to be held for less than a second to loosen up a thick stack of fuel in the hopper. */
 		new JoystickButton(buttonBox, OperatorConstants.SHOOTER_UNJAM)
-		  .whileTrue(ShooterBase.getInstance().unjamShooters());
+		  .whileTrue(
+			ShooterBase.getInstance().unjamShooters()
+			  .alongWith(Conveyor.getInstance().conveyorOut())
+		  );
 
 		/* COLLECTOR OUT & INTAKE */
 		new JoystickButton(buttonBox, OperatorConstants.COLLECTOR_OUT_INTAKE)
