@@ -379,7 +379,7 @@ public final class Constants {
 		public static final double THRUBORE_OUT = 0.0;
 		public static final double THRUBORE_IN = 0.33;
 
-		public static final double INTAKING_ROLLER_SPEED = 0.5;
+		public static final double INTAKING_ROLLER_SPEED = 0.9;
 		public static final double OUTTAKING_ROLLER_SPEED = -0.75;
 	}
 
