@@ -3,16 +3,32 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.01903687459838,
-        "y": 6.0752878736383344
+        "x": 7.8220768952546305,
+        "y": 5.022044849537037
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.393766983695651,
-        "y": 7.927236602861253
+        "x": 7.923597719832976,
+        "y": 6.152579933449076
       },
       "isLocked": false,
-      "linkedName": "Left Fuel Rotational Ending Point"
+      "linkedName": "Left Fuel Ending Point"
+    },
+    {
+      "anchor": {
+        "x": 7.080481047453705,
+        "y": 7.1000616319444445
+      },
+      "prevControl": {
+        "x": 7.801811798636274,
+        "y": 6.589248902165032
+      },
+      "nextControl": {
+        "x": 6.545939616564746,
+        "y": 7.478598893866158
+      },
+      "isLocked": false,
+      "linkedName": null
     },
     {
       "anchor": {
@@ -20,31 +36,15 @@
         "y": 7.3906506799768525
       },
       "prevControl": {
-        "x": 5.1797262124329855,
-        "y": 7.389842894213251
+        "x": 5.610345969449022,
+        "y": 7.3906506799768525
       },
       "nextControl": {
-        "x": 4.307010332705904,
-        "y": 7.391458465740454
+        "x": 3.110963854254357,
+        "y": 7.3906506799768525
       },
       "isLocked": false,
       "linkedName": "Left Trench Passthru"
-    },
-    {
-      "anchor": {
-        "x": 3.090424342631074,
-        "y": 7.3906506799768525
-      },
-      "prevControl": {
-        "x": 4.286769750194404,
-        "y": 7.3880657655333275
-      },
-      "nextControl": {
-        "x": 1.8940789350677432,
-        "y": 7.393235594420378
-      },
-      "isLocked": false,
-      "linkedName": null
     },
     {
       "anchor": {
@@ -52,8 +52,8 @@
         "y": 5.504872757523149
       },
       "prevControl": {
-        "x": 2.518837466032609,
-        "y": 6.2792124560422
+        "x": 2.378108579282408,
+        "y": 7.587970023499471
       },
       "nextControl": null,
       "isLocked": false,
@@ -62,11 +62,7 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.35203993055555527,
-      "rotationDegrees": 0.0
-    },
-    {
-      "waypointRelativePos": 1.6512369791666672,
+      "waypointRelativePos": 2.0847039473684217,
       "rotationDegrees": 0.0
     }
   ],
@@ -86,10 +82,10 @@
     "rotation": -34.05857930537961
   },
   "reversed": false,
-  "folder": "UNTESTED Left",
+  "folder": "States Left",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": -90.0
   },
   "useDefaultConstraints": true
 }

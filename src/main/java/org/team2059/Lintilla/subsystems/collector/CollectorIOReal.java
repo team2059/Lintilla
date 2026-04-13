@@ -12,6 +12,7 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel;
+import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import org.team2059.Lintilla.Constants.CollectorConstants;
 import org.team2059.Lintilla.util.LoggedTunableNumber;
@@ -81,7 +82,8 @@ public class CollectorIOReal implements CollectorIO {
 		// Configure intake, simple bang-bang
 		leftIntakeConfig
 		  .inverted(false)
-		  .idleMode(SparkFlexConfig.IdleMode.kBrake);
+		  .idleMode(SparkFlexConfig.IdleMode.kCoast)
+		    .smartCurrentLimit(40);
 		leftIntakeConfig.signals
 		  .primaryEncoderPositionPeriodMs(REV_POSITION_PERIOD_MS)
 		  .primaryEncoderVelocityPeriodMs(REV_VELOCITY_PERIOD_MS)
@@ -94,7 +96,8 @@ public class CollectorIOReal implements CollectorIO {
 
 		rightIntakeConfig
 		  .follow(leftIntakeMotor, true) // follow the left motor, and invert
-		  .idleMode(SparkFlexConfig.IdleMode.kBrake);
+		  .idleMode(SparkFlexConfig.IdleMode.kCoast)
+			.smartCurrentLimit(40);
 		rightIntakeConfig.signals
 		  .primaryEncoderPositionPeriodMs(REV_POSITION_PERIOD_MS)
 		  .primaryEncoderVelocityPeriodMs(REV_VELOCITY_PERIOD_MS)

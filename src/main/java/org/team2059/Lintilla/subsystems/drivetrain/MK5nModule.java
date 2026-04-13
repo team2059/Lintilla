@@ -52,6 +52,9 @@ public class MK5nModule implements SwerveModuleIO {
 		  .inverted(driveInverted)
 		  .idleMode(SparkBaseConfig.IdleMode.kBrake);
 
+		driveMotorConfig
+		  .smartCurrentLimit(60);
+
 		driveMotorConfig.encoder
 		  .positionConversionFactor(Constants.DrivetrainConstants.DRIVE_POSITION_FACTOR)
 		  .velocityConversionFactor(Constants.DrivetrainConstants.DRIVE_VELOCITY_FACTOR);

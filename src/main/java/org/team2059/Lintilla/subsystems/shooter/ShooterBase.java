@@ -164,9 +164,10 @@ public class ShooterBase extends SubsystemBase {
 	public void calculateSOTF(Pose2d robotPose, ChassisSpeeds fieldSpeeds) {
 
 		// Check if robot is actually moving
-		boolean isMoving =
-		  Math.hypot(fieldSpeeds.vxMetersPerSecond, fieldSpeeds.vyMetersPerSecond) > 0.1
-			|| Math.abs(fieldSpeeds.omegaRadiansPerSecond) > 0.1;
+//		boolean isMoving =
+//		  Math.hypot(fieldSpeeds.vxMetersPerSecond, fieldSpeeds.vyMetersPerSecond) > 0.1
+//			|| Math.abs(fieldSpeeds.omegaRadiansPerSecond) > 0.1;
+		boolean isMoving = true;
 
 		Translation2d virtualTarget = getHubTranslation();
 

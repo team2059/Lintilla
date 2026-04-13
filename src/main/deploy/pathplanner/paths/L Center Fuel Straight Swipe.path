@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.009898518592951,
-        "y": 6.611941872083671
+        "x": 7.8220768952546305,
+        "y": 6.368963469328704
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.009898518592951,
-        "y": 5.385347660585143
+        "x": 7.8220768952546305,
+        "y": 5.142369257830176
       },
       "isLocked": false,
       "linkedName": "Left Fuel Starting Point"
     },
     {
       "anchor": {
-        "x": 8.009898518592951,
-        "y": 5.112521773726852
+        "x": 7.8220768952546305,
+        "y": 5.022044849537037
       },
       "prevControl": {
-        "x": 8.009898518592951,
-        "y": 5.983840720744712
+        "x": 7.8220768952546305,
+        "y": 5.8933637965548975
       },
       "nextControl": null,
       "isLocked": false,
@@ -41,7 +41,7 @@
   ],
   "globalConstraints": {
     "maxVelocity": 2.0,
-    "maxAcceleration": 4.0,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -52,9 +52,9 @@
     "rotation": -90.0
   },
   "reversed": false,
-  "folder": "UNTESTED Left",
+  "folder": "States Left",
   "idealStartingState": {
-    "velocity": 0,
+    "velocity": 2.0,
     "rotation": -90.0
   },
   "useDefaultConstraints": false

@@ -370,7 +370,7 @@ public class LocalizationSystem extends SubsystemBase {
 				qnavRawPose = frame.questPose3d();
 				qnavRobotPose = qnavRawPose.transformBy(ROBOT_TO_QUEST.inverse());
 
-				double bestEstimateDistance = (bestEstimate != null)
+				double bestEstimateDistance = (bestEstimate != null && pvHasTarget)
 				  ? qnavRobotPose.toPose2d().getTranslation().getDistance(bestEstimate.toPose2d().getTranslation())
 				  : 0;
 
@@ -385,21 +385,17 @@ public class LocalizationSystem extends SubsystemBase {
 					qnavFaultCounter = Math.max(qnavFaultCounter - 1.0, 0.0);
 				}
 
+				// Healthy if we're under the threshold or PV not working
 				qnavHealthy = qnavFaultCounter < QUESTNAV_FAILURE_THRESHOLD;
 
-				// Only use QuestNav measurements when:
-				// -> in Autonomous and switch is on
-				// Or
-				// -> healthy, camera connected, and switch is on
-				if ((DriverStation.isAutonomous() && qnavUseMeasurements) || (qnavHealthy && qnavUseMeasurements && pvConnected)) {
+				// Only use QuestNav measurements when the switch is on
+				if (qnavUseMeasurements && qnavHealthy) {
 					// Check whether or not the pose is within field bounds
-					if (validFieldPose(qnavRobotPose)) {
-						Drivetrain.getInstance().addVisionMeasurement(
-						  qnavRobotPose.toPose2d(),
-						  frame.dataTimestamp(),
-						  QNAV_STD_DEVS
-						);
-					}
+					Drivetrain.getInstance().addVisionMeasurement(
+					  qnavRobotPose.toPose2d(),
+					  frame.dataTimestamp(),
+					  QNAV_STD_DEVS
+					);
 				}
 
 				break; // found the most recent tracking frame, exit loop

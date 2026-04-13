@@ -5,12 +5,13 @@
   "pathFolders": [
     "Center",
     "Left",
-    "UNTESTED Left",
-    "Right"
+    "Right",
+    "States Left"
   ],
   "autoFolders": [
     "1Swipe",
     "2Swipe",
+    "States",
     "Shoot Only",
     "Tests"
   ],

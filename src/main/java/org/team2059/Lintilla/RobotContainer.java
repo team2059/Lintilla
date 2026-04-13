@@ -5,6 +5,8 @@
 package org.team2059.Lintilla;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -17,6 +19,7 @@ import org.team2059.Lintilla.Constants.CANConstants;
 import org.team2059.Lintilla.Constants.DrivetrainConstants;
 import org.team2059.Lintilla.Constants.OperatorConstants;
 import org.team2059.Lintilla.Constants.ShooterConstants;
+import org.team2059.Lintilla.commands.QnavCalibrationCommand;
 import org.team2059.Lintilla.commands.SpinupAndShootCommand;
 import org.team2059.Lintilla.commands.TeleopDriveCommand;
 import org.team2059.Lintilla.subsystems.collector.Collector;
@@ -217,7 +220,7 @@ public class RobotContainer {
 			new SpinupAndShootCommand(
 			  ShooterBase.getInstance(),
 			  Conveyor.getInstance(),
-			  2000
+			  4000
 			).alongWith(Collector.getInstance().agitationCommand())
 		  );
 
@@ -232,7 +235,10 @@ public class RobotContainer {
 
 		/* COLLECTOR OUT & INTAKE */
 		new JoystickButton(buttonBox, OperatorConstants.COLLECTOR_OUT_INTAKE)
-		  .whileTrue(Collector.getInstance().tiltOutAndIntake());
+		  .whileTrue(
+			Collector.getInstance().tiltOutAndIntake()
+			  .alongWith(Conveyor.getInstance().conveyorOut())
+		  );
 
 		/* COLLECTOR TILT IN */
 		new JoystickButton(buttonBox, OperatorConstants.COLLECTOR_IN)
@@ -242,9 +248,9 @@ public class RobotContainer {
 		new JoystickButton(buttonBox, OperatorConstants.COLLECTOR_UNJAM)
 		  .whileTrue(Collector.getInstance().outtake());
 
-		/* COLLECTOR ROLLERS IN/INTAKE */
+		/* COLLECTOR ROLLERS IN/INTAKE at 25% */
 		new JoystickButton(buttonBox, OperatorConstants.COLLECTOR_INTAKE)
-		  .whileTrue(Collector.getInstance().intake());
+		  .whileTrue(Collector.getInstance().intakeSlow());
 
 		/* QUEST MEASUREMENTS SWITCH */
 		new JoystickButton(buttonBox, OperatorConstants.QUEST_MEASUREMENT_SWITCH)

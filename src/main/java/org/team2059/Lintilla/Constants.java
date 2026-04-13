@@ -35,7 +35,7 @@ public final class Constants {
 	public static final class OperatorConstants {
 
 		// If true, tunable numbers can be modified, and SysID routines will be instantiated (memory heavy!)
-		public static final boolean tuningMode = false;
+		public static final boolean tuningMode = true;
 
 		/* ===== */
 		/* PORTS */
@@ -174,8 +174,8 @@ public final class Constants {
 		public static final Transform2d SHOOTER_OFFSET = new Transform2d(-Units.inchesToMeters(10), 0, Rotation2d.kZero);
 
 		public static final Transform3d ROBOT_TO_QUEST = new Transform3d(
-		  -0.253244,
-		  0.216562,
+		  -0.27880251,
+		  0.21934458,
 		  0,
 		  new Rotation3d(
 			0,
@@ -186,11 +186,11 @@ public final class Constants {
 
 		public static final Transform3d ROBOT_TO_PV = new Transform3d(
 		  -Units.inchesToMeters(5.5),
-		  -Units.inchesToMeters(5.5),
-		  Units.inchesToMeters(20),
+		  -Units.inchesToMeters(3.5),
+		  Units.inchesToMeters(20.5),
 		  new Rotation3d(
 			0,
-			Units.degreesToRadians(-48),
+			Units.degreesToRadians(-60),
 			0
 		  )
 		);
@@ -374,7 +374,7 @@ public final class Constants {
 		// Error in rotations at which to stop tilting commands
 		public static final double TILT_TOLERANCE_ROTATIONS = 0.05;
 
-		public static final double THRUBORE_OFFSET = 0.93555465;
+		public static final double THRUBORE_OFFSET = 0.6078;
 
 		public static final double THRUBORE_OUT = 0.0;
 		public static final double THRUBORE_IN = 0.33;

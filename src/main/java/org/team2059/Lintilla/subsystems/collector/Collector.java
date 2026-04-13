@@ -137,6 +137,16 @@ public class Collector extends SubsystemBase {
 	}
 
 	/**
+	 * Runs rollers in the intaking direction, slower, just in case cap comes off
+	 */
+	public Command intakeSlow() {
+		return Commands.startEnd(
+		  () -> io.setIntakeSpeed(0.5),
+		  io::stopIntake
+		);
+	}
+
+	/**
 	 * Runs rollers in the outtaking (unjam) direction
 	 */
 	public Command outtake() {

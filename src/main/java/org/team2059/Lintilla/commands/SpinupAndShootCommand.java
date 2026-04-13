@@ -20,6 +20,7 @@ public class SpinupAndShootCommand extends Command {
 	private static final double SPINUP_TIME_SECONDS = 1.5;
 	private final ShooterBase shooterBase;
 	private final Conveyor conveyor;
+	private double initialDesiredRPM;
 	private double desiredRPM; // The actual RPM to push to the shooters
 	private boolean desiredRPMHardcoded; // Whether or not we're using distance-calculated RPM
 	private Timer spinUpTimer = new Timer();
@@ -37,10 +38,12 @@ public class SpinupAndShootCommand extends Command {
 		this.shooterBase = shooterBase;
 		this.conveyor = conveyor;
 
-		this.desiredRPM = 0; // This will be set later
+		this.initialDesiredRPM = 0; // This will be set later
 		this.desiredRPMHardcoded = false;
 
 		addRequirements(this.shooterBase, this.conveyor);
+
+		System.out.println("Shooting distance");
 	}
 
 	/**
@@ -48,49 +51,62 @@ public class SpinupAndShootCommand extends Command {
 	 *
 	 * @param shooterBase the ShooterBase subsystem
 	 * @param conveyor    the Conveyor subsystem
-	 * @param desiredRPM  the desired speeds in RPM
+	 * @param initialDesiredRPM  the desired speeds in RPM
 	 */
 	public SpinupAndShootCommand(
 	  ShooterBase shooterBase,
 	  Conveyor conveyor,
-	  double desiredRPM
+	  double initialDesiredRPM
 	) {
 		this.shooterBase = shooterBase;
 		this.conveyor = conveyor;
 
-		this.desiredRPM = desiredRPM;
+		this.initialDesiredRPM = initialDesiredRPM;
 		this.desiredRPMHardcoded = true;
 
 		addRequirements(this.shooterBase, this.conveyor);
+
+		System.out.println("Shooting hardcoded");
 	}
 
 	@Override
 	public void initialize() {
 		spinUpTimer.reset();
+
+		// Process desiredRPM for hardcoded shots
+		if (desiredRPMHardcoded) {
+			// Check switches
+			if (shooterBase.subFivePercent) {
+				desiredRPM = initialDesiredRPM * 0.95;
+			} else if (shooterBase.addFivePercent) {
+				desiredRPM = initialDesiredRPM * 1.05;
+			} else {
+				desiredRPM = initialDesiredRPM;
+			}
+		}
 	}
 
 	@Override
 	public void execute() {
 
 		if (!desiredRPMHardcoded) {
-			// We're not hardcoded.
+			// Process desiredRPM for distance-based shots
 
 			// Calculate the latest SOTF numbers
 			shooterBase.calculateSOTF(Drivetrain.getInstance().getEstimatedPose(), Drivetrain.getInstance().getFieldRelativeSpeeds());
 
 			// Fetch the latest distance.
-			desiredRPM = shooterBase.getTargetRpm(shooterBase.currentDistanceToTarget);
+			initialDesiredRPM = shooterBase.getTargetRpm(shooterBase.currentDistanceToTarget);
+
+			// Check the switches
+			if (shooterBase.subFivePercent) {
+				desiredRPM = initialDesiredRPM * 0.95;
+			} else if (shooterBase.addFivePercent) {
+				desiredRPM = initialDesiredRPM * 1.05;
+			} else {
+				desiredRPM = initialDesiredRPM;
+			}
 		}
-
-		// Check the switch for +5%
-		desiredRPM = (shooterBase.addFivePercent)
-		  ? desiredRPM * 1.05
-		  : desiredRPM;
-
-		// Check the switch for -5%
-		desiredRPM = (shooterBase.subFivePercent)
-		  ? desiredRPM * 0.95
-		  : desiredRPM;
 
 		Logger.recordOutput("desiredRPM", desiredRPM);
 
