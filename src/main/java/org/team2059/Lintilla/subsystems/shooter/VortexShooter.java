@@ -15,197 +15,392 @@ import static org.team2059.Lintilla.Constants.CANConstants.*;
 
 public class VortexShooter implements ShooterIO {
 
-	private final SparkFlex flywheelMotor;
-	private final SparkFlex indexerMotor;
+    private final SparkFlex leftDrumMotor;
+    private final SparkFlex rightDrumMotor;
 
-	private final SparkFlexConfig flywheelMotorConfig = new SparkFlexConfig();
-	private final SparkFlexConfig indexerMotorConfig = new SparkFlexConfig();
+    private final SparkFlex leftIndexerMotor;
+    private final SparkFlex rightIndexerMotor;
 
-	private final SparkClosedLoopController flywheelController;
-	private final SparkClosedLoopController indexerController;
+    private final SparkFlexConfig leftDrumMotorConfig =
+        new SparkFlexConfig();
 
-	private final RelativeEncoder flywheelEncoder;
-	private final RelativeEncoder indexerEncoder;
+    private final SparkFlexConfig rightDrumMotorConfig =
+        new SparkFlexConfig();
 
-	public VortexShooter(
-	  int flywheelMotorCanId,
-	  int indexerMotorCanId,
-	  boolean flywheelMotorInverted,
-	  boolean indexerMotorInverted,
-	  double kPFlywheel, double kIFlywheel, double kDFlywheel, double kSFlywheel, double kVFlywheel, double kAFlywheel,
-	  double kPIndexer, double kIIndexer, double kDIndexer, double kSIndexer, double kVIndexer, double kAIndexer
-	) {
+    private final SparkFlexConfig leftIndexerMotorConfig =
+        new SparkFlexConfig();
 
-		flywheelMotor = new SparkFlex(flywheelMotorCanId, SparkLowLevel.MotorType.kBrushless);
-		indexerMotor = new SparkFlex(indexerMotorCanId, SparkLowLevel.MotorType.kBrushless);
+    private final SparkFlexConfig rightIndexerMotorConfig =
+        new SparkFlexConfig();
 
-		flywheelMotorConfig
-		  .inverted(flywheelMotorInverted)
-		  .idleMode(SparkBaseConfig.IdleMode.kCoast);
-		indexerMotorConfig
-		  .inverted(indexerMotorInverted)
-		  .idleMode(SparkBaseConfig.IdleMode.kBrake);
+    private final SparkClosedLoopController drumController;
+    private final SparkClosedLoopController indexerController;
 
-		// Set initial closed-loop gains
-		flywheelMotorConfig.closedLoop
-		  .pid(kPFlywheel, kIFlywheel, kDFlywheel)
-		  .feedForward
-		  .kS(kSFlywheel).kV(kVFlywheel).kA(kAFlywheel);
-		indexerMotorConfig.closedLoop
-		  .pid(kPIndexer, kIIndexer, kDIndexer)
-		  .feedForward
-		  .kS(kSIndexer).kV(kVIndexer).kA(kAIndexer);
+    private final RelativeEncoder drumEncoder;
+    private final RelativeEncoder indexerEncoder;
 
-		// Configure signal update rates
-		flywheelMotorConfig.signals
-		  .primaryEncoderPositionPeriodMs(REV_POSITION_PERIOD_MS)
-		  .primaryEncoderVelocityPeriodMs(REV_VELOCITY_PERIOD_MS)
-		  .appliedOutputPeriodMs(REV_APPLIED_OUTPUT_PERIOD_MS)
-		  .outputCurrentPeriodMs(REV_OUTPUT_CURRENT_PERIOD_MS)
-		  .motorTemperaturePeriodMs(REV_MOTOR_TEMP_PERIOD_MS)
-		  .faultsPeriodMs(REV_MOTOR_FAULTS_PERIOD_MS);
-		indexerMotorConfig.signals
-		  .primaryEncoderPositionPeriodMs(REV_POSITION_PERIOD_MS)
-		  .primaryEncoderVelocityPeriodMs(REV_VELOCITY_PERIOD_MS)
-		  .appliedOutputPeriodMs(REV_APPLIED_OUTPUT_PERIOD_MS)
-		  .outputCurrentPeriodMs(REV_OUTPUT_CURRENT_PERIOD_MS)
-		  .motorTemperaturePeriodMs(REV_MOTOR_TEMP_PERIOD_MS)
-		  .faultsPeriodMs(REV_MOTOR_FAULTS_PERIOD_MS);
+    public VortexShooter(
+        int leftDrumMotorCanId, int leftIndexerMotorCanId, int rightDrumMotorCanId, int rightIndexerMotorCanId, boolean leftDrumMotorInverted, boolean leftIndexerMotorInverted, 
+		double kPDrum, double kIDrum, double kDDrum, double kSDrum, double kVDrum, double kADrum,
+        double kPIndexer, double kIIndexer, double kDIndexer, double kSIndexer, double kVIndexer, double kAIndexer
+    ) {
+        leftDrumMotor = new SparkFlex(
+            leftDrumMotorCanId,
+            SparkLowLevel.MotorType.kBrushless
+        );
 
-		flywheelMotor.configure(flywheelMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-		indexerMotor.configure(indexerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        rightDrumMotor = new SparkFlex(
+            rightDrumMotorCanId,
+            SparkLowLevel.MotorType.kBrushless
+        );
 
-		flywheelMotor.clearFaults();
-		indexerMotor.clearFaults();
+        leftIndexerMotor = new SparkFlex(
+            leftIndexerMotorCanId,
+            SparkLowLevel.MotorType.kBrushless
+        );
 
-		flywheelController = flywheelMotor.getClosedLoopController();
-		indexerController = indexerMotor.getClosedLoopController();
+        rightIndexerMotor = new SparkFlex(
+            rightIndexerMotorCanId,
+            SparkLowLevel.MotorType.kBrushless
+        );
 
-		flywheelEncoder = flywheelMotor.getEncoder();
-		indexerEncoder = indexerMotor.getEncoder();
-	}
+        leftDrumMotorConfig
+            .inverted(leftDrumMotorInverted)
+            .idleMode(SparkBaseConfig.IdleMode.kCoast);
+
+        rightDrumMotorConfig
+            .inverted(!leftDrumMotorInverted)
+            .idleMode(SparkBaseConfig.IdleMode.kCoast)
+			.follow(leftDrumMotorCanId);
+
+        leftIndexerMotorConfig
+            .inverted(leftIndexerMotorInverted)
+            .idleMode(SparkBaseConfig.IdleMode.kBrake);
+
+        rightIndexerMotorConfig
+            .inverted(!leftIndexerMotorInverted)
+            .idleMode(SparkBaseConfig.IdleMode.kBrake)
+			.follow(leftIndexerMotorCanId);
+
+        leftDrumMotorConfig.closedLoop
+            .pid(kPDrum, kIDrum, kDDrum)
+            .feedForward
+            .kS(kSDrum)
+            .kV(kVDrum)
+            .kA(kADrum);
+
+        leftIndexerMotorConfig.closedLoop
+            .pid(kPIndexer, kIIndexer, kDIndexer)
+            .feedForward
+            .kS(kSIndexer)
+            .kV(kVIndexer)
+            .kA(kAIndexer);
+
+        leftDrumMotorConfig.signals
+            .primaryEncoderPositionPeriodMs(REV_POSITION_PERIOD_MS)
+            .primaryEncoderVelocityPeriodMs(REV_VELOCITY_PERIOD_MS)
+            .appliedOutputPeriodMs(REV_APPLIED_OUTPUT_PERIOD_MS)
+            .outputCurrentPeriodMs(REV_OUTPUT_CURRENT_PERIOD_MS)
+            .motorTemperaturePeriodMs(REV_MOTOR_TEMP_PERIOD_MS)
+            .faultsPeriodMs(REV_MOTOR_FAULTS_PERIOD_MS);
+
+        rightDrumMotorConfig.signals
+            .primaryEncoderPositionPeriodMs(REV_POSITION_PERIOD_MS)
+            .primaryEncoderVelocityPeriodMs(REV_VELOCITY_PERIOD_MS)
+            .appliedOutputPeriodMs(REV_APPLIED_OUTPUT_PERIOD_MS)
+            .outputCurrentPeriodMs(REV_OUTPUT_CURRENT_PERIOD_MS)
+            .motorTemperaturePeriodMs(REV_MOTOR_TEMP_PERIOD_MS)
+            .faultsPeriodMs(REV_MOTOR_FAULTS_PERIOD_MS);
+
+        leftIndexerMotorConfig.signals
+            .primaryEncoderPositionPeriodMs(REV_POSITION_PERIOD_MS)
+            .primaryEncoderVelocityPeriodMs(REV_VELOCITY_PERIOD_MS)
+            .appliedOutputPeriodMs(REV_APPLIED_OUTPUT_PERIOD_MS)
+            .outputCurrentPeriodMs(REV_OUTPUT_CURRENT_PERIOD_MS)
+            .motorTemperaturePeriodMs(REV_MOTOR_TEMP_PERIOD_MS)
+            .faultsPeriodMs(REV_MOTOR_FAULTS_PERIOD_MS);
+
+        rightIndexerMotorConfig.signals
+            .primaryEncoderPositionPeriodMs(REV_POSITION_PERIOD_MS)
+            .primaryEncoderVelocityPeriodMs(REV_VELOCITY_PERIOD_MS)
+            .appliedOutputPeriodMs(REV_APPLIED_OUTPUT_PERIOD_MS)
+            .outputCurrentPeriodMs(REV_OUTPUT_CURRENT_PERIOD_MS)
+            .motorTemperaturePeriodMs(REV_MOTOR_TEMP_PERIOD_MS)
+            .faultsPeriodMs(REV_MOTOR_FAULTS_PERIOD_MS);
+
+        leftDrumMotor.configure(
+            leftDrumMotorConfig,
+            ResetMode.kResetSafeParameters,
+            PersistMode.kPersistParameters
+        );
+
+        rightDrumMotor.configure(
+            rightDrumMotorConfig,
+            ResetMode.kResetSafeParameters,
+            PersistMode.kPersistParameters
+        );
+
+        leftIndexerMotor.configure(
+            leftIndexerMotorConfig,
+            ResetMode.kResetSafeParameters,
+            PersistMode.kPersistParameters
+        );
+
+        rightIndexerMotor.configure(
+            rightIndexerMotorConfig,
+            ResetMode.kResetSafeParameters,
+            PersistMode.kPersistParameters
+        );
+
+        leftDrumMotor.clearFaults();
+        rightDrumMotor.clearFaults();
+        leftIndexerMotor.clearFaults();
+        rightIndexerMotor.clearFaults();
+
+        drumController = leftDrumMotor.getClosedLoopController();
+        indexerController = leftIndexerMotor.getClosedLoopController();
+
+        drumEncoder = leftDrumMotor.getEncoder();
+        indexerEncoder = leftIndexerMotor.getEncoder();
+    }
+
+    @Override
+    public void setDrumkP(double kP) {
+        leftDrumMotorConfig.closedLoop.p(kP);
+        leftDrumMotor.configure(
+            leftDrumMotorConfig,
+            ResetMode.kResetSafeParameters,
+            PersistMode.kPersistParameters
+        );
+    }
+
+    @Override
+    public void setDrumkI(double kI) {
+        leftDrumMotorConfig.closedLoop.i(kI);
+        leftDrumMotor.configure(
+            leftDrumMotorConfig,
+            ResetMode.kResetSafeParameters,
+            PersistMode.kPersistParameters
+        );
+    }
+
+    @Override
+    public void setDrumkD(double kD) {
+        leftDrumMotorConfig.closedLoop.d(kD);
+        leftDrumMotor.configure(
+            leftDrumMotorConfig,
+            ResetMode.kResetSafeParameters,
+            PersistMode.kPersistParameters
+        );
+    }
+
+    @Override
+    public void setDrumkS(double kS) {
+        leftDrumMotorConfig.closedLoop.feedForward.kS(kS);
+        leftDrumMotor.configure(
+            leftDrumMotorConfig,
+            ResetMode.kResetSafeParameters,
+            PersistMode.kPersistParameters
+        );
+    }
+
+    @Override
+    public void setDrumkV(double kV) {
+        leftDrumMotorConfig.closedLoop.feedForward.kV(kV);
+        leftDrumMotor.configure(
+            leftDrumMotorConfig,
+            ResetMode.kResetSafeParameters,
+            PersistMode.kPersistParameters
+        );
+    }
+
+    @Override
+    public void setDrumkA(double kA) {
+        leftDrumMotorConfig.closedLoop.feedForward.kA(kA);
+        leftDrumMotor.configure(
+            leftDrumMotorConfig,
+            ResetMode.kResetSafeParameters,
+            PersistMode.kPersistParameters
+        );
+    }
 
 	@Override
-	public void setFlywheelkP(double kP) {
-		flywheelMotorConfig.closedLoop.p(kP);
-		flywheelMotor.configure(flywheelMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+	public void setRightMotorSpeed(double speed) {
+		rightDrumMotor.set(speed);
 	}
 
-	@Override
-	public void setIndexerkP(double kP) {
-		indexerMotorConfig.closedLoop.p(kP);
-		indexerMotor.configure(indexerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-	}
+    @Override
+    public void setIndexerkP(double kP) {
+        leftIndexerMotorConfig.closedLoop.p(kP);
+        leftIndexerMotor.configure(
+            leftIndexerMotorConfig,
+            ResetMode.kResetSafeParameters,
+            PersistMode.kPersistParameters
+        );
+    }
 
-	@Override
-	public void setFlywheelkI(double kI) {
-		flywheelMotorConfig.closedLoop.i(kI);
-		flywheelMotor.configure(flywheelMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-	}
+    @Override
+    public void setIndexerkI(double kI) {
+        leftIndexerMotorConfig.closedLoop.i(kI);
+        leftIndexerMotor.configure(
+            leftIndexerMotorConfig,
+            ResetMode.kResetSafeParameters,
+            PersistMode.kPersistParameters
+        );
+    }
 
-	@Override
-	public void setIndexerkI(double kI) {
-		indexerMotorConfig.closedLoop.i(kI);
-		indexerMotor.configure(indexerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-	}
+    @Override
+    public void setIndexerkD(double kD) {
+        leftIndexerMotorConfig.closedLoop.d(kD);
+        leftIndexerMotor.configure(
+            leftIndexerMotorConfig,
+            ResetMode.kResetSafeParameters,
+            PersistMode.kPersistParameters
+        );
+    }
 
-	@Override
-	public void setFlywheelkD(double kD) {
-		flywheelMotorConfig.closedLoop.d(kD);
-		flywheelMotor.configure(flywheelMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-	}
+    @Override
+    public void setIndexerkS(double kS) {
+        leftIndexerMotorConfig.closedLoop.feedForward.kS(kS);
+        leftIndexerMotor.configure(
+            leftIndexerMotorConfig,
+            ResetMode.kResetSafeParameters,
+            PersistMode.kPersistParameters
+        );
+    }
 
-	@Override
-	public void setIndexerkD(double kD) {
-		indexerMotorConfig.closedLoop.d(kD);
-		indexerMotor.configure(indexerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-	}
+    @Override
+    public void setIndexerkV(double kV) {
+        leftIndexerMotorConfig.closedLoop.feedForward.kV(kV);
+        leftIndexerMotor.configure(
+            leftIndexerMotorConfig,
+            ResetMode.kResetSafeParameters,
+            PersistMode.kPersistParameters
+        );
+    }
 
-	@Override
-	public void setFlywheelkS(double kS) {
-		flywheelMotorConfig.closedLoop.feedForward.kS(kS);
-		flywheelMotor.configure(flywheelMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-	}
+    @Override
+    public void setIndexerkA(double kA) {
+        leftIndexerMotorConfig.closedLoop.feedForward.kA(kA);
+        leftIndexerMotor.configure(
+            leftIndexerMotorConfig,
+            ResetMode.kResetSafeParameters,
+            PersistMode.kPersistParameters
+        );
+    }
 
-	@Override
-	public void setIndexerkS(double kS) {
-		indexerMotorConfig.closedLoop.feedForward.kS(kS);
-		indexerMotor.configure(indexerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-	}
+    @Override
+    public void setDrumVoltage(double volts) {
+        leftDrumMotor.setVoltage(volts);
+    }
 
-	@Override
-	public void setFlywheelkV(double kV) {
-		flywheelMotorConfig.closedLoop.feedForward.kV(kV);
-		flywheelMotor.configure(flywheelMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-	}
+    @Override
+    public void setIndexerVoltage(double volts) {
+        leftIndexerMotor.setVoltage(volts);
+    }
 
-	@Override
-	public void setIndexerkV(double kV) {
-		indexerMotorConfig.closedLoop.feedForward.kV(kV);
-		indexerMotor.configure(indexerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-	}
+    @Override
+    public void setDrumRpm(double rpm) {
+        drumController.setSetpoint(
+            rpm,
+            SparkBase.ControlType.kVelocity
+        );
+    }
 
-	@Override
-	public void setFlywheelkA(double kA) {
-		flywheelMotorConfig.closedLoop.feedForward.kA(kA);
-		flywheelMotor.configure(flywheelMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-	}
+    @Override
+    public void setIndexerRpm(double rpm) {
+        indexerController.setSetpoint(
+            rpm,
+            SparkBase.ControlType.kVelocity
+        );
+    }
 
-	@Override
-	public void setIndexerkA(double kA) {
-		indexerMotorConfig.closedLoop.feedForward.kA(kA);
-		indexerMotor.configure(indexerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-	}
+    @Override
+    public void setDrumSpeed(double speed) {
+        leftDrumMotor.set(speed);
+    }
 
-	@Override
-	public void setFlywheelVoltage(double volts) {
-		flywheelMotor.setVoltage(volts);
-	}
+    @Override
+    public void setIndexerSpeed(double speed) {
+        leftIndexerMotor.set(speed);
+    }
 
-	@Override
-	public void setIndexerVoltage(double volts) {
-		indexerMotor.setVoltage(volts);
-	}
+    @Override
+    public void stopDrum() {
+        leftDrumMotor.stopMotor();
+    }
 
-	@Override
-	public void setFlywheelRpm(double rpm) {
-		flywheelController.setSetpoint(rpm, SparkBase.ControlType.kVelocity);
-	}
+    @Override
+    public void stopIndexer() {
+        leftIndexerMotor.stopMotor();
+    }
 
-	@Override
-	public void setIndexerRpm(double rpm) {
-		indexerController.setSetpoint(rpm, SparkBase.ControlType.kVelocity);
-	}
+    @Override
+    public void updateInputs(ShooterIOInputs inputs) {
+        inputs.drumPosition.mut_replace(drumEncoder.getPosition(), Rotations);
 
-	@Override
-	public void stopFlywheel() {
-		flywheelMotor.stopMotor();
-	}
+        inputs.drumVelocity.mut_replace(drumEncoder.getVelocity(), RPM);
 
-	public void setIndexerSpeed(double speed) {
-		indexerMotor.set(speed);
-	}
+        inputs.drumAppliedVolts.mut_replace(
+            leftDrumMotor.getAppliedOutput()
+                * leftDrumMotor.getBusVoltage(),
+            Volts
+        );
 
-	@Override
-	public void stopIndexer() {
-		indexerMotor.stopMotor();
-	}
+        inputs.drumCurrent.mut_replace(
+            leftDrumMotor.getOutputCurrent(),
+            Amps
+        );
 
-	@Override
-	public void updateInputs(ShooterIOInputs inputs) {
-		inputs.flywheelPosition.mut_replace(flywheelEncoder.getPosition(), Rotations);
-		inputs.indexerPosition.mut_replace(indexerEncoder.getPosition(), Rotations);
+        inputs.drumTemp.mut_replace(
+            leftDrumMotor.getMotorTemperature(),
+            Celsius
+        );
 
-		inputs.flywheelVelocity.mut_replace(flywheelEncoder.getVelocity(), RPM);
-		inputs.indexerVelocity.mut_replace(indexerEncoder.getVelocity(), RPM);
+        inputs.drumFollowerCurrent.mut_replace(
+            rightDrumMotor.getOutputCurrent(),
+            Amps
+        );
 
-		inputs.flywheelAppliedVolts.mut_replace(flywheelMotor.getAppliedOutput() * flywheelMotor.getBusVoltage(), Volts);
-		inputs.indexerAppliedVolts.mut_replace(indexerMotor.getAppliedOutput() * indexerMotor.getBusVoltage(), Volts);
+        inputs.drumFollowerTemp.mut_replace(
+            rightDrumMotor.getMotorTemperature(),
+            Celsius
+        );
 
-		inputs.flywheelCurrent.mut_replace(flywheelMotor.getOutputCurrent(), Amps);
-		inputs.indexerCurrent.mut_replace(indexerMotor.getOutputCurrent(), Amps);
+        inputs.indexerPosition.mut_replace(
+            indexerEncoder.getPosition(),
+            Rotations
+        );
 
-		inputs.flywheelTemp.mut_replace(flywheelMotor.getMotorTemperature(), Celsius);
-		inputs.indexerTemp.mut_replace(indexerMotor.getMotorTemperature(), Celsius);
-	}
+        inputs.indexerVelocity.mut_replace(
+            indexerEncoder.getVelocity(),
+            RPM
+        );
+
+        inputs.indexerAppliedVolts.mut_replace(
+            leftIndexerMotor.getAppliedOutput()
+                * leftIndexerMotor.getBusVoltage(),
+            Volts
+        );
+
+        inputs.indexerCurrent.mut_replace(
+            leftIndexerMotor.getOutputCurrent(),
+            Amps
+        );
+
+        inputs.indexerTemp.mut_replace(
+            leftIndexerMotor.getMotorTemperature(),
+            Celsius
+        );
+
+        inputs.indexerFollowerCurrent.mut_replace(
+            rightIndexerMotor.getOutputCurrent(),
+            Amps
+        );
+
+        inputs.indexerFollowerTemp.mut_replace(
+            rightIndexerMotor.getMotorTemperature(),
+            Celsius
+        );
+    }
 }

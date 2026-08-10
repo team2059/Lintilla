@@ -268,9 +268,9 @@ public final class Constants {
 		public static final int PDH = 50;
 
 		public static final int LEFT_SHOOTER_INDEXER = 54; // Same ID for both shooters for now (will be changed later)
-		public static final int RIGHT_SHOOTER_INDEXER = 55;
+		public static final int RIGHT_SHOOTER_INDEXER = 56;
 		public static final int LEFT_SHOOTER_FLYWHEEL = 53;
-		public static final int RIGHT_SHOOTER_FLYWHEEL = 56;
+		public static final int RIGHT_SHOOTER_FLYWHEEL = 55;
 
 		public static final int COLLECTOR_TILT = 57;
 		public static final int COLLECTOR_INTAKE_LEFT = 60;
@@ -299,7 +299,7 @@ public final class Constants {
 		 * - kA: Volts per RPM/sec
 		 */
 
-		// LEFT SHOOTER CONSTANTS
+		/* LEFT SHOOTER CONSTANTS
 		public static final boolean LEFT_FLYWHEEL_INVERTED = true;
 		public static final boolean LEFT_INDEXER_INVERTED = true;
 		public static final double LEFT_INDEXER_P = 0.0;
@@ -314,7 +314,9 @@ public final class Constants {
 		public static final double LEFT_FLYWHEEL_S = 0.089332;
 		public static final double LEFT_FLYWHEEL_V = 0.10669 / 60;
 		public static final double LEFT_FLYWHEEL_A = 0.020699 / 60;
-		// RIGHT SHOOTER CONSTANTS
+		
+		RIGHT SHOOTER CONSTANTS
+
 		public static final boolean RIGHT_FLYWHEEL_INVERTED = false;
 		public static final double RIGHT_INDEXER_P = 0.0;
 		public static final double RIGHT_INDEXER_I = 0.0;
@@ -328,6 +330,25 @@ public final class Constants {
 		public static final double RIGHT_FLYWHEEL_S = 0.04773;
 		public static final double RIGHT_FLYWHEEL_V = 0.10424 / 60;
 		public static final double RIGHT_FLYWHEEL_A = 0.020809 / 60;
+		*/
+
+		// DRUM SHOOTER CONSTANTS
+		public static final boolean FLYWHEEL_INVERTED = true;
+		public static final boolean INDEXER_INVERTED = true;
+		public static final double INDEXER_P = 0.0;
+		public static final double INDEXER_I = 0.0;
+		public static final double INDEXER_D = 0.0;
+		public static final double INDEXER_S = 0.079892;
+		public static final double INDEXER_V = 0.10559 / 60;
+		public static final double INDEXER_A = 0.0073533 / 60;
+		public static final double FLYWHEEL_P = 0.000052093;
+		public static final double FLYWHEEL_I = 0.0;
+		public static final double FLYWHEEL_D = 0.0;
+		public static final double FLYWHEEL_S = 0.089332;
+		public static final double FLYWHEEL_V = 0.10669 / 60;
+		public static final double FLYWHEEL_A = 0.020699 / 60;
+
+
 		public static final InterpolatingTreeMap<Double, ShooterParams> SHOOTER_MAP = new InterpolatingTreeMap<>(
 		  InverseInterpolator.forDouble(),
 

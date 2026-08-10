@@ -23,16 +23,12 @@ public class ShooterBase extends SubsystemBase {
 
 	private static ShooterBase instance;
 
-	public final ShooterIO leftShooter;
-	public final ShooterIO rightShooter;
+	public final ShooterIO shooter;
 
-	public final ShooterIOInputsAutoLogged leftShooterInputs = new ShooterIOInputsAutoLogged();
-	public final ShooterIOInputsAutoLogged rightShooterInputs = new ShooterIOInputsAutoLogged();
+	public final ShooterIOInputsAutoLogged shooterInputs = new ShooterIOInputsAutoLogged();
 
-	private final SysIdRoutine leftFlywheelRoutine;
-	private final SysIdRoutine leftIndexerRoutine;
-	private final SysIdRoutine rightFlywheelRoutine;
-	private final SysIdRoutine rightIndexerRoutine;
+	private final SysIdRoutine drumRoutine;
+	private final SysIdRoutine indexerRoutine;
 	private final MutVoltage appliedVoltsRoutine;
 	private final MutAngle angleRoutine;
 	private final MutAngularVelocity angularVelocityRoutine;
@@ -49,11 +45,9 @@ public class ShooterBase extends SubsystemBase {
 	public double targetAimAngleRad = 0.0;
 
 	private ShooterBase(
-	  ShooterIO leftShooter,
-	  ShooterIO rightShooter
+		ShooterIO shooter
 	) {
-		this.leftShooter = leftShooter;
-		this.rightShooter = rightShooter;
+		this.shooter = shooter;
 
 		addFivePercent = !RobotContainer.buttonBox.getRawButton(SHOOTER_ADD5PERCENT_SWITCH);
 		subFivePercent = !RobotContainer.buttonBox.getRawButton(SHOOTER_SUB5PERCENT_SWITCH);
@@ -63,71 +57,39 @@ public class ShooterBase extends SubsystemBase {
 			appliedVoltsRoutine = Volts.mutable(0);
 			angleRoutine = Rotations.mutable(0);
 			angularVelocityRoutine = RPM.mutable(0);
-			leftFlywheelRoutine = new SysIdRoutine(
-			  new SysIdRoutine.Config(),
-			  new SysIdRoutine.Mechanism(
-				voltage -> {
-					leftShooter.setFlywheelVoltage(voltage.in(Volts));
-				},
-				log -> {
-					log.motor("left-shooter-motor")
-					  .voltage(appliedVoltsRoutine.mut_replace(leftShooterInputs.flywheelAppliedVolts))
-					  .angularPosition(angleRoutine.mut_replace(leftShooterInputs.flywheelPosition))
-					  .angularVelocity(angularVelocityRoutine.mut_replace(leftShooterInputs.flywheelVelocity));
-				},
-				this
-			  )
+			drumRoutine = new SysIdRoutine(
+				new SysIdRoutine.Config(),
+				new SysIdRoutine.Mechanism(
+					voltage -> {
+						shooter.setDrumVoltage(voltage.in(Volts));
+					},
+					log -> {
+						log.motor("drum-shooter-motor")
+							.voltage(appliedVoltsRoutine.mut_replace(shooterInputs.drumAppliedVolts))
+							.angularPosition(angleRoutine.mut_replace(shooterInputs.drumPosition))
+							.angularVelocity(angularVelocityRoutine.mut_replace(shooterInputs.drumVelocity));
+					},
+					this
+				)
 			);
-			rightFlywheelRoutine = new SysIdRoutine(
-			  new SysIdRoutine.Config(),
-			  new SysIdRoutine.Mechanism(
-				voltage -> {
-					rightShooter.setFlywheelVoltage(voltage.in(Volts));
-				},
-				log -> {
-					log.motor("right-shooter-motor")
-					  .voltage(appliedVoltsRoutine.mut_replace(rightShooterInputs.flywheelAppliedVolts))
-					  .angularPosition(angleRoutine.mut_replace(rightShooterInputs.flywheelPosition))
-					  .angularVelocity(angularVelocityRoutine.mut_replace(rightShooterInputs.flywheelVelocity));
-				},
-				this
-			  )
-			);
-			leftIndexerRoutine = new SysIdRoutine(
-			  new SysIdRoutine.Config(),
-			  new SysIdRoutine.Mechanism(
-				voltage -> {
-					leftShooter.setIndexerVoltage(voltage.in(Volts));
-				},
-				log -> {
-					log.motor("left-shooter-motor")
-					  .voltage(appliedVoltsRoutine.mut_replace(leftShooterInputs.indexerAppliedVolts))
-					  .angularPosition(angleRoutine.mut_replace(leftShooterInputs.indexerPosition))
-					  .angularVelocity(angularVelocityRoutine.mut_replace(leftShooterInputs.indexerVelocity));
-				},
-				this
-			  )
-			);
-			rightIndexerRoutine = new SysIdRoutine(
-			  new SysIdRoutine.Config(),
-			  new SysIdRoutine.Mechanism(
-				voltage -> {
-					rightShooter.setIndexerVoltage(voltage.in(Volts));
-				},
-				log -> {
-					log.motor("right-shooter-motor")
-					  .voltage(appliedVoltsRoutine.mut_replace(rightShooterInputs.indexerAppliedVolts))
-					  .angularPosition(angleRoutine.mut_replace(rightShooterInputs.indexerPosition))
-					  .angularVelocity(angularVelocityRoutine.mut_replace(rightShooterInputs.indexerVelocity));
-				},
-				this
-			  )
+			indexerRoutine = new SysIdRoutine(
+				new SysIdRoutine.Config(),
+				new SysIdRoutine.Mechanism(
+					voltage -> {
+						shooter.setIndexerVoltage(voltage.in(Volts));
+					},
+					log -> {
+						log.motor("indexer-motor")
+							.voltage(appliedVoltsRoutine.mut_replace(shooterInputs.indexerAppliedVolts))
+							.angularPosition(angleRoutine.mut_replace(shooterInputs.indexerPosition))
+							.angularVelocity(angularVelocityRoutine.mut_replace(shooterInputs.indexerVelocity));
+					},
+					this
+				)
 			);
 		} else {
-			leftFlywheelRoutine = null;
-			rightFlywheelRoutine = null;
-			leftIndexerRoutine = null;
-			rightIndexerRoutine = null;
+			drumRoutine = null;
+			indexerRoutine = null;
 			appliedVoltsRoutine = null;
 			angleRoutine = null;
 			angularVelocityRoutine = null;
@@ -143,13 +105,11 @@ public class ShooterBase extends SubsystemBase {
 	}
 
 	public static void initialize(
-	  ShooterIO leftShooter,
-	  ShooterIO rightShooter
+		ShooterIO shooter
 	) {
 		if (instance == null) {
 			instance = new ShooterBase(
-			  leftShooter,
-			  rightShooter
+				shooter
 			);
 		}
 	}
@@ -164,10 +124,9 @@ public class ShooterBase extends SubsystemBase {
 	public void calculateSOTF(Pose2d robotPose, ChassisSpeeds fieldSpeeds) {
 
 		// Check if robot is actually moving
-//		boolean isMoving =
-//		  Math.hypot(fieldSpeeds.vxMetersPerSecond, fieldSpeeds.vyMetersPerSecond) > 0.1
-//			|| Math.abs(fieldSpeeds.omegaRadiansPerSecond) > 0.1;
-		boolean isMoving = true;
+		boolean isMoving =
+			Math.hypot(fieldSpeeds.vxMetersPerSecond, fieldSpeeds.vyMetersPerSecond) > 0.1
+			|| Math.abs(fieldSpeeds.omegaRadiansPerSecond) > 0.1;
 
 		Translation2d virtualTarget = getHubTranslation();
 
@@ -175,16 +134,16 @@ public class ShooterBase extends SubsystemBase {
 			// ROBOT IS STATIONARY: Skip SOTF and do standard static aiming
 			this.currentDistanceToTarget = robotPose.getTranslation().getDistance(virtualTarget);
 			this.targetAimAngleRad = Math.atan2(
-			  virtualTarget.getY() - robotPose.getTranslation().getY(),
-			  virtualTarget.getX() - robotPose.getTranslation().getX()
+				virtualTarget.getY() - robotPose.getTranslation().getY(),
+				virtualTarget.getX() - robotPose.getTranslation().getX()
 			);
 			return; // Exit method early
 		}
 
 		Translation2d vRobot = new Translation2d(fieldSpeeds.vxMetersPerSecond, fieldSpeeds.vyMetersPerSecond);
 		Translation2d vTan = new Translation2d(
-		  -fieldSpeeds.omegaRadiansPerSecond * SHOOTER_OFFSET.getY(),
-		  fieldSpeeds.omegaRadiansPerSecond * SHOOTER_OFFSET.getX()
+			-fieldSpeeds.omegaRadiansPerSecond * SHOOTER_OFFSET.getY(),
+			fieldSpeeds.omegaRadiansPerSecond * SHOOTER_OFFSET.getX()
 		);
 		Translation2d effectiveVelocity = vRobot.plus(vTan);
 
@@ -198,99 +157,59 @@ public class ShooterBase extends SubsystemBase {
 		}
 
 		this.targetAimAngleRad = Math.atan2(
-		  virtualTarget.getY() - robotPose.getTranslation().getY(),
-		  virtualTarget.getX() - robotPose.getTranslation().getX()
+			virtualTarget.getY() - robotPose.getTranslation().getY(),
+			virtualTarget.getX() - robotPose.getTranslation().getX()
 		);
 	}
 
 	// SysID getters
-	public Command leftShooterQuasiForward() {
-		if (leftFlywheelRoutine == null) return Commands.none();
-		return leftFlywheelRoutine.quasistatic(SysIdRoutine.Direction.kForward);
+	public Command shooterQuasiForward() {
+		if (drumRoutine == null) return Commands.none();
+		return drumRoutine.quasistatic(SysIdRoutine.Direction.kForward);
 	}
 
-	public Command rightShooterQuasiForward() {
-		if (rightFlywheelRoutine == null) return Commands.none();
-		return rightFlywheelRoutine.quasistatic(SysIdRoutine.Direction.kForward);
+	public Command indexerQuasiForward() {
+		if (indexerRoutine == null) return Commands.none();
+		return indexerRoutine.quasistatic(SysIdRoutine.Direction.kForward);
 	}
 
-	public Command leftIndexerQuasiForward() {
-		if (leftIndexerRoutine == null) return Commands.none();
-		return leftIndexerRoutine.quasistatic(SysIdRoutine.Direction.kForward);
+	public Command shooterQuasiReverse() {
+		if (drumRoutine == null) return Commands.none();
+		return drumRoutine.quasistatic(SysIdRoutine.Direction.kReverse);
 	}
 
-	public Command rightIndexerQuasiForward() {
-		if (rightIndexerRoutine == null) return Commands.none();
-		return rightIndexerRoutine.quasistatic(SysIdRoutine.Direction.kForward);
+	public Command indexerQuasiReverse() {
+		if (indexerRoutine == null) return Commands.none();
+		return indexerRoutine.quasistatic(SysIdRoutine.Direction.kReverse);
 	}
 
-	public Command leftShooterQuasiReverse() {
-		if (leftFlywheelRoutine == null) return Commands.none();
-		return leftFlywheelRoutine.quasistatic(SysIdRoutine.Direction.kReverse);
+	public Command shooterDynamicForward() {
+		if (drumRoutine == null) return Commands.none();
+		return drumRoutine.dynamic(SysIdRoutine.Direction.kForward);
 	}
 
-	public Command rightShooterQuasiReverse() {
-		if (rightFlywheelRoutine == null) return Commands.none();
-		return rightFlywheelRoutine.quasistatic(SysIdRoutine.Direction.kReverse);
+	public Command indexerDynamicForward() {
+		if (indexerRoutine == null) return Commands.none();
+		return indexerRoutine.dynamic(SysIdRoutine.Direction.kForward);
 	}
 
-	public Command leftIndexerQuasiReverse() {
-		if (leftIndexerRoutine == null) return Commands.none();
-		return leftIndexerRoutine.quasistatic(SysIdRoutine.Direction.kReverse);
+	public Command shooterDynamicReverse() {
+		if (drumRoutine == null) return Commands.none();
+		return drumRoutine.dynamic(SysIdRoutine.Direction.kReverse);
 	}
 
-	public Command rightIndexerQuasiReverse() {
-		if (rightIndexerRoutine == null) return Commands.none();
-		return rightIndexerRoutine.quasistatic(SysIdRoutine.Direction.kReverse);
-	}
-
-	public Command leftShooterDynamicForward() {
-		if (leftFlywheelRoutine == null) return Commands.none();
-		return leftFlywheelRoutine.dynamic(SysIdRoutine.Direction.kForward);
-	}
-
-	public Command rightShooterDynamicForward() {
-		if (rightFlywheelRoutine == null) return Commands.none();
-		return rightFlywheelRoutine.dynamic(SysIdRoutine.Direction.kForward);
-	}
-
-	public Command leftIndexerDynamicForward() {
-		if (leftIndexerRoutine == null) return Commands.none();
-		return leftIndexerRoutine.dynamic(SysIdRoutine.Direction.kForward);
-	}
-
-	public Command rightIndexerDynamicForward() {
-		if (rightIndexerRoutine == null) return Commands.none();
-		return rightIndexerRoutine.dynamic(SysIdRoutine.Direction.kForward);
-	}
-
-	public Command leftShooterDynamicReverse() {
-		if (leftFlywheelRoutine == null) return Commands.none();
-		return leftFlywheelRoutine.dynamic(SysIdRoutine.Direction.kReverse);
-	}
-
-	public Command rightShooterDynamicReverse() {
-		if (rightFlywheelRoutine == null) return Commands.none();
-		return rightFlywheelRoutine.dynamic(SysIdRoutine.Direction.kReverse);
-	}
-
-	public Command leftIndexerDynamicReverse() {
-		if (leftIndexerRoutine == null) return Commands.none();
-		return leftIndexerRoutine.dynamic(SysIdRoutine.Direction.kReverse);
-	}
-
-	public Command rightIndexerDynamicReverse() {
-		if (rightIndexerRoutine == null) return Commands.none();
-		return rightIndexerRoutine.dynamic(SysIdRoutine.Direction.kReverse);
+	public Command indexerDynamicReverse() {
+		if (indexerRoutine == null) return Commands.none();
+		return indexerRoutine.dynamic(SysIdRoutine.Direction.kReverse);
 	}
 
 	public Command unjamShooters() {
 		return Commands.startEnd(
-		  () -> {
-			  leftShooter.setIndexerSpeed(-1);
-			  rightShooter.setIndexerSpeed(-1);
-		  },
-		  this::stopAllSubsystemMotors
+			() -> {
+				shooter.setDrumSpeed(-1);
+				shooter.setIndexerSpeed(1);
+			},
+			this::stopAllSubsystemMotors
 		);
 	}
 
@@ -317,10 +236,8 @@ public class ShooterBase extends SubsystemBase {
 	}
 
 	public void stopAllSubsystemMotors() {
-		leftShooter.stopFlywheel();
-		leftShooter.stopIndexer();
-		rightShooter.stopFlywheel();
-		rightShooter.stopIndexer();
+		shooter.stopDrum();
+		shooter.stopIndexer();
 	}
 
 	public void setAddFivePercent(boolean b) {
@@ -333,11 +250,9 @@ public class ShooterBase extends SubsystemBase {
 
 	@Override
 	public void periodic() {
-		leftShooter.updateInputs(leftShooterInputs);
-		rightShooter.updateInputs(rightShooterInputs);
+		shooter.updateInputs(shooterInputs);
 
-		Logger.processInputs("ShooterBase/Left", leftShooterInputs);
-		Logger.processInputs("ShooterBase/Right", rightShooterInputs);
+		Logger.processInputs("ShooterBase", shooterInputs);
 
 		Logger.recordOutput("AimedAtHub", isAimed);
 		Logger.recordOutput("+5%", addFivePercent);

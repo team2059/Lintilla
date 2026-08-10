@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.team2059.Lintilla.Constants.CANConstants;
 import org.team2059.Lintilla.Constants.DrivetrainConstants;
@@ -91,41 +92,25 @@ public class RobotContainer {
 		);
 
 		ShooterBase.initialize(
-		  new VortexShooter( // LEFT SHOOTER
+		  new VortexShooter( // RIGHT SHOOTER
 			CANConstants.LEFT_SHOOTER_FLYWHEEL,
 			CANConstants.LEFT_SHOOTER_INDEXER,
-			ShooterConstants.LEFT_FLYWHEEL_INVERTED,
-			ShooterConstants.LEFT_INDEXER_INVERTED,
-			ShooterConstants.LEFT_FLYWHEEL_P,
-			ShooterConstants.LEFT_FLYWHEEL_I,
-			ShooterConstants.LEFT_FLYWHEEL_D,
-			ShooterConstants.LEFT_FLYWHEEL_S,
-			ShooterConstants.LEFT_FLYWHEEL_V,
-			ShooterConstants.LEFT_FLYWHEEL_A,
-			ShooterConstants.LEFT_INDEXER_P,
-			ShooterConstants.LEFT_INDEXER_I,
-			ShooterConstants.LEFT_INDEXER_D,
-			ShooterConstants.LEFT_INDEXER_S,
-			ShooterConstants.LEFT_INDEXER_V,
-			ShooterConstants.LEFT_INDEXER_A
-		  ),
-		  new VortexShooter( // RIGHT SHOOTER
 			CANConstants.RIGHT_SHOOTER_FLYWHEEL,
 			CANConstants.RIGHT_SHOOTER_INDEXER,
-			ShooterConstants.RIGHT_FLYWHEEL_INVERTED,
-			ShooterConstants.RIGHT_INDEXER_INVERTED,
-			ShooterConstants.RIGHT_FLYWHEEL_P,
-			ShooterConstants.RIGHT_FLYWHEEL_I,
-			ShooterConstants.RIGHT_FLYWHEEL_D,
-			ShooterConstants.RIGHT_FLYWHEEL_S,
-			ShooterConstants.RIGHT_FLYWHEEL_V,
-			ShooterConstants.RIGHT_FLYWHEEL_A,
-			ShooterConstants.RIGHT_INDEXER_P,
-			ShooterConstants.RIGHT_INDEXER_I,
-			ShooterConstants.RIGHT_INDEXER_D,
-			ShooterConstants.RIGHT_INDEXER_S,
-			ShooterConstants.RIGHT_INDEXER_V,
-			ShooterConstants.RIGHT_INDEXER_A
+			ShooterConstants.FLYWHEEL_INVERTED,
+			ShooterConstants.INDEXER_INVERTED,
+			ShooterConstants.FLYWHEEL_P,
+			ShooterConstants.FLYWHEEL_I,
+			ShooterConstants.FLYWHEEL_D,
+			ShooterConstants.FLYWHEEL_S,
+			ShooterConstants.FLYWHEEL_V,
+			ShooterConstants.FLYWHEEL_A,
+			ShooterConstants.INDEXER_P,
+			ShooterConstants.INDEXER_I,
+			ShooterConstants.INDEXER_D,
+			ShooterConstants.INDEXER_S,
+			ShooterConstants.INDEXER_V,
+			ShooterConstants.INDEXER_A
 		  )
 		);
 
@@ -248,9 +233,14 @@ public class RobotContainer {
 		new JoystickButton(buttonBox, OperatorConstants.COLLECTOR_UNJAM)
 		  .whileTrue(Collector.getInstance().outtake());
 
-		/* COLLECTOR ROLLERS IN/INTAKE at 25% */
+		// /* COLLECTOR ROLLERS IN/INTAKE at 25% */
+		// new JoystickButton(buttonBox, OperatorConstants.COLLECTOR_INTAKE)
+		//   .whileTrue(Collector.getInstance().intakeSlow());
+
 		new JoystickButton(buttonBox, OperatorConstants.COLLECTOR_INTAKE)
-		  .whileTrue(Collector.getInstance().intakeSlow());
+		  .whileTrue(Conveyor.getInstance().conveyorIn()
+		  .alongWith(new InstantCommand(() -> ShooterBase.getInstance().shooter.setIndexerSpeed(0.8))
+		  .alongWith(new InstantCommand(() -> ShooterBase.getInstance().shooter.setDrumSpeed(0.4)))));
 
 		/* QUEST MEASUREMENTS SWITCH */
 		new JoystickButton(buttonBox, OperatorConstants.QUEST_MEASUREMENT_SWITCH)

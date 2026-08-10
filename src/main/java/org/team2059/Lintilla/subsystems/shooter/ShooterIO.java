@@ -5,63 +5,74 @@ import org.littletonrobotics.junction.AutoLog;
 
 import static edu.wpi.first.units.Units.*;
 
+// Drum is right motor and follower is left motor
 public interface ShooterIO {
-	default public void setFlywheelkP(double kP) {}
 
-	default public void setFlywheelkI(double kI) {}
+    default void setDrumkP(double kP) {}
 
-	default public void setFlywheelkD(double kD) {}
+    default void setDrumkI(double kI) {}
 
-	default public void setFlywheelkS(double kS) {}
+    default void setDrumkD(double kD) {}
 
-	default public void setFlywheelkV(double kV) {}
+    default void setDrumkS(double kS) {}
 
-	default public void setFlywheelkA(double kA) {}
+    default void setDrumkV(double kV) {}
 
-	default public void setIndexerkP(double kP) {}
+    default void setDrumkA(double kA) {}
 
-	default public void setIndexerkI(double kI) {}
+    default void setDrumVoltage(double volts) {}
 
-	default public void setIndexerkD(double kD) {}
+    default void setDrumRpm(double rpm) {}
 
-	default public void setIndexerkS(double kS) {}
+    default void setDrumSpeed(double speed) {}
 
-	default public void setIndexerkV(double kV) {}
+    default void setRightMotorSpeed(double speed) {}
 
-	default public void setIndexerkA(double kA) {}
+    default void stopDrum() {}
 
-	default public void setFlywheelVoltage(double volts) {}
+    default void setIndexerkP(double kP) {}
 
-	default public void setIndexerVoltage(double volts) {}
+    default void setIndexerkI(double kI) {}
 
-	default public void setFlywheelRpm(double rpm) {}
+    default void setIndexerkD(double kD) {}
 
-	default public void setIndexerRpm(double rpm) {}
+    default void setIndexerkS(double kS) {}
 
-	default public void stopFlywheel() {}
+    default void setIndexerkV(double kV) {}
 
-	default public void stopIndexer() {}
+    default void setIndexerkA(double kA) {}
 
-	default public void setIndexerSpeed(double speed) {}
+    default void setIndexerVoltage(double volts) {}
 
-	default public void updateInputs(ShooterIOInputs inputs) {}
+    default void setIndexerRpm(double rpm) {}
+
+    default void setIndexerSpeed(double speed) {}
+
+    default void stopIndexer() {}
+
+    default void updateInputs(ShooterIOInputs inputs) {}
 
 
-	@AutoLog
-	class ShooterIOInputs {
-		public MutAngle flywheelPosition = Rotations.mutable(0);
-		public MutAngle indexerPosition = Rotations.mutable(0);
+    @AutoLog
+    class ShooterIOInputs {
 
-		public MutAngularVelocity flywheelVelocity = RPM.mutable(0);
-		public MutAngularVelocity indexerVelocity = RPM.mutable(0);
+    public MutAngle drumPosition = Rotations.mutable(0);
+    public MutAngularVelocity drumVelocity = RPM.mutable(0);
 
-		public MutVoltage flywheelAppliedVolts = Volts.mutable(0);
-		public MutVoltage indexerAppliedVolts = Volts.mutable(0);
+    public MutVoltage drumAppliedVolts = Volts.mutable(0);
+    public MutCurrent drumCurrent = Amps.mutable(0);
+    public MutTemperature drumTemp = Celsius.mutable(0);
 
-		public MutCurrent flywheelCurrent = Amps.mutable(0);
-		public MutCurrent indexerCurrent = Amps.mutable(0);
+    public MutCurrent drumFollowerCurrent = Amps.mutable(0);
+    public MutTemperature drumFollowerTemp = Celsius.mutable(0);
 
-		public MutTemperature flywheelTemp = Celsius.mutable(0);
-		public MutTemperature indexerTemp = Celsius.mutable(0);
-	}
+    public MutAngle indexerPosition = Rotations.mutable(0);
+    public MutAngularVelocity indexerVelocity = RPM.mutable(0);
+    public MutVoltage indexerAppliedVolts = Volts.mutable(0);
+    public MutCurrent indexerCurrent = Amps.mutable(0);
+    public MutTemperature indexerTemp = Celsius.mutable(0);
+
+    public MutCurrent indexerFollowerCurrent = Amps.mutable(0);
+    public MutTemperature indexerFollowerTemp = Celsius.mutable(0);
+}
 }

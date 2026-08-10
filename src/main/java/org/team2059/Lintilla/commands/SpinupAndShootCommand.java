@@ -112,22 +112,19 @@ public class SpinupAndShootCommand extends Command {
 
 		if (desiredRPM < 100) this.cancel();
 
-		// Set the two flywheels to the desired RPM, whether it's hardcoded or
+		// Set the flywheel to the desired RPM, whether it's hardcoded or
 		// not, it doesn't matter at this point in execution.
-		shooterBase.leftShooter.setFlywheelRpm(desiredRPM);
-		shooterBase.rightShooter.setFlywheelRpm(desiredRPM);
+		shooterBase.shooter.setDrumRpm(desiredRPM);
 
-		double leftRPM = shooterBase.leftShooterInputs.flywheelVelocity.in(RPM);
-		double rightRPM = shooterBase.rightShooterInputs.flywheelVelocity.in(RPM);
+		double drumRPM = shooterBase.shooterInputs.drumVelocity.in(RPM);
 
 		if (
 		  // Shooters within tolerance, or timer has run out
-		  (Math.abs(leftRPM - desiredRPM) <= SPINUP_TOLERANCE_RPM && Math.abs(rightRPM - desiredRPM) <= SPINUP_TOLERANCE_RPM)
+		  (Math.abs(drumRPM - desiredRPM) <= SPINUP_TOLERANCE_RPM)
 			|| spinUpTimer.hasElapsed(SPINUP_TIME_SECONDS)
 		) {
 			// Spin indexers and conveyor
-			shooterBase.leftShooter.setIndexerSpeed(INDEXER_SPEED_WHILE_SHOOTING);
-			shooterBase.rightShooter.setIndexerSpeed(INDEXER_SPEED_WHILE_SHOOTING);
+			shooterBase.shooter.setIndexerSpeed(INDEXER_SPEED_WHILE_SHOOTING);
 			conveyor.io.setConveyorSpeed(SHOOTING_CONVEYOR_SPEED);
 		}
 	}
@@ -144,10 +141,8 @@ public class SpinupAndShootCommand extends Command {
 		}
 
 		// Stop everything that we used
-		shooterBase.leftShooter.stopIndexer();
-		shooterBase.leftShooter.stopFlywheel();
-		shooterBase.rightShooter.stopIndexer();
-		shooterBase.rightShooter.stopFlywheel();
+		shooterBase.shooter.stopIndexer();
+		shooterBase.shooter.stopDrum();
 		conveyor.io.stopConveyor();
 	}
 }
