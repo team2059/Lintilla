@@ -205,7 +205,7 @@ public class RobotContainer {
 			new SpinupAndShootCommand(
 			  ShooterBase.getInstance(),
 			  Conveyor.getInstance(),
-			  4000
+			  2000
 			).alongWith(Collector.getInstance().agitationCommand())
 		  );
 
@@ -222,7 +222,7 @@ public class RobotContainer {
 		new JoystickButton(buttonBox, OperatorConstants.COLLECTOR_OUT_INTAKE)
 		  .whileTrue(
 			Collector.getInstance().tiltOutAndIntake()
-			  .alongWith(Conveyor.getInstance().conveyorOut())
+			  .alongWith(Conveyor.getInstance().conveyorIn())
 		  );
 
 		/* COLLECTOR TILT IN */
@@ -239,8 +239,14 @@ public class RobotContainer {
 
 		new JoystickButton(buttonBox, OperatorConstants.COLLECTOR_INTAKE)
 		  .whileTrue(Conveyor.getInstance().conveyorIn()
-		  .alongWith(new InstantCommand(() -> ShooterBase.getInstance().shooter.setIndexerSpeed(0.8))
-		  .alongWith(new InstantCommand(() -> ShooterBase.getInstance().shooter.setDrumSpeed(0.4)))));
+		  .alongWith(Commands.startEnd(() -> ShooterBase.getInstance().shooter.setIndexerSpeed(0.8), () -> ShooterBase.getInstance().shooter.setIndexerRpm(0))
+		  .alongWith(Commands.startEnd(() -> ShooterBase.getInstance().shooter.setDrumSpeed(0.4), () -> ShooterBase.getInstance().shooter.setDrumSpeed(0)))));
+
+		//SysID Routines
+		new JoystickButton(logitech, 7).whileTrue(ShooterBase.getInstance().shooterDynamicForward());
+		new JoystickButton(logitech, 8).whileTrue(ShooterBase.getInstance().shooterDynamicReverse());
+		new JoystickButton(logitech, 9).whileTrue(ShooterBase.getInstance().shooterQuasiForward());
+		new JoystickButton(logitech,10).whileTrue(ShooterBase.getInstance().shooterQuasiReverse());
 
 		/* QUEST MEASUREMENTS SWITCH */
 		new JoystickButton(buttonBox, OperatorConstants.QUEST_MEASUREMENT_SWITCH)

@@ -1,16 +1,19 @@
 package org.team2059.Lintilla.commands;
 
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj2.command.Command;
-import org.littletonrobotics.junction.Logger;
-import org.team2059.Lintilla.subsystems.conveyor.Conveyor;
-import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
-import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
-
 import static edu.wpi.first.units.Units.RPM;
 import static org.team2059.Lintilla.Constants.ConveyorConstants.SHOOTING_CONVEYOR_SPEED;
 import static org.team2059.Lintilla.Constants.ShooterConstants.INDEXER_SPEED_WHILE_SHOOTING;
 import static org.team2059.Lintilla.Constants.ShooterConstants.SPINUP_TOLERANCE_RPM;
+
+import org.littletonrobotics.junction.Logger;
+import org.team2059.Lintilla.Constants.ShooterConstants;
+import org.team2059.Lintilla.subsystems.conveyor.Conveyor;
+import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
+import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
+import org.team2059.Lintilla.util.LoggedTunableNumber;
+
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.Command;
 
 /**
  * Command to spin the shooters up at a specific velocity (or calculate velocity based on distance to hub) and shoot
@@ -24,6 +27,9 @@ public class SpinupAndShootCommand extends Command {
 	private double desiredRPM; // The actual RPM to push to the shooters
 	private boolean desiredRPMHardcoded; // Whether or not we're using distance-calculated RPM
 	private Timer spinUpTimer = new Timer();
+	// private final LoggedTunableNumber kP = new LoggedTunableNumber("DrumkP", 0.0);
+	// private final LoggedTunableNumber kS = new LoggedTunableNumber("DrumkS", ShooterConstants.FLYWHEEL_S);
+	// private final LoggedTunableNumber kV = new LoggedTunableNumber("DrumkV", ShooterConstants.FLYWHEEL_V);
 
 	/**
 	 * Constructor for distance-based shots (shoots on the fly)
@@ -88,6 +94,16 @@ public class SpinupAndShootCommand extends Command {
 
 	@Override
 	public void execute() {
+		// LoggedTunableNumber.ifChanged(
+		// 	hashCode(), 
+		// 	() -> {
+		// 	shooterBase.shooter.setDrumkP(kP.get());
+		// 	shooterBase.shooter.setDrumkS(kS.get());
+		// 	shooterBase.shooter.setDrumkV(kV.get());
+		// 	}, 
+		// 	kP, kS, kV
+		// );
+
 
 		if (!desiredRPMHardcoded) {
 			// Process desiredRPM for distance-based shots

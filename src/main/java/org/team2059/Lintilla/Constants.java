@@ -5,14 +5,24 @@
 
 package org.team2059.Lintilla;
 
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
+
+import java.util.Optional;
+
 import com.ctre.phoenix6.CANBus;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -21,11 +31,6 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
-
-import java.util.Optional;
-
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meters;
 
 public final class Constants {
 
@@ -341,12 +346,12 @@ public final class Constants {
 		public static final double INDEXER_S = 0.079892;
 		public static final double INDEXER_V = 0.10559 / 60;
 		public static final double INDEXER_A = 0.0073533 / 60;
-		public static final double FLYWHEEL_P = 0.000052093;
+		public static final double FLYWHEEL_P = 0.000085; // 0.000052093
 		public static final double FLYWHEEL_I = 0.0;
 		public static final double FLYWHEEL_D = 0.0;
-		public static final double FLYWHEEL_S = 0.089332;
-		public static final double FLYWHEEL_V = 0.10669 / 60;
-		public static final double FLYWHEEL_A = 0.020699 / 60;
+		public static final double FLYWHEEL_S = 0.065095;
+		public static final double FLYWHEEL_V = 0.10725 / 60;
+		public static final double FLYWHEEL_A = 0.026757 / 60;
 
 
 		public static final InterpolatingTreeMap<Double, ShooterParams> SHOOTER_MAP = new InterpolatingTreeMap<>(

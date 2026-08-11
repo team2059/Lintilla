@@ -13,6 +13,8 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 import static edu.wpi.first.units.Units.*;
 import static org.team2059.Lintilla.Constants.CANConstants.*;
 
+import org.team2059.Lintilla.util.LoggedTunableNumber;
+
 public class VortexShooter implements ShooterIO {
 
     private final SparkFlex leftDrumMotor;
