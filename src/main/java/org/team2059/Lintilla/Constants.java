@@ -291,6 +291,7 @@ public final class Constants {
 		public static final double SPINUP_TOLERANCE_RPM = 50;
 		// Speed [-1,1] to run the indexer at while shooting
 		public static final double INDEXER_SPEED_WHILE_SHOOTING = 0.9;
+		public static final double INDEXER_RPM_WHILE_SHOOTING = 5000;
 		public static final double HUB_HEIGHT_METERS = 1.83; // End height of trajectory
 		public static final double SHOOTER_HEIGHT_METERS = 0.5; // Start height of trajectory
 
@@ -340,13 +341,13 @@ public final class Constants {
 		// DRUM SHOOTER CONSTANTS
 		public static final boolean FLYWHEEL_INVERTED = true;
 		public static final boolean INDEXER_INVERTED = true;
-		public static final double INDEXER_P = 0.0;
+		public static final double INDEXER_P = 0.04;
 		public static final double INDEXER_I = 0.0;
 		public static final double INDEXER_D = 0.0;
-		public static final double INDEXER_S = 0.079892;
-		public static final double INDEXER_V = 0.10559 / 60;
-		public static final double INDEXER_A = 0.0073533 / 60;
-		public static final double FLYWHEEL_P = 0.000085; // 0.000052093
+		public static final double INDEXER_S = 0.033388;
+		public static final double INDEXER_V = 0.10488 / 60;
+		public static final double INDEXER_A = 0.020016 / 60;
+		public static final double FLYWHEEL_P = 0.00055; // 0.000052093
 		public static final double FLYWHEEL_I = 0.0;
 		public static final double FLYWHEEL_D = 0.0;
 		public static final double FLYWHEEL_S = 0.065095;
