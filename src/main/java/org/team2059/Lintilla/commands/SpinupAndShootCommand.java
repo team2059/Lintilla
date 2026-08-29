@@ -30,6 +30,7 @@ public class SpinupAndShootCommand extends Command {
 	private Timer spinUpTimer = new Timer();
 	private final LoggedTunableNumber kP = new LoggedTunableNumber("DrumkP", ShooterConstants.FLYWHEEL_P);
 	private final LoggedTunableNumber kV = new LoggedTunableNumber("DrumkV", ShooterConstants.FLYWHEEL_V);
+	private final LoggedTunableNumber tunableRPM = new LoggedTunableNumber("RPM", desiredRPM);
 
 	/**
 	 * Constructor for distance-based shots (shoots on the fly)
@@ -77,10 +78,20 @@ public class SpinupAndShootCommand extends Command {
 
 	@Override
 	public void initialize() {
-		spinUpTimer.reset();
+		spinUpTimer.restart();
 
 		// Process desiredRPM for hardcoded shots
 		if (desiredRPMHardcoded) {
+			LoggedTunableNumber.ifChanged(
+				hashCode(),
+				() -> {
+					desiredRPM = tunableRPM.get();
+				},
+				tunableRPM
+			);
+
+			initialDesiredRPM = desiredRPM;
+			
 			// Check switches
 			if (shooterBase.subFivePercent) {
 				desiredRPM = initialDesiredRPM * 0.95;
@@ -106,6 +117,7 @@ public class SpinupAndShootCommand extends Command {
 
 		if (!desiredRPMHardcoded) {
 			// Process desiredRPM for distance-based shots
+			
 
 			// Calculate the latest SOTF numbers
 			shooterBase.calculateSOTF(Drivetrain.getInstance().getEstimatedPose(), Drivetrain.getInstance().getFieldRelativeSpeeds());
@@ -139,8 +151,8 @@ public class SpinupAndShootCommand extends Command {
 			|| spinUpTimer.hasElapsed(SPINUP_TIME_SECONDS)
 		) {
 			// Spin indexers and conveyor
-			//shooterBase.shooter.setIndexerSpeed(INDEXER_SPEED_WHILE_SHOOTING);
-			shooterBase.shooter.setIndexerRpm(INDEXER_RPM_WHILE_SHOOTING);
+			shooterBase.shooter.setIndexerSpeed(INDEXER_SPEED_WHILE_SHOOTING);
+			//shooterBase.shooter.setIndexerRpm(INDEXER_RPM_WHILE_SHOOTING);
 			conveyor.io.setConveyorSpeed(SHOOTING_CONVEYOR_SPEED);
 		}
 	}

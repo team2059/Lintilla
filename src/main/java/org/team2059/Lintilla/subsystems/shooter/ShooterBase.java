@@ -16,7 +16,6 @@ import org.team2059.Lintilla.RobotContainer;
 import static edu.wpi.first.units.Units.*;
 import static org.team2059.Lintilla.Constants.OperatorConstants.*;
 import static org.team2059.Lintilla.Constants.ShooterConstants;
-import static org.team2059.Lintilla.Constants.VisionConstants.SHOOTER_OFFSET;
 import static org.team2059.Lintilla.Constants.VisionConstants.getHubTranslation;
 
 public class ShooterBase extends SubsystemBase {
@@ -142,8 +141,8 @@ public class ShooterBase extends SubsystemBase {
 
 		Translation2d vRobot = new Translation2d(fieldSpeeds.vxMetersPerSecond, fieldSpeeds.vyMetersPerSecond);
 		Translation2d vTan = new Translation2d(
-			-fieldSpeeds.omegaRadiansPerSecond * SHOOTER_OFFSET.getY(),
-			fieldSpeeds.omegaRadiansPerSecond * SHOOTER_OFFSET.getX()
+			-fieldSpeeds.omegaRadiansPerSecond,
+			fieldSpeeds.omegaRadiansPerSecond
 		);
 		Translation2d effectiveVelocity = vRobot.plus(vTan);
 

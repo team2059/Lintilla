@@ -176,8 +176,6 @@ public final class Constants {
 
 		public static final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
 
-		public static final Transform2d SHOOTER_OFFSET = new Transform2d(-Units.inchesToMeters(10), 0, Rotation2d.kZero);
-
 		public static final Transform3d ROBOT_TO_QUEST = new Transform3d(
 		  -0.27880251,
 		  0.21934458,
@@ -190,12 +188,12 @@ public final class Constants {
 		);
 
 		public static final Transform3d ROBOT_TO_PV = new Transform3d(
-		  -Units.inchesToMeters(5.5),
-		  -Units.inchesToMeters(3.5),
-		  Units.inchesToMeters(20.5),
+		  -Units.inchesToMeters(4),
+		  -Units.inchesToMeters(9.75),
+		  Units.inchesToMeters(16.5),
 		  new Rotation3d(
 			0,
-			Units.degreesToRadians(-60),
+			Units.degreesToRadians(-45),
 			0
 		  )
 		);
@@ -347,7 +345,7 @@ public final class Constants {
 		public static final double INDEXER_S = 0.033388;
 		public static final double INDEXER_V = 0.10488 / 60;
 		public static final double INDEXER_A = 0.020016 / 60;
-		public static final double FLYWHEEL_P = 0.00055; // 0.000052093
+		public static final double FLYWHEEL_P = 0.0007; // 0.000052093
 		public static final double FLYWHEEL_I = 0.0;
 		public static final double FLYWHEEL_D = 0.0;
 		public static final double FLYWHEEL_S = 0.065095;
