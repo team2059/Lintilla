@@ -189,7 +189,7 @@ public final class Constants {
 
 		public static final Transform3d ROBOT_TO_PV = new Transform3d(
 		  -Units.inchesToMeters(4),
-		  -Units.inchesToMeters(9.75),
+		  Units.inchesToMeters(6),
 		  Units.inchesToMeters(16.5),
 		  new Rotation3d(
 			0,
@@ -339,11 +339,11 @@ public final class Constants {
 		// DRUM SHOOTER CONSTANTS
 		public static final boolean FLYWHEEL_INVERTED = true;
 		public static final boolean INDEXER_INVERTED = true;
-		public static final double INDEXER_P = 0.04;
+		public static final double INDEXER_P = 0.07;
 		public static final double INDEXER_I = 0.0;
 		public static final double INDEXER_D = 0.0;
 		public static final double INDEXER_S = 0.033388;
-		public static final double INDEXER_V = 0.10488 / 60;
+		public static final double INDEXER_V = 0.10725 / 60;
 		public static final double INDEXER_A = 0.020016 / 60;
 		public static final double FLYWHEEL_P = 0.0007; // 0.000052093
 		public static final double FLYWHEEL_I = 0.0;
@@ -354,6 +354,7 @@ public final class Constants {
 
 
 		public static final InterpolatingTreeMap<Double, ShooterParams> SHOOTER_MAP = new InterpolatingTreeMap<>(
+			
 		  InverseInterpolator.forDouble(),
 
 		  // Value interpolator: blends RPMs and flight times based on distance ratio, t

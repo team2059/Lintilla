@@ -151,8 +151,8 @@ public class SpinupAndShootCommand extends Command {
 			|| spinUpTimer.hasElapsed(SPINUP_TIME_SECONDS)
 		) {
 			// Spin indexers and conveyor
-			shooterBase.shooter.setIndexerSpeed(INDEXER_SPEED_WHILE_SHOOTING);
-			//shooterBase.shooter.setIndexerRpm(INDEXER_RPM_WHILE_SHOOTING);
+			//shooterBase.shooter.setIndexerSpeed(INDEXER_SPEED_WHILE_SHOOTING);
+			shooterBase.shooter.setIndexerRpm(INDEXER_RPM_WHILE_SHOOTING);
 			conveyor.io.setConveyorSpeed(SHOOTING_CONVEYOR_SPEED);
 		}
 	}
