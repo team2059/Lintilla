@@ -41,7 +41,8 @@ public class LocalizationSystem extends SubsystemBase {
 
 	private static LocalizationSystem instance;
 	private final QuestNav questNav;
-	private final PhotonCamera pvCam;
+	private final PhotonCamera pv1Cam;
+	private final PhotonCamera pv2Cam;
 	private final PhotonPoseEstimator pvEstimator;
 	private boolean qnavConnected = false;
 	private boolean qnavTracking = false;
@@ -54,11 +55,18 @@ public class LocalizationSystem extends SubsystemBase {
 	private double qnavFaultCounter = 0.0;
 	private boolean qnavHealthy = false;
 	private Matrix<N3, N1> pvStdDevs;
-	private Pose3d pvRobotPose = new Pose3d();
+
 	private boolean pvUseMeasurements;
-	private boolean pvConnected = false;
-	private boolean pvHasTarget = false;
-	private int pvBestTargetId = -1;
+
+	private Pose3d pv1RobotPose = new Pose3d();
+	private boolean pv1Connected = false;
+	private boolean pv1HasTarget = false;
+	private int pv1BestTargetId = -1;
+
+	private Pose3d pv2RobotPose = new Pose3d();
+	private boolean pv2Connected = false;
+	private boolean pv2HasTarget = false;
+	private int pv2BestTargetId = -1;
 
 	/**
 	 * Constructor for LocalizationSystem
@@ -71,7 +79,8 @@ public class LocalizationSystem extends SubsystemBase {
 		qnavUseMeasurements = !RobotContainer.buttonBox.getRawButton(QUEST_MEASUREMENT_SWITCH);
 
 		// Set up PhotonVision camera and estimator
-		pvCam = new PhotonCamera(PV_CAM_NAME);
+		pv1Cam = new PhotonCamera(PV1_CAM_NAME);
+		pv2Cam = new PhotonCamera(PV2_CAM_NAME);
 		pvEstimator = new PhotonPoseEstimator(
 		  APRIL_TAG_FIELD_LAYOUT,
 		  ROBOT_TO_PV
@@ -417,10 +426,12 @@ public class LocalizationSystem extends SubsystemBase {
 
 	public void pvPeriodic() {
 		// Update everything but poses first
-		pvConnected = pvCam.isConnected();
+		pv1Connected = pv1Cam.isConnected();
+		pv2Connected = pv2Cam.isConnected();
 
 		// Grab all unread results from camera
-		List<PhotonPipelineResult> pvCamResults = pvCam.getAllUnreadResults();
+		List<PhotonPipelineResult> pvCamResults = pv1Cam.getAllUnreadResults();
+		List<PhotonPipelineResult> 
 
 		Optional<EstimatedRobotPose> visionEst = Optional.empty();
 
