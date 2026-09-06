@@ -207,8 +207,7 @@ public final class Constants {
 		public static final Translation2d BLUE_TOWER_CENTER = new Translation2d(1.1434, 3.7457);
 		public static final Translation2d RED_TOWER_CENTER = new Translation2d(15.3952, 4.3236);
 
-		public static final String PV1_CAM_NAME = "HHCamRightShooter";
-		public static final String PV2_CAM_NAME = "HHCamLeftShooter";
+		public static final String PV_CAM_NAME = "HHCamRightShooter";
 		// The standard deviations of our estimated poses, which affect correction rate
 		public static final Matrix<N3, N1> PV_SINGLE_TAG_STD_DEVS = VecBuilder.fill(2, 2, 8);
 		public static final Matrix<N3, N1> PV_MULTI_TAG_STD_DEVS = VecBuilder.fill(0.5, 0.5, 1);
@@ -340,7 +339,7 @@ public final class Constants {
 		// DRUM SHOOTER CONSTANTS
 		public static final boolean FLYWHEEL_INVERTED = true;
 		public static final boolean INDEXER_INVERTED = true;
-		public static final double INDEXER_P = 0.07;
+		public static final double INDEXER_P = 0.00055;
 		public static final double INDEXER_I = 0.0;
 		public static final double INDEXER_D = 0.0;
 		public static final double INDEXER_S = 0.033388;
@@ -355,7 +354,7 @@ public final class Constants {
 
 
 		public static final InterpolatingTreeMap<Double, ShooterParams> SHOOTER_MAP = new InterpolatingTreeMap<>(
-
+			
 		  InverseInterpolator.forDouble(),
 
 		  // Value interpolator: blends RPMs and flight times based on distance ratio, t
