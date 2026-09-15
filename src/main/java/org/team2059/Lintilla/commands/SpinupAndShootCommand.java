@@ -148,7 +148,7 @@ public class SpinupAndShootCommand extends Command {
 
 		if (desiredRPM < 100) this.cancel();
 
-		double acceleratedRPM = desiredRPM * 1.2;
+		double acceleratedRPM = desiredRPM * 1.15;
 
 		// Set the flywheel to the desired RPM, whether it's hardcoded or
 		// not, it doesn't matter at this point in execution.
