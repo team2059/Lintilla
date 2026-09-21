@@ -187,9 +187,20 @@ public final class Constants {
 		  )
 		);
 
-		public static final Transform3d ROBOT_TO_PV = new Transform3d(
+		public static final Transform3d LEFT_ROBOT_TO_PV = new Transform3d(
 		  -Units.inchesToMeters(4),
-		  Units.inchesToMeters(6),
+		  -Units.inchesToMeters(9.5),
+		  Units.inchesToMeters(16.5),
+		  new Rotation3d(
+			0,
+			Units.degreesToRadians(-45),
+			0
+		  )
+		);
+
+		public static final Transform3d RIGHT_ROBOT_TO_PV = new Transform3d(
+		  -Units.inchesToMeters(4),
+		  Units.inchesToMeters(6.25),
 		  Units.inchesToMeters(16.5),
 		  new Rotation3d(
 			0,
@@ -208,6 +219,7 @@ public final class Constants {
 		public static final Translation2d RED_TOWER_CENTER = new Translation2d(15.3952, 4.3236);
 
 		public static final String PV_CAM_NAME = "HHCamRightShooter";
+		public static final String PV_CAM_NAME_2 = "HHCamLeftShooter";
 		// The standard deviations of our estimated poses, which affect correction rate
 		public static final Matrix<N3, N1> PV_SINGLE_TAG_STD_DEVS = VecBuilder.fill(2, 2, 8);
 		public static final Matrix<N3, N1> PV_MULTI_TAG_STD_DEVS = VecBuilder.fill(0.5, 0.5, 1);

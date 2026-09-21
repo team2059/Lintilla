@@ -257,6 +257,6 @@ public class ShooterBase extends SubsystemBase {
 		Logger.recordOutput("+5%", addFivePercent);
 		Logger.recordOutput("-5%", subFivePercent);
 		Logger.recordOutput("CurrentDistanceToHub", currentDistanceToTarget);
-		Logger.recordOutput("TargetAngleToHub", targetAimAngleRad);
+		Logger.recordOutput("TargetAngleToHub", targetAimAngleRad); 
 	}
 }
