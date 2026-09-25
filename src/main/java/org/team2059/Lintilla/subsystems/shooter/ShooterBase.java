@@ -124,8 +124,8 @@ public class ShooterBase extends SubsystemBase {
 
 		// Check if robot is actually moving
 		boolean isMoving =
-			Math.hypot(fieldSpeeds.vxMetersPerSecond, fieldSpeeds.vyMetersPerSecond) > 0.1
-			|| Math.abs(fieldSpeeds.omegaRadiansPerSecond) > 0.1;
+			Math.hypot(fieldSpeeds.vxMetersPerSecond, fieldSpeeds.vyMetersPerSecond) > 0.1;
+			//|| Math.abs(fieldSpeeds.omegaRadiansPerSecond) > 0.1;
 
 		Translation2d virtualTarget = getHubTranslation();
 

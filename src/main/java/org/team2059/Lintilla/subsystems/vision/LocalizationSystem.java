@@ -47,7 +47,7 @@ public class LocalizationSystem extends SubsystemBase {
     private final PhotonCamera pvCam;
     private final PhotonCamera pvCam2;
 
-    private final PhotonPoseEstimator pvEstimator;
+    private final PhotonPoseEstimator pvEstimator1;
     private final PhotonPoseEstimator pvEstimator2;
 
     private boolean qnavConnected = false;
@@ -64,9 +64,13 @@ public class LocalizationSystem extends SubsystemBase {
     private double qnavFaultCounter = 0.0;
     private boolean qnavHealthy = false;
 
-    private Matrix<N3, N1> pvStdDevs;
+    private Matrix<N3, N1> pvStdDevs1;
+    private Matrix<N3, N1> pvStdDevs2;
 
-    private Pose3d pvRobotPose = new Pose3d();
+
+    private Pose3d pvRobotPose1 = new Pose3d();
+    private Pose3d pvRobotPose2 = new Pose3d();
+    private Pose3d pvAvgRobotPose = new Pose3d();
 
     private boolean pvUseMeasurements;
     private boolean pvConnected = false;
@@ -93,7 +97,7 @@ public class LocalizationSystem extends SubsystemBase {
         pvCam = new PhotonCamera(PV_CAM_NAME);
         pvCam2 = new PhotonCamera(PV_CAM_NAME_2);
 
-        pvEstimator = new PhotonPoseEstimator(
+        pvEstimator1 = new PhotonPoseEstimator(
             APRIL_TAG_FIELD_LAYOUT,
             LEFT_ROBOT_TO_PV
         );
@@ -228,8 +232,16 @@ public class LocalizationSystem extends SubsystemBase {
      *
      * @return current estimated Pose3d from PhotonVision
      */
-    public Pose3d getPvRobotPose() {
-        return pvRobotPose;
+    public Pose3d getPvRobotPose1() {
+        return pvRobotPose1;
+    }
+
+    public Pose3d getPvRobotPose2() {
+        return pvRobotPose2;
+    }
+
+    public Pose3d getPvAvgRobotPose() {
+        return pvAvgRobotPose;
     }
 
     /**
@@ -293,13 +305,14 @@ public class LocalizationSystem extends SubsystemBase {
      * @param estimatedPose estimated robot pose
      * @param targets       List of PhotonTrackedTargets
      */
-    private void updateEstimationStdDevs(
+    private Matrix<N3, N1> updateEstimationStdDevs(
         Optional<EstimatedRobotPose> estimatedPose,
-        List<PhotonTrackedTarget> targets
+        List<PhotonTrackedTarget> targets,
+        PhotonPoseEstimator poseEstimator
     ) {
         if (estimatedPose.isEmpty()) {
             // No pose input. Default to single-tag std devs
-            pvStdDevs = Constants.VisionConstants.PV_SINGLE_TAG_STD_DEVS;
+            return Constants.VisionConstants.PV_SINGLE_TAG_STD_DEVS;
         } else {
             // Pose present. Start running heuristic.
             var estStdDevs = Constants.VisionConstants.PV_SINGLE_TAG_STD_DEVS;
@@ -308,7 +321,7 @@ public class LocalizationSystem extends SubsystemBase {
 
             // Precalculation - see how many tags we count, and calculate an average-distance metric
             for (var tgt : targets) {
-                var tagPose = pvEstimator.getFieldTags().getTagPose(tgt.getFiducialId());
+                var tagPose = poseEstimator.getFieldTags().getTagPose(tgt.getFiducialId());
 
                 if (tagPose.isEmpty()) continue;
 
@@ -329,7 +342,7 @@ public class LocalizationSystem extends SubsystemBase {
 
             if (numTags == 0) {
                 // No tags visible. Default to single-tag std devs
-                pvStdDevs = Constants.VisionConstants.PV_SINGLE_TAG_STD_DEVS;
+                return Constants.VisionConstants.PV_SINGLE_TAG_STD_DEVS;
             } else {
                 // One or more tags visible, run the full heuristic.
                 avgDist /= numTags;
@@ -351,7 +364,7 @@ public class LocalizationSystem extends SubsystemBase {
                         estStdDevs.times(1 + (avgDist * avgDist / 30));
                 }
 
-                pvStdDevs = estStdDevs;
+                return estStdDevs;
             }
         }
     }
@@ -431,9 +444,14 @@ public class LocalizationSystem extends SubsystemBase {
         double rotation1 = pose1.getRotation().getZ();
         double rotation2 = pose2.getRotation().getZ();
 
-        double rotation =
-            (rotation1 * weight1 + rotation2 * weight2)
-                / totalWeight;
+        //better to just use the one with the largest weight, or just the first camera if both are the same
+        double rotation = 0;
+
+        if (weight2 > weight1) {
+            rotation = rotation2;
+        } else {
+            rotation = rotation1;
+        }
 
         return new Pose3d(
             x,
@@ -448,7 +466,7 @@ public class LocalizationSystem extends SubsystemBase {
      */
     public Command syncPoses() {
         return Commands.runOnce(() -> {
-            Pose3d p = getPvRobotPose();
+            Pose3d p = getPvAvgRobotPose();
 
             if (p != null && pvHasTarget && pvConnected) {
                 setQnavRobotPose(p);
@@ -657,14 +675,14 @@ public class LocalizationSystem extends SubsystemBase {
 
             // Attempt multi-tag estimation
             visionEst1 =
-                pvEstimator.estimateCoprocMultiTagPose(
+                pvEstimator1.estimateCoprocMultiTagPose(
                     pvCamResult
                 );
 
             // If multi-tag fails, fall back to lowest ambiguity
             if (visionEst1.isEmpty()) {
                 visionEst1 =
-                    pvEstimator.estimateLowestAmbiguityPose(
+                    pvEstimator1.estimateLowestAmbiguityPose(
                         pvCamResult
                     );
             }
@@ -738,17 +756,21 @@ public class LocalizationSystem extends SubsystemBase {
             visionEst1.isPresent() &&
             pvCamResult != null
         ) {
-            updateEstimationStdDevs(
+            pvStdDevs1 = updateEstimationStdDevs(
                 visionEst1,
-                pvCamResult.getTargets()
+                pvCamResult.getTargets(),
+                pvEstimator1
             );
-        } else if (
+        }
+        
+        if (
             visionEst2.isPresent() &&
             pvCam2Result != null
         ) {
-            updateEstimationStdDevs(
+            pvStdDevs2 = updateEstimationStdDevs(
                 visionEst2,
-                pvCam2Result.getTargets()
+                pvCam2Result.getTargets(),
+                pvEstimator2
             );
         }
 
@@ -771,7 +793,9 @@ public class LocalizationSystem extends SubsystemBase {
             visionEst1.isPresent() &&
             visionEst2.isPresent()
         ) {
-            pvRobotPose =
+            pvRobotPose1 = visionEst1.get().estimatedPose;
+            pvRobotPose2 = visionEst2.get().estimatedPose;
+            pvAvgRobotPose =
                 combinePoses(
                     visionEst1.get().estimatedPose,
                     pvWeight,
@@ -779,11 +803,11 @@ public class LocalizationSystem extends SubsystemBase {
                     pvWeight2
                 );
         } else if (visionEst1.isPresent()) {
-            pvRobotPose =
-                visionEst1.get().estimatedPose;
+            pvRobotPose1 = visionEst1.get().estimatedPose;
+            pvAvgRobotPose = pvRobotPose1;
         } else if (visionEst2.isPresent()) {
-            pvRobotPose =
-                visionEst2.get().estimatedPose;
+            pvRobotPose2 = visionEst2.get().estimatedPose;
+            pvAvgRobotPose = pvRobotPose2;
         }
 
         /*
@@ -797,34 +821,27 @@ public class LocalizationSystem extends SubsystemBase {
             pvUseMeasurements &&
             (visionEst1.isPresent() || visionEst2.isPresent())
         ) {
-            double timestamp;
 
-            if (
-                visionEst1.isPresent() &&
-                visionEst2.isPresent()
-            ) {
-                // Use the newer of the two measurements
-                timestamp =
-                    Math.max(
-                        visionEst1.get().timestampSeconds,
-                        visionEst2.get().timestampSeconds
-                    );
-            } else if (visionEst1.isPresent()) {
-                timestamp =
-                    visionEst1.get().timestampSeconds;
-            } else {
-                timestamp =
-                    visionEst2.get().timestampSeconds;
+            //if not using quest measurements, use photon vision measurements
+            //from either camera, or both if both are available
+            if (visionEst1.isPresent()) {
+                double timestamp = visionEst1.get().timestampSeconds;
+                if (!qnavHealthy || !qnavUseMeasurements) {
+                    Drivetrain.getInstance().addVisionMeasurement(
+                        pvRobotPose1.toPose2d(),
+                        timestamp,
+                        pvStdDevs1);
+                }
             }
 
-            // If QuestNav considered unhealthy, or not enabled,
-            // fall back to PhotonVision measurements
-            if (!qnavHealthy || !qnavUseMeasurements) {
-                Drivetrain.getInstance().addVisionMeasurement(
-                    pvRobotPose.toPose2d(),
-                    timestamp,
-                    pvStdDevs
-                );
+            if (visionEst2.isPresent()) {
+                double timestamp = visionEst2.get().timestampSeconds;
+                if (!qnavHealthy || !qnavUseMeasurements) {
+                    Drivetrain.getInstance().addVisionMeasurement(
+                        pvRobotPose2.toPose2d(), 
+                        timestamp, 
+                        pvStdDevs2);
+                }
             }
         }
 
@@ -850,8 +867,18 @@ public class LocalizationSystem extends SubsystemBase {
         );
 
         Logger.recordOutput(
-            "LocalizationSystem/PV/RobotPose",
-            pvRobotPose
+            "LocalizationSystem/PV/RobotPose1",
+            pvRobotPose1
+        );
+
+        Logger.recordOutput(
+            "LocalizationSystem/PV/RobotPose2",
+            pvRobotPose2
+        );
+
+        Logger.recordOutput(
+            "LocalizationSystem/PV/AverageRobotPose",
+            pvAvgRobotPose
         );
 
         Logger.recordOutput(
@@ -872,6 +899,6 @@ public class LocalizationSystem extends SubsystemBase {
         pvPeriodic();
 
         // QuestNav periodic
-        qnavPeriodic(pvRobotPose);
+        qnavPeriodic(pvAvgRobotPose);
     }
 }
