@@ -187,9 +187,9 @@ public final class Constants {
 		  )
 		);
 
-		public static final Transform3d LEFT_ROBOT_TO_PV = new Transform3d(
+		public static final Transform3d RIGHT_ROBOT_TO_PV = new Transform3d(
 		  -Units.inchesToMeters(4),
-		  -Units.inchesToMeters(9.5),
+		  -Units.inchesToMeters(9.75),
 		  Units.inchesToMeters(16.5),
 		  new Rotation3d(
 			0,
@@ -198,9 +198,9 @@ public final class Constants {
 		  )
 		);
 
-		public static final Transform3d RIGHT_ROBOT_TO_PV = new Transform3d(
+		public static final Transform3d LEFT_ROBOT_TO_PV = new Transform3d(
 		  -Units.inchesToMeters(4),
-		  Units.inchesToMeters(6.25),
+		  Units.inchesToMeters(6.5),
 		  Units.inchesToMeters(16.5),
 		  new Rotation3d(
 			0,

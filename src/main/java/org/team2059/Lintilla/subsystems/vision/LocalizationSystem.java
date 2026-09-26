@@ -99,12 +99,12 @@ public class LocalizationSystem extends SubsystemBase {
 
         pvEstimator1 = new PhotonPoseEstimator(
             APRIL_TAG_FIELD_LAYOUT,
-            LEFT_ROBOT_TO_PV
+            RIGHT_ROBOT_TO_PV
         );
 
         pvEstimator2 = new PhotonPoseEstimator(
             APRIL_TAG_FIELD_LAYOUT,
-            RIGHT_ROBOT_TO_PV
+            LEFT_ROBOT_TO_PV
         );
 
         pvUseMeasurements =
@@ -750,8 +750,7 @@ public class LocalizationSystem extends SubsystemBase {
             pvWeight2 = 0.0;
         }
 
-        // Update standard deviations using whichever
-        // camera produced a valid estimate.
+        // Update standard deviations for both cameras
         if (
             visionEst1.isPresent() &&
             pvCamResult != null
