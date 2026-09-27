@@ -37,6 +37,7 @@ public class SpinupAndShootCommand extends Command {
 
 	private boolean accelerated = true;
 	private boolean hitAcceleratedSetpoint = false;
+	private boolean highAccelerated = true;
 
 	/**
 	 * Constructor for distance-based shots (shoots on the fly)
@@ -148,7 +149,15 @@ public class SpinupAndShootCommand extends Command {
 
 		if (desiredRPM < 100) this.cancel();
 
-		double acceleratedRPM = desiredRPM * 1.22;
+		double acceleratedRPM;
+
+		if (highAccelerated) {
+			acceleratedRPM = desiredRPM * 1.26;
+		} else {
+			acceleratedRPM = desiredRPM * 1.245;
+		}
+
+		boolean decelerate = false;
 
 		// Set the flywheel to the desired RPM, whether it's hardcoded or
 		// not, it doesn't matter at this point in execution.
@@ -161,12 +170,20 @@ public class SpinupAndShootCommand extends Command {
 
 		double drumRPM = shooterBase.shooterInputs.drumVelocity.in(RPM);
 
-		if (accelerated) {
+		if (accelerated && drumRPM - acceleratedRPM > 0) {
+			decelerate = true;
+		} else if (!accelerated && drumRPM - desiredRPM > 0) {
+			decelerate = true;
+		}
+
+		if (decelerate) {
+			shooterBase.shooter.setDrumVoltage(0);
+		} else if (accelerated) {
 			if (Math.abs(drumRPM - acceleratedRPM) <= SPINUP_TOLERANCE_RPM) {
 				shooterBase.shooter.setIndexerRpm(0.75 * desiredRPM);
 				conveyor.io.setConveyorSpeed(SHOOTING_CONVEYOR_SPEED);
 			}
-		} else{
+		} else {
 			if (Math.abs(drumRPM - desiredRPM) <= SPINUP_TOLERANCE_RPM) {
 				shooterBase.shooter.setIndexerRpm(0.75 * desiredRPM);
 				conveyor.io.setConveyorSpeed(SHOOTING_CONVEYOR_SPEED);
@@ -177,6 +194,10 @@ public class SpinupAndShootCommand extends Command {
 		if (Math.abs(drumRPM - acceleratedRPM) <= SPINUP_TOLERANCE_RPM && accelerated && !hitAcceleratedSetpoint) {
 			shooterAcceleratedTimer.reset();
 			hitAcceleratedSetpoint = true;
+		}
+
+		if (shooterAcceleratedTimer.hasElapsed(0.25)) {
+			highAccelerated = false;
 		}
 
 		if (shooterAcceleratedTimer.hasElapsed(0.4) && hitAcceleratedSetpoint) {

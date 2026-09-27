@@ -27,7 +27,7 @@ public class TeleopDriveCommand extends Command {
 
 	// Values for autorotation to hub
 	private final PIDController controller;
-	private final LoggedTunableNumber kP = new LoggedTunableNumber("HubTurnKp", 8.0);
+	private final LoggedTunableNumber kP = new LoggedTunableNumber("HubTurnKp", 6.0);
 	private final LoggedTunableNumber kI = new LoggedTunableNumber("HubTurnKi", 0);
 	private final LoggedTunableNumber kD = new LoggedTunableNumber("HubTurnKd", 0);
 
@@ -78,7 +78,7 @@ public class TeleopDriveCommand extends Command {
 	@Override
 	public void initialize() {
 		// Set tolerance to 1 degree for rotational PID (applies if button is selected)
-		controller.setTolerance(Math.toRadians(2));
+		controller.setTolerance(Math.toRadians(1));
 	}
 
 	// Called every time the scheduler runs while the command is scheduled.
@@ -128,11 +128,13 @@ public class TeleopDriveCommand extends Command {
 				Drivetrain.getInstance().getFieldRelativeSpeeds()
 			  );
 
+
+			double targetAngle = ShooterBase.getInstance().targetAimAngleRad + Math.toRadians(2);
+			
 			// Apply PID to rotation
 			double angularSpeedRps = controller.calculate(
 			  drivetrain.getEstimatedPose().getRotation().getRadians(),
-			  ShooterBase.getInstance().targetAimAngleRad
-			  
+			  (targetAngle > 180) ? targetAngle - 360 : targetAngle
 			);
 
 			ShooterBase.getInstance().isAimed = controller.atSetpoint(); // set for use in other commands
@@ -145,7 +147,11 @@ public class TeleopDriveCommand extends Command {
 			);
 
 			// Apply drive command
-			drivetrain.drive(xSpeed, ySpeed, angularSpeedRps, Drivetrain.isFieldRelativeTeleop);
+			if (controller.atSetpoint()) {
+				drivetrain.drive(xSpeed, ySpeed, 0, Drivetrain.isFieldRelativeTeleop);
+			} else {
+				drivetrain.drive(xSpeed, ySpeed, angularSpeedRps, Drivetrain.isFieldRelativeTeleop);
+			}
 
 		} else if (inverted.getAsBoolean()) { // Invert all axes if requested
 			drivetrain.drive(

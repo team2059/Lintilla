@@ -351,7 +351,7 @@ public final class Constants {
 		// DRUM SHOOTER CONSTANTS
 		public static final boolean FLYWHEEL_INVERTED = true;
 		public static final boolean INDEXER_INVERTED = true;
-		public static final double INDEXER_P = 0.00055;
+		public static final double INDEXER_P = 0.00063; //0.00055
 		public static final double INDEXER_I = 0.0;
 		public static final double INDEXER_D = 0.0;
 		public static final double INDEXER_S = 0.033388;
