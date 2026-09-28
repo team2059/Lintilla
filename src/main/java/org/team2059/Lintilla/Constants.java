@@ -176,8 +176,6 @@ public final class Constants {
 
 		public static final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
 
-		public static final Transform2d SHOOTER_OFFSET = new Transform2d(-Units.inchesToMeters(10), 0, Rotation2d.kZero);
-
 		public static final Transform3d ROBOT_TO_QUEST = new Transform3d(
 		  -0.27880251,
 		  0.21934458,
@@ -189,13 +187,24 @@ public final class Constants {
 		  )
 		);
 
-		public static final Transform3d ROBOT_TO_PV = new Transform3d(
-		  -Units.inchesToMeters(5.5),
-		  -Units.inchesToMeters(3.5),
-		  Units.inchesToMeters(20.5),
+		public static final Transform3d RIGHT_ROBOT_TO_PV = new Transform3d(
+		  -Units.inchesToMeters(4),
+		  -Units.inchesToMeters(9.75),
+		  Units.inchesToMeters(16.5),
 		  new Rotation3d(
 			0,
-			Units.degreesToRadians(-60),
+			Units.degreesToRadians(-45),
+			0
+		  )
+		);
+
+		public static final Transform3d LEFT_ROBOT_TO_PV = new Transform3d(
+		  -Units.inchesToMeters(4),
+		  Units.inchesToMeters(6.5),
+		  Units.inchesToMeters(16.5),
+		  new Rotation3d(
+			0,
+			Units.degreesToRadians(-45),
 			0
 		  )
 		);
@@ -210,6 +219,7 @@ public final class Constants {
 		public static final Translation2d RED_TOWER_CENTER = new Translation2d(15.3952, 4.3236);
 
 		public static final String PV_CAM_NAME = "HHCamRightShooter";
+		public static final String PV_CAM_NAME_2 = "HHCamLeftShooter";
 		// The standard deviations of our estimated poses, which affect correction rate
 		public static final Matrix<N3, N1> PV_SINGLE_TAG_STD_DEVS = VecBuilder.fill(2, 2, 8);
 		public static final Matrix<N3, N1> PV_MULTI_TAG_STD_DEVS = VecBuilder.fill(0.5, 0.5, 1);
@@ -291,6 +301,7 @@ public final class Constants {
 		public static final double SPINUP_TOLERANCE_RPM = 50;
 		// Speed [-1,1] to run the indexer at while shooting
 		public static final double INDEXER_SPEED_WHILE_SHOOTING = 0.9;
+		public static final double INDEXER_RPM_WHILE_SHOOTING = 5000;
 		public static final double HUB_HEIGHT_METERS = 1.83; // End height of trajectory
 		public static final double SHOOTER_HEIGHT_METERS = 0.5; // Start height of trajectory
 
@@ -340,13 +351,13 @@ public final class Constants {
 		// DRUM SHOOTER CONSTANTS
 		public static final boolean FLYWHEEL_INVERTED = true;
 		public static final boolean INDEXER_INVERTED = true;
-		public static final double INDEXER_P = 0.0;
+		public static final double INDEXER_P = 0.00063; //0.00055
 		public static final double INDEXER_I = 0.0;
 		public static final double INDEXER_D = 0.0;
-		public static final double INDEXER_S = 0.079892;
-		public static final double INDEXER_V = 0.10559 / 60;
-		public static final double INDEXER_A = 0.0073533 / 60;
-		public static final double FLYWHEEL_P = 0.000085; // 0.000052093
+		public static final double INDEXER_S = 0.033388;
+		public static final double INDEXER_V = 0.10725 / 60;
+		public static final double INDEXER_A = 0.020016 / 60;
+		public static final double FLYWHEEL_P = 0.00055; // 0.000052093
 		public static final double FLYWHEEL_I = 0.0;
 		public static final double FLYWHEEL_D = 0.0;
 		public static final double FLYWHEEL_S = 0.065095;
@@ -355,6 +366,7 @@ public final class Constants {
 
 
 		public static final InterpolatingTreeMap<Double, ShooterParams> SHOOTER_MAP = new InterpolatingTreeMap<>(
+			
 		  InverseInterpolator.forDouble(),
 
 		  // Value interpolator: blends RPMs and flight times based on distance ratio, t
@@ -370,16 +382,16 @@ public final class Constants {
 
 		static {
 			// X/Y DISTANCE FROM CENTER OF SHOOTER TO CENTER OF HUB, IN METERS
-			SHOOTER_MAP.put(1.7, new ShooterParams(2525, 0.96));
-			SHOOTER_MAP.put(2.01, new ShooterParams(2625, 1.07));
-			SHOOTER_MAP.put(2.13, new ShooterParams(2675, 0.85));
-			SHOOTER_MAP.put(2.31, new ShooterParams(2725, 0.94));
-			SHOOTER_MAP.put(2.44, new ShooterParams(2775, 1.11));
-			SHOOTER_MAP.put(2.59, new ShooterParams(2825, 1.13));
-			SHOOTER_MAP.put(2.74, new ShooterParams(2875, 1));
-			SHOOTER_MAP.put(3.81, new ShooterParams(3225, 1.25));
-			SHOOTER_MAP.put(4.0, new ShooterParams(3425, 1.32));
-			SHOOTER_MAP.put(4.976, new ShooterParams(3725, 1.48));
+			SHOOTER_MAP.put(1.759, new ShooterParams(2575, 0.96));
+			SHOOTER_MAP.put(2.01, new ShooterParams(2650, 1.07));
+			SHOOTER_MAP.put(2.24, new ShooterParams(2725, 1.11));
+			SHOOTER_MAP.put(2.453, new ShooterParams(2800, 1.11));
+			SHOOTER_MAP.put(2.667, new ShooterParams(2850, 1.13));
+			SHOOTER_MAP.put(2.82, new ShooterParams(2925, 1.13));
+			SHOOTER_MAP.put(2.99, new ShooterParams(2975, 1));
+			SHOOTER_MAP.put(3.15, new ShooterParams(3075, 1.25));
+			SHOOTER_MAP.put(3.56, new ShooterParams(3200, 1.32));
+			SHOOTER_MAP.put(4.01, new ShooterParams(3325, 1.48));
 		}
 
 		public record ShooterParams(double rpm, double timeOfFlight) {}

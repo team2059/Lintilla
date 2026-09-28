@@ -212,7 +212,7 @@ public class Drivetrain extends SubsystemBase {
 	 * @return current Pose2d of the shooter. The offset has been applied. Where is the shooter relative to the field?
 	 */
 	public Pose2d getShooterPose() {
-		return getEstimatedPose().transformBy(VisionConstants.SHOOTER_OFFSET);
+		return getEstimatedPose();
 	}
 
 	public Command resetGyroHeading() {

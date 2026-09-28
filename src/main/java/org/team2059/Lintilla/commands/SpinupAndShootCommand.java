@@ -2,8 +2,11 @@ package org.team2059.Lintilla.commands;
 
 import static edu.wpi.first.units.Units.RPM;
 import static org.team2059.Lintilla.Constants.ConveyorConstants.SHOOTING_CONVEYOR_SPEED;
+import static org.team2059.Lintilla.Constants.ShooterConstants.INDEXER_RPM_WHILE_SHOOTING;
 import static org.team2059.Lintilla.Constants.ShooterConstants.INDEXER_SPEED_WHILE_SHOOTING;
 import static org.team2059.Lintilla.Constants.ShooterConstants.SPINUP_TOLERANCE_RPM;
+
+import java.rmi.AccessException;
 
 import org.littletonrobotics.junction.Logger;
 import org.team2059.Lintilla.Constants.ShooterConstants;
@@ -27,9 +30,14 @@ public class SpinupAndShootCommand extends Command {
 	private double desiredRPM; // The actual RPM to push to the shooters
 	private boolean desiredRPMHardcoded; // Whether or not we're using distance-calculated RPM
 	private Timer spinUpTimer = new Timer();
-	// private final LoggedTunableNumber kP = new LoggedTunableNumber("DrumkP", 0.0);
-	// private final LoggedTunableNumber kS = new LoggedTunableNumber("DrumkS", ShooterConstants.FLYWHEEL_S);
-	// private final LoggedTunableNumber kV = new LoggedTunableNumber("DrumkV", ShooterConstants.FLYWHEEL_V);
+	private Timer shooterAcceleratedTimer = new Timer();
+	private final LoggedTunableNumber kP = new LoggedTunableNumber("DrumkP", ShooterConstants.FLYWHEEL_P);
+	private final LoggedTunableNumber kV = new LoggedTunableNumber("DrumkV", ShooterConstants.FLYWHEEL_V);
+	private final LoggedTunableNumber tunableRPM = new LoggedTunableNumber("RPM", desiredRPM);
+
+	private boolean accelerated = true;
+	private boolean hitAcceleratedSetpoint = false;
+	private boolean highAccelerated = true;
 
 	/**
 	 * Constructor for distance-based shots (shoots on the fly)
@@ -40,6 +48,7 @@ public class SpinupAndShootCommand extends Command {
 	public SpinupAndShootCommand(
 	  ShooterBase shooterBase,
 	  Conveyor conveyor
+
 	) {
 		this.shooterBase = shooterBase;
 		this.conveyor = conveyor;
@@ -77,10 +86,21 @@ public class SpinupAndShootCommand extends Command {
 
 	@Override
 	public void initialize() {
-		spinUpTimer.reset();
+		spinUpTimer.restart();
+		shooterAcceleratedTimer.restart();
 
 		// Process desiredRPM for hardcoded shots
 		if (desiredRPMHardcoded) {
+			LoggedTunableNumber.ifChanged(
+				hashCode(),
+				() -> {
+					desiredRPM = tunableRPM.get();
+				},
+				tunableRPM
+			);
+
+			initialDesiredRPM = desiredRPM;
+			
 			// Check switches
 			if (shooterBase.subFivePercent) {
 				desiredRPM = initialDesiredRPM * 0.95;
@@ -94,19 +114,19 @@ public class SpinupAndShootCommand extends Command {
 
 	@Override
 	public void execute() {
-		// LoggedTunableNumber.ifChanged(
-		// 	hashCode(), 
-		// 	() -> {
-		// 	shooterBase.shooter.setDrumkP(kP.get());
-		// 	shooterBase.shooter.setDrumkS(kS.get());
-		// 	shooterBase.shooter.setDrumkV(kV.get());
-		// 	}, 
-		// 	kP, kS, kV
-		// );
+		LoggedTunableNumber.ifChanged(
+			hashCode(), 
+			() -> {
+			shooterBase.shooter.setDrumkP(kP.get());
+			shooterBase.shooter.setDrumkV(kV.get());
+			}, 
+			kP, kV
+		);
 
 
 		if (!desiredRPMHardcoded) {
 			// Process desiredRPM for distance-based shots
+			
 
 			// Calculate the latest SOTF numbers
 			shooterBase.calculateSOTF(Drivetrain.getInstance().getEstimatedPose(), Drivetrain.getInstance().getFieldRelativeSpeeds());
@@ -121,6 +141,7 @@ public class SpinupAndShootCommand extends Command {
 				desiredRPM = initialDesiredRPM * 1.05;
 			} else {
 				desiredRPM = initialDesiredRPM;
+
 			}
 		}
 
@@ -128,21 +149,65 @@ public class SpinupAndShootCommand extends Command {
 
 		if (desiredRPM < 100) this.cancel();
 
+		double acceleratedRPM;
+
+		if (highAccelerated) {
+			acceleratedRPM = desiredRPM * 1.26;
+		} else {
+			acceleratedRPM = desiredRPM * 1.245;
+		}
+
+		boolean decelerate = false;
+
 		// Set the flywheel to the desired RPM, whether it's hardcoded or
 		// not, it doesn't matter at this point in execution.
-		shooterBase.shooter.setDrumRpm(desiredRPM);
+
+		if (accelerated) {
+			shooterBase.shooter.setDrumRpm(acceleratedRPM);
+		} else {
+			shooterBase.shooter.setDrumRpm(desiredRPM);
+		}
 
 		double drumRPM = shooterBase.shooterInputs.drumVelocity.in(RPM);
 
-		if (
-		  // Shooters within tolerance, or timer has run out
-		  (Math.abs(drumRPM - desiredRPM) <= SPINUP_TOLERANCE_RPM)
-			|| spinUpTimer.hasElapsed(SPINUP_TIME_SECONDS)
-		) {
-			// Spin indexers and conveyor
-			shooterBase.shooter.setIndexerSpeed(INDEXER_SPEED_WHILE_SHOOTING);
-			conveyor.io.setConveyorSpeed(SHOOTING_CONVEYOR_SPEED);
+		if (accelerated && drumRPM - acceleratedRPM > 0) {
+			decelerate = true;
+		} else if (!accelerated && drumRPM - desiredRPM > 0) {
+			decelerate = true;
 		}
+
+		if (decelerate) {
+			shooterBase.shooter.setDrumVoltage(0);
+		} else if (accelerated) {
+			if (Math.abs(drumRPM - acceleratedRPM) <= SPINUP_TOLERANCE_RPM) {
+				shooterBase.shooter.setIndexerRpm(0.75 * desiredRPM);
+				conveyor.io.setConveyorSpeed(SHOOTING_CONVEYOR_SPEED);
+			}
+		} else {
+			if (Math.abs(drumRPM - desiredRPM) <= SPINUP_TOLERANCE_RPM) {
+				shooterBase.shooter.setIndexerRpm(0.75 * desiredRPM);
+				conveyor.io.setConveyorSpeed(SHOOTING_CONVEYOR_SPEED);
+			}
+		}
+
+
+		if (Math.abs(drumRPM - acceleratedRPM) <= SPINUP_TOLERANCE_RPM && accelerated && !hitAcceleratedSetpoint) {
+			shooterAcceleratedTimer.reset();
+			hitAcceleratedSetpoint = true;
+		}
+
+		if (shooterAcceleratedTimer.hasElapsed(0.25)) {
+			highAccelerated = false;
+		}
+
+		if (shooterAcceleratedTimer.hasElapsed(0.4) && hitAcceleratedSetpoint) {
+			accelerated = false;
+		}
+	}
+
+	public void resetAcceleratedBooleans() {
+		accelerated = true;
+		hitAcceleratedSetpoint = false;
 	}
 
 	@Override
@@ -155,6 +220,8 @@ public class SpinupAndShootCommand extends Command {
 		if (interrupted) {
 			System.out.println("RPM was " + desiredRPM);
 		}
+
+		resetAcceleratedBooleans();
 
 		// Stop everything that we used
 		shooterBase.shooter.stopIndexer();

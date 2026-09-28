@@ -16,7 +16,6 @@ import org.team2059.Lintilla.RobotContainer;
 import static edu.wpi.first.units.Units.*;
 import static org.team2059.Lintilla.Constants.OperatorConstants.*;
 import static org.team2059.Lintilla.Constants.ShooterConstants;
-import static org.team2059.Lintilla.Constants.VisionConstants.SHOOTER_OFFSET;
 import static org.team2059.Lintilla.Constants.VisionConstants.getHubTranslation;
 
 public class ShooterBase extends SubsystemBase {
@@ -125,8 +124,8 @@ public class ShooterBase extends SubsystemBase {
 
 		// Check if robot is actually moving
 		boolean isMoving =
-			Math.hypot(fieldSpeeds.vxMetersPerSecond, fieldSpeeds.vyMetersPerSecond) > 0.1
-			|| Math.abs(fieldSpeeds.omegaRadiansPerSecond) > 0.1;
+			Math.hypot(fieldSpeeds.vxMetersPerSecond, fieldSpeeds.vyMetersPerSecond) > 0.1;
+			//|| Math.abs(fieldSpeeds.omegaRadiansPerSecond) > 0.1;
 
 		Translation2d virtualTarget = getHubTranslation();
 
@@ -142,8 +141,8 @@ public class ShooterBase extends SubsystemBase {
 
 		Translation2d vRobot = new Translation2d(fieldSpeeds.vxMetersPerSecond, fieldSpeeds.vyMetersPerSecond);
 		Translation2d vTan = new Translation2d(
-			-fieldSpeeds.omegaRadiansPerSecond * SHOOTER_OFFSET.getY(),
-			fieldSpeeds.omegaRadiansPerSecond * SHOOTER_OFFSET.getX()
+			-fieldSpeeds.omegaRadiansPerSecond,
+			fieldSpeeds.omegaRadiansPerSecond
 		);
 		Translation2d effectiveVelocity = vRobot.plus(vTan);
 
@@ -258,6 +257,6 @@ public class ShooterBase extends SubsystemBase {
 		Logger.recordOutput("+5%", addFivePercent);
 		Logger.recordOutput("-5%", subFivePercent);
 		Logger.recordOutput("CurrentDistanceToHub", currentDistanceToTarget);
-		Logger.recordOutput("TargetAngleToHub", targetAimAngleRad);
+		Logger.recordOutput("TargetAngleToHub", targetAimAngleRad); 
 	}
 }

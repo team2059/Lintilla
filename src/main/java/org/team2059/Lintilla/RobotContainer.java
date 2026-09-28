@@ -178,6 +178,18 @@ public class RobotContainer {
 		/* DRIVER'S CONTROLLER */
 		/* =================== */
 
+		new JoystickButton(logitech, 7)
+			.whileTrue(ShooterBase.getInstance().indexerDynamicForward());
+
+		new JoystickButton(logitech, 8)
+			.whileTrue(ShooterBase.getInstance().indexerDynamicReverse());
+
+		new JoystickButton(logitech, 9)
+			.whileTrue(ShooterBase.getInstance().indexerQuasiForward());
+
+		new JoystickButton(logitech, 10)
+			.whileTrue(ShooterBase.getInstance().indexerQuasiReverse());
+
 		/* RESET GYRO HEADING */
 		new JoystickButton(logitech, OperatorConstants.RESET_HEADING)
 		  .whileTrue(Drivetrain.getInstance().resetGyroHeading());
@@ -241,12 +253,6 @@ public class RobotContainer {
 		  .whileTrue(Conveyor.getInstance().conveyorIn()
 		  .alongWith(Commands.startEnd(() -> ShooterBase.getInstance().shooter.setIndexerSpeed(0.8), () -> ShooterBase.getInstance().shooter.setIndexerRpm(0))
 		  .alongWith(Commands.startEnd(() -> ShooterBase.getInstance().shooter.setDrumSpeed(0.4), () -> ShooterBase.getInstance().shooter.setDrumSpeed(0)))));
-
-		//SysID Routines
-		new JoystickButton(logitech, 7).whileTrue(ShooterBase.getInstance().shooterDynamicForward());
-		new JoystickButton(logitech, 8).whileTrue(ShooterBase.getInstance().shooterDynamicReverse());
-		new JoystickButton(logitech, 9).whileTrue(ShooterBase.getInstance().shooterQuasiForward());
-		new JoystickButton(logitech,10).whileTrue(ShooterBase.getInstance().shooterQuasiReverse());
 
 		/* QUEST MEASUREMENTS SWITCH */
 		new JoystickButton(buttonBox, OperatorConstants.QUEST_MEASUREMENT_SWITCH)
