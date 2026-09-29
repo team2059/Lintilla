@@ -5,8 +5,6 @@
 package org.team2059.Lintilla;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -14,13 +12,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.team2059.Lintilla.Constants.CANConstants;
 import org.team2059.Lintilla.Constants.DrivetrainConstants;
 import org.team2059.Lintilla.Constants.OperatorConstants;
 import org.team2059.Lintilla.Constants.ShooterConstants;
-import org.team2059.Lintilla.commands.QnavCalibrationCommand;
 import org.team2059.Lintilla.commands.SpinupAndShootCommand;
 import org.team2059.Lintilla.commands.TeleopDriveCommand;
 import org.team2059.Lintilla.subsystems.collector.Collector;
@@ -251,8 +247,7 @@ public class RobotContainer {
 
 		new JoystickButton(buttonBox, OperatorConstants.COLLECTOR_INTAKE)
 		  .whileTrue(Conveyor.getInstance().conveyorIn()
-		  .alongWith(Commands.startEnd(() -> ShooterBase.getInstance().shooter.setIndexerSpeed(0.8), () -> ShooterBase.getInstance().shooter.setIndexerRpm(0))
-		  .alongWith(Commands.startEnd(() -> ShooterBase.getInstance().shooter.setDrumSpeed(0.4), () -> ShooterBase.getInstance().shooter.setDrumSpeed(0)))));
+		  .alongWith(Commands.startEnd(() -> ShooterBase.getInstance().shooter.setIndexerSpeed(0.8), () -> ShooterBase.getInstance().shooter.setIndexerRpm(0))));
 
 		/* QUEST MEASUREMENTS SWITCH */
 		new JoystickButton(buttonBox, OperatorConstants.QUEST_MEASUREMENT_SWITCH)

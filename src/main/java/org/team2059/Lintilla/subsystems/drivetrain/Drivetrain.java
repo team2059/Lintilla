@@ -25,7 +25,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 import org.team2059.Lintilla.Constants.AutoConstants;
 import org.team2059.Lintilla.Constants.DrivetrainConstants;
-import org.team2059.Lintilla.Constants.VisionConstants;
 import org.team2059.Lintilla.routines.DrivetrainRoutine;
 
 import static edu.wpi.first.units.Units.Meters;

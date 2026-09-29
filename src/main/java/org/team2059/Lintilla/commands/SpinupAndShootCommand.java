@@ -2,11 +2,7 @@ package org.team2059.Lintilla.commands;
 
 import static edu.wpi.first.units.Units.RPM;
 import static org.team2059.Lintilla.Constants.ConveyorConstants.SHOOTING_CONVEYOR_SPEED;
-import static org.team2059.Lintilla.Constants.ShooterConstants.INDEXER_RPM_WHILE_SHOOTING;
-import static org.team2059.Lintilla.Constants.ShooterConstants.INDEXER_SPEED_WHILE_SHOOTING;
 import static org.team2059.Lintilla.Constants.ShooterConstants.SPINUP_TOLERANCE_RPM;
-
-import java.rmi.AccessException;
 
 import org.littletonrobotics.junction.Logger;
 import org.team2059.Lintilla.Constants.ShooterConstants;
@@ -23,7 +19,6 @@ import edu.wpi.first.wpilibj2.command.Command;
  * when a certain tolerance is reached.
  */
 public class SpinupAndShootCommand extends Command {
-	private static final double SPINUP_TIME_SECONDS = 1.5;
 	private final ShooterBase shooterBase;
 	private final Conveyor conveyor;
 	private double initialDesiredRPM;
@@ -146,9 +141,10 @@ public class SpinupAndShootCommand extends Command {
 		}
 
 		Logger.recordOutput("desiredRPM", desiredRPM);
-
+		
 		if (desiredRPM < 100) this.cancel();
 
+		// Initially accelerate flywheel to compensate for indexer ramping up
 		double acceleratedRPM;
 
 		if (highAccelerated) {
@@ -170,12 +166,14 @@ public class SpinupAndShootCommand extends Command {
 
 		double drumRPM = shooterBase.shooterInputs.drumVelocity.in(RPM);
 
+		// Stop accelerating if the flywheel is above desired/accelerated RPM
 		if (accelerated && drumRPM - acceleratedRPM > 0) {
 			decelerate = true;
 		} else if (!accelerated && drumRPM - desiredRPM > 0) {
 			decelerate = true;
 		}
 
+		
 		if (decelerate) {
 			shooterBase.shooter.setDrumVoltage(0);
 		} else if (accelerated) {
@@ -196,6 +194,7 @@ public class SpinupAndShootCommand extends Command {
 			hitAcceleratedSetpoint = true;
 		}
 
+		// Accelerate higher first, then lower, then stop accelerating after 0.4 seconds
 		if (shooterAcceleratedTimer.hasElapsed(0.25)) {
 			highAccelerated = false;
 		}

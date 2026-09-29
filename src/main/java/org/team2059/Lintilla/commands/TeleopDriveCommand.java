@@ -128,7 +128,6 @@ public class TeleopDriveCommand extends Command {
 				Drivetrain.getInstance().getFieldRelativeSpeeds()
 			  );
 
-
 			double targetAngle = ShooterBase.getInstance().targetAimAngleRad + Math.toRadians(2);
 			
 			// Apply PID to rotation
@@ -146,7 +145,7 @@ public class TeleopDriveCommand extends Command {
 			  DrivetrainConstants.TELE_DRIVE_MAX_ANGULAR_SPEED
 			);
 
-			// Apply drive command
+			// If at setpoint, stop rotating
 			if (controller.atSetpoint()) {
 				drivetrain.drive(xSpeed, ySpeed, 0, Drivetrain.isFieldRelativeTeleop);
 			} else {
@@ -170,6 +169,7 @@ public class TeleopDriveCommand extends Command {
 		} else if (snakeMode.getAsBoolean()) {
 			Rotation2d snakeAngle = new Rotation2d(xSpeed, ySpeed);
 			double snakeRotSpeed = 0;
+			
 			if (Math.abs(Math.hypot(xSpeed, ySpeed)) > 0.05) {
 				Pose2d currentPose = drivetrain.getEstimatedPose();
 				snakeRotSpeed = MathUtil.clamp(controller.calculate(currentPose.getRotation().getRadians(), snakeAngle.getRadians() - (-Math.PI / 2)), -1, 1);
@@ -178,7 +178,7 @@ public class TeleopDriveCommand extends Command {
 				drivetrain.drive(
 				  xSpeed,
 				  ySpeed,
-				  -snakeRotSpeed, // TODO: Test this
+				  -snakeRotSpeed,
 				  Drivetrain.isFieldRelativeTeleop); // Should always be true for snake mode
 			} else {
 				drivetrain.drive(
