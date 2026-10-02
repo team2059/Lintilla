@@ -1,18 +1,21 @@
 package org.team2059.Lintilla.commands;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj2.command.Command;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
+
+import org.littletonrobotics.junction.Logger;
 import org.team2059.Lintilla.Constants.DrivetrainConstants;
 import org.team2059.Lintilla.subsystems.drivetrain.Drivetrain;
 import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
 import org.team2059.Lintilla.util.LoggedTunableNumber;
 
-import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 
 /**
  * Command to drive the robot using a flight stick controller.
@@ -22,8 +25,10 @@ public class TeleopDriveCommand extends Command {
 	private final Drivetrain drivetrain;
 
 	private final DoubleSupplier forwardX, forwardY, rotation, slider;
-	private final BooleanSupplier strafeOnly, inverted, hubTracking, snakeMode;
+	private final BooleanSupplier strafeOnly, inverted, hubTracking, snakeMode, xbox;
 	private final SlewRateLimiter xLimiter, yLimiter, rotLimiter;
+	
+	private double xboxSpeedMult = 0.7;
 
 	// Values for autorotation to hub
 	private final PIDController controller;
@@ -50,7 +55,8 @@ public class TeleopDriveCommand extends Command {
 	  BooleanSupplier strafeOnly,
 	  BooleanSupplier inverted,
 	  BooleanSupplier hubTracking,
-	  BooleanSupplier snakeMode
+	  BooleanSupplier snakeMode,
+	  BooleanSupplier xbox
 	) {
 
 		this.drivetrain = drivetrain;
@@ -62,6 +68,7 @@ public class TeleopDriveCommand extends Command {
 		this.inverted = inverted;
 		this.hubTracking = hubTracking;
 		this.snakeMode = snakeMode;
+		this.xbox = xbox;
 
 		this.xLimiter = new SlewRateLimiter(DrivetrainConstants.MAX_ACCELERATION);
 		this.yLimiter = new SlewRateLimiter(DrivetrainConstants.MAX_ACCELERATION);
@@ -73,6 +80,7 @@ public class TeleopDriveCommand extends Command {
 
 		addRequirements(drivetrain);
 	}
+
 
 	// Called when the command is initially scheduled.
 	@Override
@@ -112,12 +120,21 @@ public class TeleopDriveCommand extends Command {
 		ySpeed *= DrivetrainConstants.TELE_DRIVE_MAX_SPEED;
 		rot *= DrivetrainConstants.TELE_DRIVE_MAX_ANGULAR_SPEED;
 
-		// Apply slider limit
-		double sliderVal = (-slider.getAsDouble() + 1) / 2;
-		sliderVal = Math.max(sliderVal, 0.15);
+		double sliderVal;
+		if (!xbox.getAsBoolean()) {
+			// Apply slider limit
+			sliderVal = (-slider.getAsDouble() + 1) / 2;
+			sliderVal = Math.max(sliderVal, 0.15);
+		} else {
+			sliderVal = (-slider.getAsDouble() + 1.0)/2.0;
+			sliderVal = sliderVal < 0.15 ? 0.15 : sliderVal;
+			Logger.recordOutput("Slider value", sliderVal);
+    	} 
+
 		xSpeed *= sliderVal;
 		ySpeed *= sliderVal;
 		rot *= sliderVal;
+		
 
 		if (hubTracking.getAsBoolean()) {
 

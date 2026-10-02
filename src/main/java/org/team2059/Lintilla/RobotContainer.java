@@ -4,15 +4,10 @@
 
 package org.team2059.Lintilla;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import static org.team2059.Lintilla.Constants.OperatorConstants.SHOOTER_ADD5PERCENT_SWITCH;
+import static org.team2059.Lintilla.Constants.OperatorConstants.SHOOTER_SUB5PERCENT_SWITCH;
+import static org.team2059.Lintilla.Constants.OperatorConstants.USE_XBOX_CONTROLLER;
+
 import org.team2059.Lintilla.Constants.CANConstants;
 import org.team2059.Lintilla.Constants.DrivetrainConstants;
 import org.team2059.Lintilla.Constants.OperatorConstants;
@@ -30,8 +25,18 @@ import org.team2059.Lintilla.subsystems.shooter.ShooterBase;
 import org.team2059.Lintilla.subsystems.shooter.VortexShooter;
 import org.team2059.Lintilla.subsystems.vision.LocalizationSystem;
 
-import static org.team2059.Lintilla.Constants.OperatorConstants.SHOOTER_ADD5PERCENT_SWITCH;
-import static org.team2059.Lintilla.Constants.OperatorConstants.SHOOTER_SUB5PERCENT_SWITCH;
+import com.pathplanner.lib.auto.AutoBuilder;
+
+import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
  * Central initialization class
@@ -39,6 +44,7 @@ import static org.team2059.Lintilla.Constants.OperatorConstants.SHOOTER_SUB5PERC
 public class RobotContainer {
 
 	public static Joystick logitech;
+	public static CommandXboxController controller;
 	public static GenericHID buttonBox;
 
 	SendableChooser<Command> autoChooser;
@@ -49,8 +55,11 @@ public class RobotContainer {
 	public RobotContainer() {
 
 		// Initialize all controllers and button boxes
-
-		logitech = new Joystick(OperatorConstants.LOGITECH_PORT);
+		if (OperatorConstants.USE_XBOX_CONTROLLER) {
+			controller = new CommandXboxController(OperatorConstants.XBOX_PORT);
+		} else {
+			logitech = new Joystick(OperatorConstants.LOGITECH_PORT);
+		}
 		buttonBox = new GenericHID(OperatorConstants.BUTTON_BOX_PORT);
 
 		// Initialize all instance objects for subsystems and default commands
@@ -111,19 +120,40 @@ public class RobotContainer {
 		);
 
 		// Set the drivetrain's default command as the actual teleop command
-		Drivetrain.getInstance().setDefaultCommand(
-		  new TeleopDriveCommand(
-			Drivetrain.getInstance(),
-			() -> -logitech.getRawAxis(OperatorConstants.TRANSLATION_AXIS), // forwardX
-			() -> -logitech.getRawAxis(OperatorConstants.STRAFE_AXIS), // forwardY
-			() -> -logitech.getRawAxis(OperatorConstants.ROTATION_AXIS), // rotation
-			() -> logitech.getRawAxis(OperatorConstants.SLIDER_AXIS), // slider
-			() -> logitech.getRawButton(OperatorConstants.STRAFE_ONLY), // Strafe Only Button
-			() -> logitech.getRawButton(OperatorConstants.INVERT_DRIVE), // Inverted button
-			() -> logitech.getRawButton(OperatorConstants.HUB_ALIGN),
-			() -> logitech.getRawButton(OperatorConstants.SNAKE_MODE)
-		  )
+
+		if (OperatorConstants.USE_XBOX_CONTROLLER) {
+			Drivetrain.getInstance().setDefaultCommand(
+			  new TeleopDriveCommand(
+				Drivetrain.getInstance(),
+				() -> -controller.getHID().getRawAxis(1), //left joystick y
+        		() -> -controller.getHID().getRawAxis(0), //left joystick x 
+        		() -> -controller.getHID().getRawAxis(4), //right joystick x
+				() -> controller.getHID().getRawAxis(3), // slider 
+				() -> false, // Strafe only (false)
+				() -> false, // Inverted (false)
+				() -> controller.getHID().getRawButton(6), // hub tracking 
+				() -> false, // snake mode (false)
+				() -> true
+			  )
+			);
+
+		} else {
+			Drivetrain.getInstance().setDefaultCommand(
+		  	new TeleopDriveCommand(
+				Drivetrain.getInstance(),
+				() -> -logitech.getRawAxis(OperatorConstants.TRANSLATION_AXIS), // forwardX
+				() -> -logitech.getRawAxis(OperatorConstants.STRAFE_AXIS), // forwardY
+				() -> -logitech.getRawAxis(OperatorConstants.ROTATION_AXIS), // rotation
+				() -> logitech.getRawAxis(OperatorConstants.SLIDER_AXIS), // slider
+				() -> logitech.getRawButton(OperatorConstants.STRAFE_ONLY), // Strafe Only Button
+				() -> logitech.getRawButton(OperatorConstants.INVERT_DRIVE), // Inverted button
+				() -> logitech.getRawButton(OperatorConstants.HUB_ALIGN),
+				() -> logitech.getRawButton(OperatorConstants.SNAKE_MODE),
+				() -> false
+			)
 		);
+		}
+		
 
 		LocalizationSystem.initialize();
 
@@ -174,26 +204,36 @@ public class RobotContainer {
 		/* DRIVER'S CONTROLLER */
 		/* =================== */
 
-		new JoystickButton(logitech, 7)
-			.whileTrue(ShooterBase.getInstance().indexerDynamicForward());
+		// new JoystickButton(logitech, 7)
+		// 	.whileTrue(ShooterBase.getInstance().indexerDynamicForward());
 
-		new JoystickButton(logitech, 8)
-			.whileTrue(ShooterBase.getInstance().indexerDynamicReverse());
+		// new JoystickButton(logitech, 8)
+		// 	.whileTrue(ShooterBase.getInstance().indexerDynamicReverse());
 
-		new JoystickButton(logitech, 9)
-			.whileTrue(ShooterBase.getInstance().indexerQuasiForward());
+		// new JoystickButton(logitech, 9)
+		// 	.whileTrue(ShooterBase.getInstance().indexerQuasiForward());
 
-		new JoystickButton(logitech, 10)
-			.whileTrue(ShooterBase.getInstance().indexerQuasiReverse());
+		// new JoystickButton(logitech, 10)
+		// 	.whileTrue(ShooterBase.getInstance().indexerQuasiReverse());
 
 		/* RESET GYRO HEADING */
-		new JoystickButton(logitech, OperatorConstants.RESET_HEADING)
-		  .whileTrue(Drivetrain.getInstance().resetGyroHeading());
-
+		if (USE_XBOX_CONTROLLER) {
+			new JoystickButton(controller.getHID(), 4)
+			  .whileTrue(Drivetrain.getInstance().resetGyroHeading());
+		} else {
+			new JoystickButton(logitech, OperatorConstants.RESET_HEADING)
+		  		.whileTrue(Drivetrain.getInstance().resetGyroHeading());
+		}
+		
 		/* SWITCH FIELD/ROBOT RELATIVITY */
-		new JoystickButton(logitech, OperatorConstants.ROBOT_RELATIVE)
-		  .whileTrue(Drivetrain.getInstance().setFieldRelativity());
-
+		if (USE_XBOX_CONTROLLER) {
+			new JoystickButton(controller.getHID(), 3)
+		  		.whileTrue(Drivetrain.getInstance().setFieldRelativity());
+		} else {
+			new JoystickButton(logitech, OperatorConstants.ROBOT_RELATIVE)
+		  		.whileTrue(Drivetrain.getInstance().setFieldRelativity());
+		}
+		
 		/* ===================== */
 		/* OPERATOR'S CONTROLLER */
 		/* ===================== */
@@ -239,15 +279,14 @@ public class RobotContainer {
 
 		/* COLLECTOR OUTTAKE/UNJAM */
 		new JoystickButton(buttonBox, OperatorConstants.COLLECTOR_UNJAM)
-		  .whileTrue(Collector.getInstance().outtake());
+		  .whileTrue(Collector.getInstance().outtake().alongWith(Conveyor.getInstance().conveyorOut()));
 
 		// /* COLLECTOR ROLLERS IN/INTAKE at 25% */
 		// new JoystickButton(buttonBox, OperatorConstants.COLLECTOR_INTAKE)
 		//   .whileTrue(Collector.getInstance().intakeSlow());
 
 		new JoystickButton(buttonBox, OperatorConstants.COLLECTOR_INTAKE)
-		  .whileTrue(Conveyor.getInstance().conveyorIn()
-		  .alongWith(Commands.startEnd(() -> ShooterBase.getInstance().shooter.setIndexerSpeed(0.8), () -> ShooterBase.getInstance().shooter.setIndexerRpm(0))));
+		  .whileTrue(Conveyor.getInstance().conveyorIn().alongWith(Collector.getInstance().intake()));
 
 		/* QUEST MEASUREMENTS SWITCH */
 		new JoystickButton(buttonBox, OperatorConstants.QUEST_MEASUREMENT_SWITCH)

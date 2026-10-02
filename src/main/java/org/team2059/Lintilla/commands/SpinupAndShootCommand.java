@@ -28,7 +28,6 @@ public class SpinupAndShootCommand extends Command {
 	private Timer shooterAcceleratedTimer = new Timer();
 	private final LoggedTunableNumber kP = new LoggedTunableNumber("DrumkP", ShooterConstants.FLYWHEEL_P);
 	private final LoggedTunableNumber kV = new LoggedTunableNumber("DrumkV", ShooterConstants.FLYWHEEL_V);
-	private final LoggedTunableNumber tunableRPM = new LoggedTunableNumber("RPM", desiredRPM);
 
 	private boolean accelerated = true;
 	private boolean hitAcceleratedSetpoint = false;
@@ -86,15 +85,6 @@ public class SpinupAndShootCommand extends Command {
 
 		// Process desiredRPM for hardcoded shots
 		if (desiredRPMHardcoded) {
-			LoggedTunableNumber.ifChanged(
-				hashCode(),
-				() -> {
-					desiredRPM = tunableRPM.get();
-				},
-				tunableRPM
-			);
-
-			initialDesiredRPM = desiredRPM;
 			
 			// Check switches
 			if (shooterBase.subFivePercent) {

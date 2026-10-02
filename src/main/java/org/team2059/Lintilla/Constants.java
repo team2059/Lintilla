@@ -38,13 +38,18 @@ public final class Constants {
 	public static final class OperatorConstants {
 
 		// If true, tunable numbers can be modified, and SysID routines will be instantiated (memory heavy!)
-		public static final boolean tuningMode = true;
+		public static final boolean tuningMode = false;
+
+		// Using xbox controller
+		public static final boolean USE_XBOX_CONTROLLER = true;
+
 
 		/* ===== */
 		/* PORTS */
 		/* ===== */
 
 		public static final int LOGITECH_PORT = 0;
+		public static final int XBOX_PORT = 0;
 		public static final int BUTTON_BOX_PORT = 1;
 
 		/* ==== */
